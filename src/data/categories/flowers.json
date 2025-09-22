@@ -1,0 +1,75 @@
+[
+  {
+    "id": 101,
+    "nameEn": "Red Rose Bouquet",
+    "nameAr": "باقة ورد أحمر",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/12932954/pexels-photo-12932954.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/12932954/pexels-photo-12932954.jpeg",
+      "https://images.pexels.com/photos/1058775/pexels-photo-1058775.jpeg",
+      "https://images.pexels.com/photos/931162/pexels-photo-931162.jpeg",
+      "https://images.pexels.com/photos/144429/pexels-photo-144429.jpeg"
+    ],
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "categoryId": "flowers",
+    "occasionId": "valentines-day",
+    "descriptionEn": "A classic bouquet of vibrant red roses, symbolizing love and affection. Each rose is carefully selected for its beauty and freshness, arranged with elegant greenery and wrapped in premium paper. Perfect for expressing your deepest emotions on special occasions.",
+    "descriptionAr": "باقة كلاسيكية من الورود الحمراء النابضة بالحياة، ترمز إلى الحب والعاطفة. كل وردة مختارة بعناية لجمالها ونضارتها، مرتبة مع خضرة أنيقة ومغلفة بورق مميز. مثالية للتعبير عن أعمق مشاعرك في المناسبات الخاصة.",
+    "careTipsEn": "Keep roses in a cool place away from direct sunlight. Change water every two days and trim stems diagonally. Use provided flower food for longer freshness.",
+    "careTipsAr": "احفظ الورود في مكان بارد بعيداً عن أشعة الشمس المباشرة. قم بتغيير الماء كل يومين وقص السيقان بشكل مائل. استخدم غذاء الزهور المرفق للحفاظ على النضارة لفترة أطول.",
+    "dimensionsEn": "Height: 50 cm, Width: 30 cm",
+    "dimensionsAr": "الارتفاع: 50 سم، العرض: 30 سم",
+    "arrangementContentsEn": "12 red roses.  baby’s breath. eucalyptus. premium wrapping",
+    "arrangementContentsAr": "12 وردة حمراء. أنفاس الطفل. أوكالبتوس. تغليف فاخر"
+  },
+  {
+    "id": 102,
+    "nameEn": "White Lily Arrangement",
+    "nameAr": "تنسيق زنابق بيضاء",
+    "price": 249,
+    "imageUrl": "https://images.pexels.com/photos/11986512/pexels-photo-11986512.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/11986512/pexels-photo-11986512.jpeg",
+      "https://images.pexels.com/photos/278849/pexels-photo-278849.jpeg",
+      "https://images.pexels.com/photos/265856/pexels-photo-265856.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "flowers",
+    "occasionId": "wedding",
+    "descriptionEn": "Elegant white lilies arranged beautifully for special occasions. These pristine flowers represent purity and new beginnings, making them perfect for weddings and celebrations. The arrangement includes complementary foliage and is presented in a sophisticated style.",
+    "descriptionAr": "زنابق بيضاء أنيقة مرتبة بجمال للمناسبات الخاصة. هذه الزهور النقية تمثل الطهارة والبدايات الجديدة، مما يجعلها مثالية لحفلات الزفاف والاحتفالات. التنسيق يشمل أوراق مكملة ومقدم بأسلوب راقي.",
+    "careTipsEn": "Place lilies in a cool area, avoid direct sunlight. Change water daily and remove pollen to prevent staining. Use flower food to extend bloom life.",
+    "careTipsAr": "ضع الزنابق في منطقة باردة، وتجنب أشعة الشمس المباشرة. غير الماء يومياً وأزل حبوب اللقاح لمنع البقع. استخدم غذاء الزهور لإطالة عمر الزهرة.",
+    "dimensionsEn": "Height: 60 cm, Width: 40 cm",
+    "dimensionsAr": "الارتفاع: 60 سم، العرض: 40 سم",
+    "arrangementContentsEn": "10 white lilies, ferns, white roses, elegant vase",
+    "arrangementContentsAr": "10 زنابق بيضاء، سرخس، ورود بيضاء، مزهرية أنيقة"
+  },
+  {
+    "id": 103,
+    "nameEn": "Mixed Seasonal Flowers",
+    "nameAr": "زهور موسمية متنوعة",
+    "price": 179,
+    "imageUrl": "https://images.pexels.com/photos/12366357/pexels-photo-12366357.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/12366357/pexels-photo-12366357.jpeg",
+      "https://images.pexels.com/photos/132474/pexels-photo-132474.jpeg",
+      "https://images.pexels.com/photos/4466492/pexels-photo-4466492.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "flowers",
+    "occasionId": "thank-you",
+    "descriptionEn": "A beautiful mix of seasonal flowers in vibrant colors. This cheerful arrangement features the best blooms of the season, carefully combined to create a stunning display. Each bouquet is unique and brings the beauty of nature into any space.",
+    "descriptionAr": "مزيج جميل من الزهور الموسمية بألوان نابضة بالحياة. هذا التنسيق المبهج يضم أفضل أزهار الموسم، مجمعة بعناية لخلق عرض مذهل. كل باقة فريدة وتجلب جمال الطبيعة إلى أي مكان.",
+    "careTipsEn": "Keep bouquet in a cool spot, change water every two days. Trim stems and use flower food to maintain vibrancy.",
+    "careTipsAr": "احفظ الباقة في مكان بارد، وغير الماء كل يومين. قص السيقان واستخدم غذاء الزهور للحفاظ على الحيوية.",
+    "dimensionsEn": "Height: 45 cm, Width: 35 cm",
+    "dimensionsAr": "الارتفاع: 45 سم، العرض: 35 سم",
+    "arrangementContentsEn": "Seasonal flowers (tulips, daisies), greenery, wrapped in kraft paper",
+    "arrangementContentsAr": "زهور موسمية (توليب، أقحوان)، خضرة، مغلفة بورق كرافت"
+  }
+]

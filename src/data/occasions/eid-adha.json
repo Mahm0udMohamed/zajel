@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2101,
+    "nameEn": "Eid Adha Premium Gift Box",
+    "nameAr": "صندوق هدايا عيد الأضحى المميز",
+    "price": 349,
+    "imageUrl": "https://images.pexels.com/photos/7249186/pexels-photo-7249186.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "coupons",
+    "occasionId": "eid-adha",
+    "descriptionEn": "A premium gift box with traditional sweets and luxury items for Eid Adha.",
+    "descriptionAr": "صندوق هدايا مميز يحتوي على حلويات تقليدية وأشياء فاخرة لعيد الأضحى."
+  },
+  {
+    "id": 2102,
+    "nameEn": "Eid Adha Floral Centerpiece",
+    "nameAr": "قطعة مركزية زهور عيد الأضحى",
+    "price": 229,
+    "imageUrl": "https://images.pexels.com/photos/7249186/pexels-photo-7249186.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "flowers",
+    "occasionId": "eid-adha",
+    "descriptionEn": "An elegant floral centerpiece to grace your Eid Adha celebrations.",
+    "descriptionAr": "قطعة مركزية زهور أنيقة لتزيين احتفالات عيد الأضحى."
+  },
+  {
+    "id": 2103,
+    "nameEn": "Eid Adha Luxury Dessert Tray",
+    "nameAr": "صينية حلويات فاخرة عيد الأضحى",
+    "price": 299,
+    "imageUrl": "https://images.pexels.com/photos/28769885/pexels-photo-28769885.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "chocolate-cake",
+    "occasionId": "eid-adha",
+    "descriptionEn": "A luxurious dessert tray with a variety of sweets for Eid Adha gatherings.",
+    "descriptionAr": "صينية حلويات فاخرة تحتوي على مجموعة متنوعة من الحلويات لتجمعات عيد الأضحى."
+  }
+]

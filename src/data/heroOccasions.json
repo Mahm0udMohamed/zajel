@@ -1,0 +1,512 @@
+[
+  {
+    "id": "eid-fitr",
+    "nameAr": "عيد الفطر",
+    "nameEn": "Eid Fitr",
+    "date": "2026-04-05T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "عيد فطر مبارك! تقبل الله منا ومنكم",
+    "celebratoryMessageEn": "Eid Fitr Mubarak! May Allah accept from us and you",
+    "priority": 1,
+    "isActive": true
+  },
+  {
+    "id": "eid-adha",
+    "nameAr": "عيد الأضحى",
+    "nameEn": "Eid Adha",
+    "date": "2025-06-06T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "عيد أضحى مبارك! كل عام وأنتم بخير",
+    "celebratoryMessageEn": "Eid Adha Mubarak! Wishing you joy and blessings",
+    "priority": 1,
+    "isActive": true
+  },
+  {
+    "id": "el-hajj",
+    "nameAr": "الحج",
+    "nameEn": "El-Hajj",
+    "date": "2025-06-01T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "حج مبارك! تقبل الله حجكم وسعيكم",
+    "celebratoryMessageEn": "Blessed Hajj! May Allah accept your pilgrimage",
+    "priority": 2,
+    "isActive": true
+  },
+  {
+    "id": "ramadan",
+    "nameAr": "شهر رمضان",
+    "nameEn": "Ramadan",
+    "date": "2025-03-01T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "رمضان كريم! شهر مبارك عليكم",
+    "celebratoryMessageEn": "Ramadan Kareem! Blessed month upon you",
+    "priority": 1,
+    "isActive": true
+  },
+  {
+    "id": "birthdays",
+    "nameAr": "أعياد الميلاد",
+    "nameEn": "Birthdays",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "عيد ميلاد سعيد! أتمنى لك كل الخير والسعادة",
+    "celebratoryMessageEn": "Happy Birthday! Wishing you all the best and happiness",
+    "priority": 3,
+    "isActive": true
+  },
+  {
+    "id": "graduation",
+    "nameAr": "التخرج",
+    "nameEn": "Graduation",
+    "date": "2025-07-01T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "مبروك التخرج! فخور جداً بإنجازك الرائع",
+    "celebratoryMessageEn": "Congratulations on Your Graduation! So proud of your achievement",
+    "priority": 3,
+    "isActive": true
+  },
+  {
+    "id": "anniversary",
+    "nameAr": "ذكرى سنوية",
+    "nameEn": "Anniversary",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "ذكرى سنوية سعيدة! أتمنى لكما المزيد من السعادة",
+    "celebratoryMessageEn": "Happy Anniversary! Wishing you more happiness together",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "wedding",
+    "nameAr": "زفاف",
+    "nameEn": "Wedding",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "مبروك الزفاف! أتمنى لكما حياة سعيدة مليئة بالحب",
+    "celebratoryMessageEn": "Congratulations on Your Wedding! Wishing you a happy life filled with love",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "thank-you",
+    "nameAr": "شكراً",
+    "nameEn": "Thank You",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "شكراً من القلب! تقديرنا لك لا حدود له",
+    "celebratoryMessageEn": "Thank You from the Heart! Our appreciation for you is boundless",
+    "priority": 5,
+    "isActive": true
+  },
+  {
+    "id": "new-year",
+    "nameAr": "رأس السنة",
+    "nameEn": "New Year",
+    "date": "2026-01-01T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "سنة جديدة سعيدة! أتمنى لك عاماً مليئاً بالنجاح والفرح",
+    "celebratoryMessageEn": "Happy New Year! Wishing you a year filled with success and joy",
+    "priority": 2,
+    "isActive": true
+  },
+  {
+    "id": "mothers-day",
+    "nameAr": "عيد الأم",
+    "nameEn": "Mother's Day",
+    "date": "2026-03-21T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "عيد أم سعيد! شكراً لك على كل التضحيات والحب",
+    "celebratoryMessageEn": "Happy Mother's Day! Thank you for all the sacrifices and love",
+    "priority": 2,
+    "isActive": true
+  },
+  {
+    "id": "fathers-day",
+    "nameAr": "عيد الأب",
+    "nameEn": "Father's Day",
+    "date": "2025-06-15T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "عيد أب سعيد! شكراً لك على كونك أفضل أب في العالم",
+    "celebratoryMessageEn": "Happy Father's Day! Thank you for being the best dad in the world",
+    "priority": 2,
+    "isActive": true
+  },
+  {
+    "id": "valentines-day",
+    "nameAr": "عيد الحب",
+    "nameEn": "Valentine's Day",
+    "date": "2026-02-14T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "عيد حب سعيد! أنت الحب الحقيقي في حياتي",
+    "celebratoryMessageEn": "Happy Valentine's Day! You are the true love of my life",
+    "priority": 2,
+    "isActive": true
+  },
+  {
+    "id": "womens-day",
+    "nameAr": "يوم المرأة العالمي",
+    "nameEn": "International Women's Day",
+    "date": "2025-03-08T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "يوم المرأة العالمي! تحية لكل امرأة قوية ومؤثرة",
+    "celebratoryMessageEn": "International Women's Day! Salute to every strong and influential woman",
+    "priority": 3,
+    "isActive": true
+  },
+  {
+    "id": "teachers-day",
+    "nameAr": "يوم المعلم",
+    "nameEn": "Teacher's Day",
+    "date": "2025-10-05T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "يوم المعلم! شكراً لكل معلم يضيء طريق المعرفة",
+    "celebratoryMessageEn": "Teacher's Day! Thank you to every teacher who lights the path of knowledge",
+    "priority": 3,
+    "isActive": true
+  },
+  {
+    "id": "national-day",
+    "nameAr": "اليوم الوطني",
+    "nameEn": "National Day",
+    "date": "2025-09-23T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "اليوم الوطني السعودي! فخر وعزة لوطننا الغالي",
+    "celebratoryMessageEn": "Saudi National Day! Pride and honor for our beloved homeland",
+    "priority": 2,
+    "isActive": true
+  },
+  {
+    "id": "christmas",
+    "nameAr": "عيد الميلاد",
+    "nameEn": "Christmas",
+    "date": "2025-12-25T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "عيد ميلاد مجيد! أتمنى لك أوقاتاً سعيدة مع الأحباب",
+    "celebratoryMessageEn": "Merry Christmas! Wishing you happy times with loved ones",
+    "priority": 3,
+    "isActive": true
+  },
+  {
+    "id": "easter",
+    "nameAr": "عيد الفصح",
+    "nameEn": "Easter",
+    "date": "2025-04-20T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "عيد فصح سعيد! تجدد الأمل والحياة",
+    "celebratoryMessageEn": "Happy Easter! Renewal of hope and life",
+    "priority": 3,
+    "isActive": true
+  },
+  {
+    "id": "back-to-school",
+    "nameAr": "العودة للمدرسة",
+    "nameEn": "Back to School",
+    "date": "2025-09-01T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "العودة للمدرسة! بداية جديدة مليئة بالتعلم والنجاح",
+    "celebratoryMessageEn": "Back to School! A new beginning filled with learning and success",
+    "priority": 3,
+    "isActive": true
+  },
+  {
+    "id": "friendship-day",
+    "nameAr": "يوم الصداقة",
+    "nameEn": "Friendship Day",
+    "date": "2025-08-03T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "يوم الصداقة! شكراً لكونك صديقاً رائعاً",
+    "celebratoryMessageEn": "Friendship Day! Thank you for being an amazing friend",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "get-well-soon",
+    "nameAr": "الشفاء العاجل",
+    "nameEn": "Get Well Soon",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "الشفاء العاجل! أتمنى لك الصحة والعافية",
+    "celebratoryMessageEn": "Get Well Soon! Wishing you health and wellness",
+    "priority": 5,
+    "isActive": true
+  },
+  {
+    "id": "congratulations",
+    "nameAr": "تهنئة",
+    "nameEn": "Congratulations",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "ألف مبروك! إنجاز رائع يستحق الاحتفال",
+    "celebratoryMessageEn": "Congratulations! A wonderful achievement worth celebrating",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "baby-shower",
+    "nameAr": "استقبال المولود",
+    "nameEn": "Baby Shower",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "مبروك المولود الجديد! أتمنى له حياة سعيدة وصحية",
+    "celebratoryMessageEn": "Congratulations on the new baby! Wishing them a happy and healthy life",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "retirement",
+    "nameAr": "التقاعد",
+    "nameEn": "Retirement",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "مبروك التقاعد! استمتع بهذه المرحلة الجديدة من الحياة",
+    "celebratoryMessageEn": "Happy Retirement! Enjoy this new chapter of life",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "promotion",
+    "nameAr": "الترقية",
+    "nameEn": "Promotion",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "مبروك الترقية! تستحق كل النجاح والتقدير",
+    "celebratoryMessageEn": "Congratulations on Your Promotion! You deserve all the success and recognition",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "housewarming",
+    "nameAr": "المنزل الجديد",
+    "nameEn": "Housewarming",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "مبروك المنزل الجديد! أتمنى لك حياة سعيدة فيه",
+    "celebratoryMessageEn": "Congratulations on Your New Home! Wishing you a happy life in it",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "apology",
+    "nameAr": "اعتذار",
+    "nameEn": "Apology",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "أعتذر بصدق! أتمنى أن تقبل اعتذاري من القلب",
+    "celebratoryMessageEn": "I sincerely apologize! I hope you accept my heartfelt apology",
+    "priority": 5,
+    "isActive": true
+  },
+  {
+    "id": "good-luck",
+    "nameAr": "حظ سعيد",
+    "nameEn": "Good Luck",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "حظ سعيد! أتمنى لك التوفيق في كل ما تقوم به",
+    "celebratoryMessageEn": "Good Luck! Wishing you success in everything you do",
+    "priority": 5,
+    "isActive": true
+  },
+  {
+    "id": "sympathy",
+    "nameAr": "التعازي",
+    "nameEn": "Sympathy",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "أحر التعازي! نشاركك الحزن ونتمنى لك الصبر والسلوان",
+    "celebratoryMessageEn": "Deepest Condolences! We share your grief and wish you patience and comfort",
+    "priority": 5,
+    "isActive": true
+  },
+  {
+    "id": "engagement",
+    "nameAr": "الخطوبة",
+    "nameEn": "Engagement",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "مبروك الخطوبة! أتمنى لكما حياة سعيدة مليئة بالحب",
+    "celebratoryMessageEn": "Congratulations on Your Engagement! Wishing you a happy life filled with love",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "success",
+    "nameAr": "النجاح",
+    "nameEn": "Success",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "مبروك النجاح! تستحق كل التقدير والاحتفال",
+    "celebratoryMessageEn": "Congratulations on Your Success! You deserve all the appreciation and celebration",
+    "priority": 4,
+    "isActive": true
+  },
+  {
+    "id": "recovery",
+    "nameAr": "التعافي",
+    "nameEn": "Recovery",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "الحمد لله على سلامتك! أتمنى لك الصحة الدائمة",
+    "celebratoryMessageEn": "Thank God for your safety! Wishing you continued health",
+    "priority": 5,
+    "isActive": true
+  },
+  {
+    "id": "welcome-home",
+    "nameAr": "أهلاً بعودتك",
+    "nameEn": "Welcome Home",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "أهلاً بعودتك! اشتقنا لك كثيراً",
+    "celebratoryMessageEn": "Welcome Home! We missed you so much",
+    "priority": 5,
+    "isActive": true
+  },
+  {
+    "id": "farewell",
+    "nameAr": "الوداع",
+    "nameEn": "Farewell",
+    "date": "2025-12-31T00:00:00",
+    "images": [
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
+      "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png"
+    ],
+    "celebratoryMessageAr": "وداعاً! أتمنى لك التوفيق في رحلتك الجديدة",
+    "celebratoryMessageEn": "Farewell! Wishing you success in your new journey",
+    "priority": 5,
+    "isActive": true
+  }
+]

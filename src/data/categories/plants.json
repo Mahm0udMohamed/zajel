@@ -1,0 +1,41 @@
+[
+  {
+    "id": 301,
+    "nameEn": "Golden Orchid Pot",
+    "nameAr": "أوركيد ذهبي في أصيص",
+    "price": 399,
+    "imageUrl": "https://m.media-amazon.com/images/I/71dbxQmHy%2BL._UF894%2C1000_QL80_.jpg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "plants",
+    "occasionId": "graduation",
+    "descriptionEn": "A stunning golden orchid in a decorative pot, ideal for elegant celebrations. This exotic plant features vibrant golden blooms that symbolize luxury and achievement. Comes with care instructions and a beautiful ceramic pot that complements any decor.",
+    "descriptionAr": "أوركيد ذهبي مذهل في أصيص مزخرف، مثالي للاحتفالات الأنيقة. هذا النبات الاستوائي يتميز بأزهار ذهبية نابضة بالحياة ترمز للفخامة والإنجاز. يأتي مع تعليمات العناية وأصيص سيراميك جميل يكمل أي ديكور."
+  },
+  {
+    "id": 302,
+    "nameEn": "Succulent Garden Set",
+    "nameAr": "طقم حديقة عصارية",
+    "price": 149,
+    "imageUrl": "https://m.media-amazon.com/images/I/71Lnz4l-eaL._UF894%2C1000_QL80_.jpg",
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "categoryId": "plants",
+    "occasionId": "new-year",
+    "descriptionEn": "A collection of beautiful succulents in decorative pots. This low-maintenance garden set includes various succulent species, each in its own stylish pot. Perfect for beginners and busy lifestyles, these plants bring natural beauty to any space.",
+    "descriptionAr": "مجموعة من النباتات العصارية الجميلة في أصص مزخرفة. طقم الحديقة قليل الصيانة هذا يشمل أنواع مختلفة من العصاريات، كل منها في أصيص أنيق خاص به. مثالي للمبتدئين وأنماط الحياة المزدحمة، هذه النباتات تجلب الجمال الطبيعي لأي مكان."
+  },
+  {
+    "id": 303,
+    "nameEn": "Indoor Fern Collection",
+    "nameAr": "مجموعة سرخس داخلي",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/2821220/pexels-photo-2821220.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "plants",
+    "occasionId": "thank-you",
+    "descriptionEn": "A lovely collection of indoor ferns perfect for home decoration. These air-purifying plants create a fresh, natural atmosphere while requiring minimal care. The collection includes different fern varieties in matching decorative planters.",
+    "descriptionAr": "مجموعة رائعة من السرخس الداخلي مثالية لتزيين المنزل. هذه النباتات المنقية للهواء تخلق جواً طبيعياً منعشاً مع الحاجة لعناية قليلة. المجموعة تشمل أنواع مختلفة من السرخس في أحواض زراعة زخرفية متطابقة."
+  }
+]

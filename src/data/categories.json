@@ -1,0 +1,57 @@
+[
+  {
+    "id": "flowers",
+    "nameKey": "home.categories.items.flowers",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380621/1_kxxw33.png"
+  },
+  {
+    "id": "jewelry",
+    "nameKey": "home.categories.items.jewelry",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380621/2_lfbu29.png"
+  },
+  {
+    "id": "plants",
+    "nameKey": "home.categories.items.plants",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380626/3_w12azk.png"
+  },
+  {
+    "id": "perfumes",
+    "nameKey": "home.categories.items.perfumes",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380607/4_wi4ceb.png"
+  },
+  {
+    "id": "beauty-care",
+    "nameKey": "home.categories.items.beautyCare",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380616/5_dtgjg6.png"
+  },
+  {
+    "id": "personal-care",
+    "nameKey": "home.categories.items.personalCare",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380624/6_dcytkl.png"
+  },
+  {
+    "id": "vases",
+    "nameKey": "home.categories.items.vases",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380627/7_p0kmbp.png"
+  },
+  {
+    "id": "balloons",
+    "nameKey": "home.categories.items.balloons",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380646/8_dmqt2y.png"
+  },
+  {
+    "id": "coupons",
+    "nameKey": "home.categories.items.coupons",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380649/9_zazxzg.png"
+  },
+  {
+    "id": "party-favors",
+    "nameKey": "home.categories.items.partyFavors",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380653/10_bvqpue.png"
+  },
+  {
+    "id": "chocolate-cake",
+    "nameKey": "home.categories.items.chocolateCake",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380667/11_aqnila.png"
+  }
+]

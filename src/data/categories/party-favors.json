@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1001,
+    "nameEn": "Wedding Favor Boxes",
+    "nameAr": "صناديق توزيعات زفاف",
+    "price": 149,
+    "imageUrl": "https://images.pexels.com/photos/28787815/pexels-photo-28787815.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "categoryId": "party-favors",
+    "occasionId": "wedding",
+    "descriptionEn": "Elegant wedding favor boxes filled with sweet treats for guests. These beautifully designed boxes contain premium chocolates and confections, serving as memorable keepsakes for your special day. Each box is carefully crafted to reflect the joy and elegance of your celebration.",
+    "descriptionAr": "صناديق توزيعات زفاف أنيقة مليئة بالحلويات للضيوف. هذه الصناديق المصممة بجمال تحتوي على شوكولاتة وحلويات مميزة، تخدم كتذكارات لا تُنسى ليومك المميز. كل صندوق مصنوع بعناية ليعكس فرحة وأناقة احتفالك."
+  },
+  {
+    "id": 1002,
+    "nameEn": "Birthday Party Favor Bags",
+    "nameAr": "أكياس توزيعات عيد ميلاد",
+    "price": 79,
+    "imageUrl": "https://images.pexels.com/photos/13777852/pexels-photo-13777852.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "party-favors",
+    "occasionId": "birthdays",
+    "descriptionEn": "Fun party favor bags with toys and candies for birthday celebrations. These colorful bags are filled with age-appropriate treats and small toys that will delight young guests. Perfect for making every child feel special and ensuring they leave with a smile.",
+    "descriptionAr": "أكياس توزيعات ممتعة تحتوي على ألعاب وحلويات لاحتفالات أعياد الميلاد. هذه الأكياس الملونة مليئة بالحلويات المناسبة للعمر والألعاب الصغيرة التي ستسعد الضيوف الصغار. مثالية لجعل كل طفل يشعر بالتميز وضمان مغادرته بابتسامة."
+  },
+  {
+    "id": 1003,
+    "nameEn": "Graduation Celebration Favors",
+    "nameAr": "توزيعات احتفال التخرج",
+    "price": 99,
+    "imageUrl": "https://images.pexels.com/photos/7764513/pexels-photo-7764513.jpeg",
+
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "party-favors",
+    "occasionId": "graduation",
+    "descriptionEn": "Special graduation favors to commemorate this important milestone. These thoughtfully curated items celebrate academic achievement and mark the transition to the next chapter of life. Each favor serves as a meaningful reminder of this significant accomplishment.",
+    "descriptionAr": "توزيعات تخرج خاصة لإحياء ذكرى هذا الإنجاز المهم. هذه العناصر المنسقة بعناية تحتفل بالإنجاز الأكاديمي وتمييز الانتقال للفصل التالي من الحياة. كل توزيعة تخدم كتذكير مهم لهذا الإنجاز الكبير."
+  }
+]

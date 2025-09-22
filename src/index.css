@@ -1,0 +1,632 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans-en: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --font-sans-ar: "Cairo", "Segoe UI Arabic", "Tahoma", sans-serif;
+  --font-serif: "Amiri", "Times New Roman", serif;
+}
+
+html,
+body {
+  @apply m-0 p-0 min-h-screen;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html[dir="ltr"] body {
+  font-family: var(--font-sans-en);
+  font-weight: 300;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html[dir="rtl"] body {
+  font-family: var(--font-sans-ar);
+  font-weight: 400;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Custom utility classes */
+@layer components {
+  .container-custom {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-md transition-all duration-200 font-normal tracking-wide;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-dark shadow-sm hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-primary border border-primary hover:bg-primary/5 shadow-sm hover:shadow-md;
+  }
+
+  .card {
+    @apply rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg bg-white;
+  }
+
+  .section-title {
+    @apply text-2xl md:text-3xl font-serif font-light text-center mb-8 text-gray-900 tracking-tight;
+  }
+
+  .view-more {
+    @apply text-primary hover:text-primary-dark font-normal transition-colors tracking-wide;
+  }
+
+  .scrollbar-hidden {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  .snap-x {
+    scroll-snap-type: x mandatory;
+  }
+
+  .snap-center {
+    scroll-snap-align: center;
+  }
+
+  /* Disable scroll-snap for hero section */
+  .hero-section {
+    scroll-snap-type: none;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+.rtl-flip {
+  @apply rtl:scale-x-[-1];
+}
+
+img {
+  will-change: transform;
+}
+
+/* Custom animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Gradient text animation */
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
+}
+
+/* Pulse glow effect */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(139, 69, 137, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(139, 69, 137, 0.6);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Enhanced Shimmer effect for lazy loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* تحسين أوزان الخط للوضع الإنجليزي */
+html[dir="ltr"] h1,
+html[dir="ltr"] h2,
+html[dir="ltr"] h3,
+html[dir="ltr"] h4,
+html[dir="ltr"] h5,
+html[dir="ltr"] h6 {
+  font-weight: 500;
+}
+
+html[dir="ltr"] .font-bold {
+  font-weight: 600 !important;
+}
+
+html[dir="ltr"] .font-semibold {
+  font-weight: 500 !important;
+}
+
+html[dir="ltr"] .font-medium {
+  font-weight: 400 !important;
+}
+
+html[dir="ltr"] .text-lg,
+html[dir="ltr"] .text-xl,
+html[dir="ltr"] .text-2xl,
+html[dir="ltr"] .text-3xl,
+html[dir="ltr"] .text-4xl,
+html[dir="ltr"] .text-5xl,
+html[dir="ltr"] .text-6xl {
+  font-weight: 400;
+}
+
+/* تحسين النصوص العادية */
+html[dir="ltr"] p,
+html[dir="ltr"] span,
+html[dir="ltr"] div {
+  font-weight: 400;
+}
+
+/* تحسين الأزرار */
+html[dir="ltr"] button,
+html[dir="ltr"] .btn {
+  font-weight: 500;
+}
+
+/* تحسين الروابط */
+html[dir="ltr"] a {
+  font-weight: 400;
+}
+
+/* تحسين النماذج */
+html[dir="ltr"] input,
+html[dir="ltr"] textarea,
+html[dir="ltr"] select {
+  font-weight: 400;
+}
+
+/* تحسين الخط العربي */
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] h4,
+html[dir="rtl"] h5,
+html[dir="rtl"] h6 {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+html[dir="rtl"] .font-bold {
+  font-weight: 700 !important;
+}
+
+html[dir="rtl"] .font-semibold {
+  font-weight: 600 !important;
+}
+
+html[dir="rtl"] .font-medium {
+  font-weight: 500 !important;
+}
+
+/* تحسين قراءة النص العربي */
+html[dir="rtl"] p,
+html[dir="rtl"] span,
+html[dir="rtl"] div {
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+/* تحسين الأزرار العربية */
+html[dir="rtl"] button,
+html[dir="rtl"] .btn {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* تحسين النماذج العربية */
+html[dir="rtl"] input,
+html[dir="rtl"] textarea,
+html[dir="rtl"] select {
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Advanced shimmer for better lazy loading effect */
+@keyframes shimmer-wave {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer-wave {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer-wave::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  animation: shimmer-wave 2s infinite;
+}
+
+/* Lazy loading specific animations */
+@keyframes lazy-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.lazy-fade-in {
+  animation: lazy-fade-in 0.6s ease-out forwards;
+}
+
+/* Skeleton loading animation */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* RTL scrollbar support */
+html[dir="rtl"] ::-webkit-scrollbar {
+  direction: rtl;
+}
+
+/* تحسين إخفاء شريط التمرير للتمرير الأفقي */
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+  width: 0;
+  height: 0;
+}
+
+/* تحسينات سلوك التمرير في الوضع العربي */
+html[dir="rtl"] .scrollbar-hidden {
+  scroll-behavior: smooth;
+}
+
+/* ضمان سلوك snap صحيح في الوضع العربي */
+html[dir="rtl"] .snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+html[dir="rtl"] .snap-center {
+  scroll-snap-align: center;
+}
+
+/* تحسينات التمرير للأجهزة المحمولة */
+.scroll-smooth {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* تحسين الأداء للعناصر القابلة للتمرير */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+/* تحسين الاستجابة للمس */
+@media (hover: none) and (pointer: coarse) {
+  .scrollbar-hidden {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: block;
+    height: 4px;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+  }
+}
+
+/* Focus styles */
+.focus-visible:focus {
+  outline: 2px solid #8b4589;
+  outline-offset: 2px;
+}
+
+/* Selection styles */
+::selection {
+  background-color: #8b4589;
+  color: white;
+}
+
+::-moz-selection {
+  background-color: #8b4589;
+  color: white;
+}
+
+/* Image loading states */
+.image-loading {
+  background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.image-loaded {
+  animation: none;
+  background: none;
+}
+
+/* Lazy image fade-in effect */
+.lazy-image-enter {
+  opacity: 0;
+  transform: scale(1.1);
+  filter: blur(4px);
+}
+
+.lazy-image-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out,
+    filter 0.6s ease-out;
+}
+
+/* Blur-up effect for progressive loading */
+.blur-up {
+  filter: blur(5px);
+  transition: filter 0.3s ease-out;
+}
+
+.blur-up.loaded {
+  filter: blur(0);
+}
+
+/* Intersection observer loading states */
+.lazy-loading {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.lazy-loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Image optimization classes */
+.img-optimized {
+  image-rendering: high-quality;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.img-responsive {
+  max-width: 100%;
+  height: auto;
+  image-rendering: high-quality;
+}
+
+/* Preload critical images */
+.img-preload {
+  content-visibility: auto;
+  contain-intrinsic-size: 400px 300px;
+  image-rendering: high-quality;
+}
+
+/* High quality image rendering */
+img {
+  image-rendering: high-quality;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Enhanced image loading animations */
+@keyframes imageSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(1.05) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+}
+
+.image-slide-in {
+  animation: imageSlideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Smooth blur-up effect */
+@keyframes blurUp {
+  from {
+    filter: blur(8px);
+    transform: scale(1.05);
+  }
+  to {
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+.blur-up-animation {
+  animation: blurUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Enhanced placeholder animation */
+@keyframes placeholderPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.placeholder-pulse {
+  animation: placeholderPulse 2s ease-in-out infinite;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer,
+  .animate-shimmer-wave,
+  .skeleton-loading,
+  .lazy-fade-in,
+  .image-slide-in,
+  .blur-up-animation,
+  .placeholder-pulse {
+    animation: none;
+  }
+
+  .lazy-image-enter-active {
+    transition: none;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .animate-shimmer {
+    background: linear-gradient(90deg, #000000 25%, #ffffff 50%, #000000 75%);
+  }
+}
+
+/* Print styles */
+@media print {
+  .animate-shimmer,
+  .animate-shimmer-wave,
+  .skeleton-loading {
+    animation: none;
+    background: #f5f5f5;
+  }
+}

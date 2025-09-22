@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2501,
+    "nameEn": "Wedding Blessing Gift Set",
+    "nameAr": "طقم هدية بركة الزفاف",
+    "price": 599,
+    "imageUrl": "https://images.pexels.com/photos/265856/pexels-photo-265856.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "jewelry",
+    "occasionId": "wedding",
+    "descriptionEn": "A luxurious gift set to bless the newlyweds on their special day. This elegant collection includes premium jewelry pieces, decorative items, and keepsakes that symbolize love and unity. Each item is carefully selected to celebrate the beginning of their beautiful journey together.",
+    "descriptionAr": "طقم هدايا فاخر لمباركة العروسين في يومهم المميز. هذه المجموعة الأنيقة تشمل قطع مجوهرات مميزة وعناصر زخرفية وتذكارات ترمز للحب والوحدة. كل عنصر مختار بعناية للاحتفال ببداية رحلتهم الجميلة معاً."
+  },
+  {
+    "id": 2502,
+    "nameEn": "Wedding White Lily Bouquet",
+    "nameAr": "باقة زنابق بيضاء زفاف",
+    "price": 299,
+    "imageUrl": "https://images.pexels.com/photos/278849/pexels-photo-278849.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "flowers",
+    "occasionId": "wedding",
+    "descriptionEn": "Pure white lilies symbolizing new beginnings and eternal love. This stunning bridal bouquet features pristine white lilies arranged with delicate greenery and baby's breath. Perfect for the bride or as a centerpiece to celebrate the sacred union of marriage.",
+    "descriptionAr": "زنابق بيضاء نقية ترمز للبدايات الجديدة والحب الأبدي. هذه الباقة العروس المذهلة تتميز بزنابق بيضاء نقية مرتبة مع خضرة دقيقة ونفس الطفل. مثالية للعروس أو كقطعة مركزية للاحتفال بالاتحاد المقدس للزواج."
+  },
+  {
+    "id": 2503,
+    "nameEn": "Wedding Crystal Vase",
+    "nameAr": "فازة كريستال زفاف",
+    "price": 449,
+    "imageUrl": "https://images.pexels.com/photos/1123240/pexels-photo-1123240.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "vases",
+    "occasionId": "wedding",
+    "descriptionEn": "An elegant crystal vase as a timeless wedding gift for the couple. This exquisite piece features intricate crystal work and elegant design that will grace their home for years to come. A symbol of clarity, purity, and the beautiful transparency of true love.",
+    "descriptionAr": "فازة كريستال أنيقة كهدية زفاف خالدة للزوجين. هذه القطعة الرائعة تتميز بعمل كريستال معقد وتصميم أنيق سيزين منزلهم لسنوات قادمة. رمز للوضوح والنقاء والشفافية الجميلة للحب الحقيقي."
+  }
+]

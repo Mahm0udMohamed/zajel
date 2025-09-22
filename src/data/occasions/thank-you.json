@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2601,
+    "nameEn": "Thank You Appreciation Box",
+    "nameAr": "صندوق تقدير شكر",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/7310196/pexels-photo-7310196.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "categoryId": "personal-care",
+    "occasionId": "thank-you",
+    "descriptionEn": "A thoughtful appreciation box to express your gratitude. This carefully curated collection includes premium items such as artisanal soaps, scented candles, gourmet treats, and a heartfelt thank you card. Perfect for showing appreciation to someone who has made a difference in your life.",
+    "descriptionAr": "صندوق تقدير مدروس للتعبير عن امتنانك. هذه المجموعة المنسقة بعناية تشمل عناصر مميزة مثل صابون حرفي وشموع معطرة وحلويات فاخرة وبطاقة شكر صادقة. مثالي لإظهار التقدير لشخص أحدث فرقاً في حياتك."
+  },
+  {
+    "id": 2602,
+    "nameEn": "Thank You Flower Arrangement",
+    "nameAr": "تنسيق زهور شكر",
+    "price": 149,
+    "imageUrl": "https://images.pexels.com/photos/4439414/pexels-photo-4439414.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "flowers",
+    "occasionId": "thank-you",
+    "descriptionEn": "A beautiful flower arrangement to say thank you in the most elegant way. This graceful bouquet features a mix of fresh flowers in soft, appreciative colors. Each arrangement is designed to convey heartfelt gratitude and brighten someone's day with natural beauty.",
+    "descriptionAr": "تنسيق زهور جميل لقول شكراً بأكثر الطرق أناقة. هذه الباقة الرشيقة تتميز بمزيج من الزهور الطازجة بألوان ناعمة ومقدرة. كل تنسيق مصمم لنقل الامتنان الصادق وإضاءة يوم شخص ما بالجمال الطبيعي."
+  },
+  {
+    "id": 2603,
+    "nameEn": "Thank You Gourmet Treats",
+    "nameAr": "حلويات شكر فاخرة",
+    "price": 179,
+    "imageUrl": "https://images.pexels.com/photos/10821054/pexels-photo-10821054.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "chocolate-cake",
+    "occasionId": "thank-you",
+    "descriptionEn": "Gourmet treats and sweets to sweeten your thank you message. This delightful collection includes premium chocolates, artisanal cookies, and specialty confections. Each treat is carefully selected to create a memorable way to express your appreciation and gratitude.",
+    "descriptionAr": "حلويات ومأكولات فاخرة لتحلية رسالة شكرك. هذه المجموعة الرائعة تشمل شوكولاتة مميزة وبسكويت حرفي وحلويات متخصصة. كل حلوى مختارة بعناية لخلق طريقة لا تُنسى للتعبير عن تقديرك وامتنانك."
+  }
+]

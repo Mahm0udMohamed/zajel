@@ -1,0 +1,431 @@
+{
+  "meta": {
+    "title": "Zajil Al-Sa'adah | Premium Gifts",
+    "delivery": "Zajil Al-Sa'adah | Delivery Information"
+  },
+  "navigation": {
+    "home": "Home",
+    "categories": "Categories",
+    "occasions": "Occasions",
+    "brands": "Brands",
+    "specialGifts": "Special Gifts"
+  },
+  "bottomNav": {
+    "home": "Home",
+    "categories": "Categories",
+    "notifications": "Notifications",
+    "favorites": "Favorites",
+    "packages": "Packages"
+  },
+  "header": {
+    "search": "What are you looking for?",
+    "deliveryTo": "Delivery To",
+    "login": "Login",
+    "basket": "Basket",
+    "profile": "Profile",
+    "orders": "My Orders",
+    "logout": "Logout"
+  },
+  "home": {
+    "hero": {
+      "expressDelivery": "Express delivery. Premium gifts in minutes!",
+      "giftNow": "Gift Now"
+    },
+    "shopByOccasion": {
+      "title": "Shop by Occasion"
+    },
+    "occasions": {
+      "title": "Occasions",
+      "viewMore": "View More",
+      "items": {
+        "eidFitr": "Eid Fitr",
+        "eidAdha": "Eid Adha",
+        "elHajj": "El-Hajj",
+        "birthdays": "Birthdays",
+        "graduation": "Graduation",
+        "anniversary": "Anniversary",
+        "wedding": "Wedding",
+        "thankYou": "Thank You",
+        "newYear": "New Year",
+        "mothersDay": "Mother's Day",
+        "valentinesDay": "Valentine's Day"
+      },
+      "celebratory": {
+        "eidFitr": "Eid Fitr Mubarak!",
+        "eidAdha": "Eid Adha Mubarak!",
+        "elHajj": "Happy Hajj!",
+        "birthdays": "Happy Birthday!",
+        "graduation": "Congratulations on Your Graduation!",
+        "anniversary": "Happy Anniversary!",
+        "wedding": "Congratulations on Your Wedding!",
+        "thankYou": "Thank You from the Heart!",
+        "newYear": "Happy New Year!",
+        "mothersDay": "Happy Mother's Day!",
+        "valentinesDay": "Happy Valentine's Day!"
+      }
+    },
+    "categories": {
+      "title": "Categories",
+      "viewMore": "View More",
+      "items": {
+        "flowers": "Flowers",
+        "jewelry": "Jewelry",
+        "plants": "Plants",
+        "perfumes": "Perfumes",
+        "beautyCare": "Beauty Care",
+        "personalCare": "Personal Care",
+        "vases": "Vases",
+        "balloons": "Balloons",
+        "coupons": "Coupons",
+        "partyFavors": "Party Favors",
+        "chocolateCake": "Chocolate & Cake"
+      }
+    },
+    "bestSellers": {
+      "title": "Best Sellers",
+      "viewMore": "View More",
+      "bestSeller": "Best Seller"
+    },
+    "featuredCollections": {
+      "title": "Featured Collections",
+      "viewMore": "View More",
+      "specialGift": "Special Gift"
+    },
+    "shipping": {
+      "title": "Shipping & Delivery Service",
+      "description": "We provide fast and reliable delivery service throughout Saudi Arabia. With same-day delivery available in major cities, we ensure your gifts arrive at the perfect time.",
+      "badge": "Live Delivery",
+      "features": {
+        "sameDay": {
+          "title": "Same-Day Delivery",
+          "description": "For orders before 2 PM in Riyadh, Jeddah, and Dammam"
+        },
+        "nationwide": {
+          "title": "Nationwide Coverage",
+          "description": "We reach all cities and provinces across Saudi Arabia"
+        },
+        "secure": {
+          "title": "Secure Packaging",
+          "description": "We guarantee your gifts arrive in perfect condition with professional packaging"
+        },
+        "tracking": {
+          "title": "Order Tracking",
+          "description": "Track your order in real-time from preparation to delivery"
+        }
+      },
+      "specialOffer": {
+        "title": "Special Occasion Offer",
+        "description": "Free delivery for orders over 200 SAR during special occasions"
+      }
+    },
+    "downloadApp": {
+      "title": "Download Our App",
+      "description": "Enjoy a seamless shopping experience with the Zajil Al-Sa'adah app, order your premium gifts with ease and speed!",
+      "iosPlatform": "iOS",
+      "androidPlatform": "Android",
+      "downloadOn": "Download on",
+      "getItOn": "Get it on",
+      "appStore": "App Store",
+      "features": {
+        "feature1": "Easily select personalized gifts",
+        "feature2": "Fast and reliable delivery",
+        "feature3": "Seamless and easy shopping experience"
+      }
+    },
+    "magicGift": {
+      "title": "Perfect Gift Selection Assistant",
+      "description": "Let us help you find the perfect gift through intelligent analysis of your needs and preferences",
+      "explore": "Start Now"
+    },
+    "testimonials": {
+      "title": "Customer Testimonials",
+      "items": {
+        "quote1": "Amazing experience! The gifts were unique and delivered on time.",
+        "quote2": "Great quality and fast service, I highly recommend shopping here!",
+        "quote3": "Loved the variety of gifts and ease of ordering, will definitely come back."
+      }
+    },
+    "counter": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "seconds": "Seconds",
+      "eidMessage": "Eid Adha Mubarak"
+    }
+  },
+  "notifications": {
+    "title": "Send Greetings",
+    "description": "Send beautiful greetings to your loved ones via email or SMS",
+    "recipientName": "Recipient Name",
+    "recipientEmail": "Email Address",
+    "recipientPhone": "Phone Number",
+    "occasion": "Occasion",
+    "selectOccasion": "Select an occasion",
+    "message": "Your Message",
+    "messagePlaceholder": "Write your greeting message here...",
+    "sendMethod": "Send Method",
+    "email": "Email",
+    "sms": "SMS",
+    "both": "Both",
+    "sendGreeting": "Send Greeting",
+    "successMessage": "Your greeting has been sent successfully!",
+    "recentNotifications": "Recent Greetings",
+    "sampleMessage1": "Happy birthday! Wishing you all the best on your special day.",
+    "sampleMessage2": "Congratulations on your graduation! So proud of your achievement.",
+    "occasions": {
+      "birthday": "Birthday",
+      "anniversary": "Anniversary",
+      "wedding": "Wedding",
+      "graduation": "Graduation",
+      "eid": "Eid",
+      "thankYou": "Thank You",
+      "congratulations": "Congratulations"
+    }
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "description": "Your saved items for easy access",
+    "empty": "No favorites yet",
+    "startShopping": "Start Shopping",
+    "addToCart": "Add to Cart",
+    "recommendations": "You might also like"
+  },
+  "packages": {
+    "title": "Gift Packages",
+    "description": "Choose from our curated gift packages",
+    "popular": "Most Popular",
+    "save": "Save",
+    "selectPackage": "Select Package",
+    "basic": {
+      "name": "Basic Package",
+      "description": "Perfect for simple occasions",
+      "feature1": "1 flower arrangement",
+      "feature2": "Gift wrapping included",
+      "feature3": "Standard delivery"
+    },
+    "premium": {
+      "name": "Premium Package",
+      "description": "Ideal for special celebrations",
+      "feature1": "2 flower arrangements",
+      "feature2": "Premium gift box",
+      "feature3": "Express delivery",
+      "feature4": "Personalized card"
+    },
+    "luxury": {
+      "name": "Luxury Package",
+      "description": "Ultimate gift experience",
+      "feature1": "3 premium arrangements",
+      "feature2": "Luxury gift packaging",
+      "feature3": "Same-day delivery",
+      "feature4": "Personalized message",
+      "feature5": "Complimentary chocolates"
+    },
+    "custom": {
+      "title": "Need a Custom Package?",
+      "description": "Contact us to create a personalized gift package",
+      "contact": "Contact Us"
+    }
+  },
+  "product": {
+    "addToCart": "Add to Cart",
+    "description": "Description",
+    "relatedProducts": "You may also like",
+    "notFound": "Product Not Found",
+    "backToHome": "Back to Home"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "loginRequired": "Login Required",
+    "loginRequiredMessage": "Please login to view and manage your cart",
+    "continueShopping": "Continue Shopping",
+    "checkout": "Checkout",
+    "total": "Total",
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "discount": "Discount",
+    "clearCart": "Clear Cart"
+  },
+  "footer": {
+    "about": "About Us",
+    "contact": "Contact Us",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "faq": "FAQ",
+    "delivery": "Delivery Information",
+    "returns": "Returns & Refunds",
+    "followUs": "Follow Us",
+    "copyright": "© 2025 Zajil Al-Sa'adah. All rights reserved.",
+    "aboutDescription": "Zajil Al-Sa'adah is a specialty store offering unique and distinctive gifts for all occasions. We always strive to bring happiness to people's hearts through our special gifts.",
+    "quickLinks": "Quick Links",
+    "legal": "Legal",
+    "contactUs": "Contact Us",
+    "location": "Riyadh, Saudi Arabia"
+  },
+  "delivery": {
+    "locations": "Delivery Locations",
+    "time": "Delivery Time",
+    "process": "Delivery Process",
+    "contactYou": "Contact Us for More Information"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Welcome back",
+      "email": "Email Address",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "signIn": "Sign In",
+      "signInWithGoogle": "Continue with Google",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "phoneLogin": "Login with Phone",
+      "emailLogin": "Login with Email"
+    },
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Join us today",
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "createAccount": "Create Account",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "agreeToTerms": "I agree to the Terms & Conditions and Privacy Policy",
+      "passwordStrength": {
+        "weak": "Weak",
+        "fair": "Fair",
+        "good": "Good",
+        "strong": "Strong"
+      }
+    },
+    "verification": {
+      "email": {
+        "title": "Verify Your Email",
+        "subtitle": "We sent a verification code to",
+        "code": "Verification Code",
+        "verify": "Verify Code",
+        "resend": "Resend Code",
+        "didntReceive": "Didn't receive the code?",
+        "changeEmail": "Want to change email?",
+        "backToSignup": "Back to signup"
+      },
+      "phone": {
+        "title": "Verify Phone Number",
+        "subtitle": "We sent a verification code to",
+        "code": "Verification Code",
+        "verify": "Verify Code",
+        "resend": "Resend Code",
+        "didntReceive": "Didn't receive the code?"
+      },
+      "phoneSetup": {
+        "title": "Add Your Phone Number",
+        "subtitle": "To complete your account setup, please add and verify your phone number",
+        "phoneNumber": "Phone Number",
+        "sendCode": "Send Verification Code",
+        "verifyTitle": "Verify Phone Number",
+        "verifySubtitle": "Enter the code sent to your phone number",
+        "completeRegistration": "Verify & Complete Registration",
+        "whyPhone": "Why do we need your phone?",
+        "securityReason": "Additional account security",
+        "notificationsReason": "Important order notifications",
+        "loginReason": "Quick phone login option",
+        "deliveryReason": "Delivery updates",
+        "changePhone": "Change Phone Number",
+        "requiredStep": "This step is required to secure your account and improve your shopping experience"
+      }
+    },
+    "forgotPassword": {
+      "title": "Forgot Password?",
+      "subtitle": "Don't worry, we'll send you a reset link",
+      "email": "Email Address",
+      "sendLink": "Send Reset Link",
+      "linkSent": "Link Sent",
+      "checkEmail": "A password reset link has been sent to your email",
+      "backToLogin": "Back to login"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your new password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "updatePassword": "Update Password",
+      "passwordsNotMatch": "Passwords do not match"
+    },
+    "google": {
+      "processing": "Processing...",
+      "success": "Successfully Signed In",
+      "error": "Authentication Failed",
+      "welcome": "Welcome! You will be redirected to the homepage"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "personalInfo": "Personal Information",
+    "accountSettings": "Account Settings",
+    "security": "Security",
+    "fullName": "Full Name",
+    "username": "Username",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "profilePicture": "Profile Picture",
+    "updateProfile": "Update Profile",
+    "changePassword": "Change Password",
+    "updateEmail": "Update Email",
+    "deleteAccount": "Delete Account",
+    "verified": "Verified",
+    "notVerified": "Not Verified",
+    "memberSince": "Member Since",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "newEmail": "New Email Address",
+    "verificationCode": "Verification Code",
+    "sendVerificationCode": "Send Verification Code",
+    "verifyCode": "Verify Code",
+    "updatePassword": "Update Password",
+    "updateEmailAddress": "Update Email Address",
+    "deleteAccountPermanently": "Delete Account Permanently",
+    "typeDeleteToConfirm": "Type DELETE to confirm",
+    "passwordStrength": {
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
+    }
+  },
+  "orders": {
+    "title": "My Orders",
+    "description": "Track and manage your orders",
+    "orderNumber": "Order Number",
+    "orderDate": "Order Date",
+    "status": "Status",
+    "total": "Total",
+    "items": "Items",
+    "shippingInfo": "Shipping Information",
+    "trackingNumber": "Tracking Number",
+    "viewDetails": "View Details",
+    "trackOrder": "Track Order",
+    "cancelOrder": "Cancel Order",
+    "rateOrder": "Rate Order",
+    "noOrders": "No Orders Found",
+    "noOrdersDescription": "You haven't placed any orders yet. Start shopping now!",
+    "startShopping": "Start Shopping",
+    "searchOrders": "Search orders...",
+    "allOrders": "All Orders",
+    "statusOptions": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  }
+}

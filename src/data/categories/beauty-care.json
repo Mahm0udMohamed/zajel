@@ -1,0 +1,41 @@
+[
+  {
+    "id": 501,
+    "nameEn": "Luxury Skincare Set",
+    "nameAr": "طقم عناية فاخر بالبشرة",
+    "price": 449,
+    "imageUrl": "https://images.pexels.com/photos/13554884/pexels-photo-13554884.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "beauty-care",
+    "occasionId": "mothers-day",
+    "descriptionEn": "A complete luxury skincare set for radiant, healthy skin. This comprehensive collection includes cleanser, toner, serum, and moisturizer, all formulated with premium ingredients. Each product works synergistically to reveal your skin's natural glow and maintain its youthful appearance.",
+    "descriptionAr": "طقم عناية فاخر كامل للحصول على بشرة مشرقة وصحية. هذه المجموعة الشاملة تشمل منظف وتونر وسيروم ومرطب، كلها مصنوعة بمكونات مميزة. كل منتج يعمل بتناغم لكشف إشراق بشرتك الطبيعي والحفاظ على مظهرها الشبابي."
+  },
+  {
+    "id": 502,
+    "nameEn": "Organic Face Mask Collection",
+    "nameAr": "مجموعة أقنعة وجه طبيعية",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/4841273/pexels-photo-4841273.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "beauty-care",
+    "occasionId": "thank-you",
+    "descriptionEn": "A collection of organic face masks for different skin types. Each mask is crafted with natural ingredients to address specific skin concerns. From hydrating honey masks to purifying clay treatments, this collection offers a spa-like experience at home.",
+    "descriptionAr": "مجموعة من أقنعة الوجه الطبيعية لأنواع البشرة المختلفة. كل قناع مصنوع بمكونات طبيعية لمعالجة مشاكل البشرة المحددة. من أقنعة العسل المرطبة إلى علاجات الطين المنقية، هذه المجموعة تقدم تجربة سبا في المنزل."
+  },
+  {
+    "id": 503,
+    "nameEn": "Premium Makeup Kit",
+    "nameAr": "طقم مكياج مميز",
+    "price": 349,
+    "imageUrl": "https://m.media-amazon.com/images/I/81cVrzhPHzL._UF1000%2C1000_QL80_.jpg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "beauty-care",
+    "occasionId": "graduation",
+    "descriptionEn": "A premium makeup kit with all essentials for a perfect look. This professional-grade collection includes foundation, concealer, eyeshadow palette, mascara, and lipstick in versatile shades. Perfect for creating both natural everyday looks and glamorous evening styles.",
+    "descriptionAr": "طقم مكياج مميز يحتوي على كل الأساسيات للحصول على إطلالة مثالية. هذه المجموعة بجودة احترافية تشمل كريم أساس وكونسيلر وباليت ظلال عيون وماسكارا وأحمر شفاه بدرجات متنوعة. مثالي لخلق إطلالات طبيعية يومية وأنماط مسائية ساحرة."
+  }
+]

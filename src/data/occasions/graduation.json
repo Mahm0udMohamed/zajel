@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2301,
+    "nameEn": "Graduation Achievement Gift",
+    "nameAr": "هدية إنجاز التخرج",
+    "price": 399,
+    "imageUrl": "https://images.pexels.com/photos/7842994/pexels-photo-7842994.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "jewelry",
+    "occasionId": "graduation",
+    "descriptionEn": "A special jewelry piece to commemorate this important achievement.",
+    "descriptionAr": "قطعة مجوهرات خاصة لإحياء ذكرى هذا الإنجاز المهم."
+  },
+  {
+    "id": 2302,
+    "nameEn": "Graduation Flower Crown",
+    "nameAr": "تاج زهور التخرج",
+    "price": 149,
+    "imageUrl": "https://images.pexels.com/photos/931162/pexels-photo-931162.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "flowers",
+    "occasionId": "graduation",
+    "descriptionEn": "A beautiful flower crown to celebrate graduation day in style.",
+    "descriptionAr": "تاج زهور جميل للاحتفال بيوم التخرج بأناقة."
+  },
+  {
+    "id": 2303,
+    "nameEn": "Graduation Success Plant",
+    "nameAr": "نبتة نجاح التخرج",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/7842749/pexels-photo-7842749.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "plants",
+    "occasionId": "graduation",
+    "descriptionEn": "A symbolic plant representing growth and new beginnings after graduation.",
+    "descriptionAr": "نبتة رمزية تمثل النمو والبدايات الجديدة بعد التخرج."
+  }
+]

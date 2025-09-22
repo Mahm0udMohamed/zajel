@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2801,
+    "nameEn": "Mother's Day Luxury Spa Set",
+    "nameAr": "طقم سبا فاخر عيد الأم",
+    "price": 449,
+    "imageUrl": "https://images.pexels.com/photos/5438515/pexels-photo-5438515.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "beauty-care",
+    "occasionId": "mothers-day",
+    "descriptionEn": "A luxurious spa set to pamper mom on her special day. This comprehensive collection includes premium skincare products, aromatic bath salts, scented candles, and a plush robe. Everything needed to create a relaxing spa experience at home for the most important woman in your life.",
+    "descriptionAr": "طقم سبا فاخر لتدليل الأم في يومها المميز. هذه المجموعة الشاملة تشمل منتجات عناية بالبشرة مميزة وأملاح استحمام عطرية وشموع معطرة وروب ناعم. كل ما هو مطلوب لخلق تجربة سبا مريحة في المنزل للمرأة الأهم في حياتك."
+  },
+  {
+    "id": 2802,
+    "nameEn": "Mother's Day Pink Roses",
+    "nameAr": "ورود وردية عيد الأم",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/31221254/pexels-photo-31221254.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "flowers",
+    "occasionId": "mothers-day",
+    "descriptionEn": "Beautiful pink roses to show your love and appreciation for mom. This elegant bouquet features fresh pink roses symbolizing gratitude, grace, and admiration. Carefully arranged with complementary greenery and presented in beautiful wrapping to honor the special woman who means everything to you.",
+    "descriptionAr": "ورود وردية جميلة لإظهار حبك وتقديرك للأم. هذه الباقة الأنيقة تتميز بورود وردية طازجة ترمز للامتنان والنعمة والإعجاب. مرتبة بعناية مع خضرة مكملة ومقدمة في تغليف جميل لتكريم المرأة الخاصة التي تعني كل شيء لك."
+  },
+  {
+    "id": 2803,
+    "nameEn": "Mother's Day Jewelry Box",
+    "nameAr": "صندوق مجوهرات عيد الأم",
+    "price": 349,
+    "imageUrl": "https://images.pexels.com/photos/6955472/pexels-photo-6955472.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "jewelry",
+    "occasionId": "mothers-day",
+    "descriptionEn": "An elegant jewelry box with a special piece for the most important woman. This beautiful set includes a premium jewelry box with compartments for organizing treasured pieces, along with a stunning necklace or bracelet. A timeless gift that shows how much you care.",
+    "descriptionAr": "صندوق مجوهرات أنيق مع قطعة خاصة للمرأة الأهم. هذا الطقم الجميل يشمل صندوق مجوهرات مميز بأقسام لتنظيم القطع الثمينة، مع قلادة أو سوار مذهل. هدية خالدة تظهر مدى اهتمامك."
+  }
+]

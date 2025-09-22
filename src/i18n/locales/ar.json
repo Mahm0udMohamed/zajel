@@ -1,0 +1,430 @@
+{
+  "meta": {
+    "title": "زاجل السعادة | هدايا مميزة",
+    "delivery": "زاجل السعادة | معلومات التوصيل"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "occasions": "المناسبات",
+    "brands": "العلامات التجارية",
+    "specialGifts": "هدايا مميزة"
+  },
+  "bottomNav": {
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "notifications": "الإشعارات",
+    "favorites": "المفضلة",
+    "packages": "الباقات"
+  },
+  "header": {
+    "search": "عمّ تبحث؟",
+    "deliveryTo": "التوصيل إلى",
+    "login": "تسجيل الدخول",
+    "basket": "السلة",
+    "profile": "الملف الشخصي",
+    "orders": "طلباتي",
+    "logout": "تسجيل الخروج"
+  },
+  "home": {
+    "hero": {
+      "expressDelivery": "توصيل سريع. هدايا مميزة في دقائق!",
+      "giftNow": "اطلب الآن"
+    },
+    "shopByOccasion": {
+      "title": "تسوق حسب المناسبة"
+    },
+    "occasions": {
+      "title": "المناسبات",
+      "viewMore": "عرض المزيد",
+      "items": {
+        "eidFitr": "عيد الفطر",
+        "eidAdha": "عيد الأضحى",
+        "elHajj": "الحج",
+        "birthdays": "أعياد الميلاد",
+        "graduation": "التخرج",
+        "anniversary": "ذكرى سنوية",
+        "wedding": "زفاف",
+        "thankYou": "شكراً",
+        "newYear": "رأس السنة",
+        "mothersDay": "عيد الأم",
+        "valentinesDay": "عيد الحب"
+      },
+      "celebratory": {
+        "eidFitr": "عيد فطر مبارك!",
+        "eidAdha": "عيد أضحى مبارك!",
+        "elHajj": "حج مبارك!",
+        "birthdays": "عيد ميلاد سعيد!",
+        "graduation": "مبروك التخرج!",
+        "anniversary": "ذكرى سنوية سعيدة!",
+        "wedding": "مبروك الزفاف!",
+        "thankYou": "شكرًا من القلب!",
+        "newYear": "سنة جديدة سعيدة!",
+        "mothersDay": "عيد أم سعيد!",
+        "valentinesDay": "عيد حب سعيد!"
+      }
+    },
+    "categories": {
+      "title": "الفئات",
+      "viewMore": "عرض المزيد",
+      "items": {
+        "flowers": "ورد",
+        "jewelry": "مجوهرات",
+        "plants": "نباتات",
+        "perfumes": "عطورات",
+        "beautyCare": "عناية وجمال",
+        "personalCare": "عناية شخصية",
+        "vases": "فازات",
+        "balloons": "بالونات",
+        "coupons": "كوبونات",
+        "partyFavors": "توزيعات",
+        "chocolateCake": "شوكولاتة وكيك"
+      }
+    },
+    "bestSellers": {
+      "title": "الأكثر مبيعاً",
+      "viewMore": "عرض المزيد",
+      "bestSeller": "الأكثر مبيعاً"
+    },
+    "featuredCollections": {
+      "title": "المجموعات المميزة",
+      "viewMore": "عرض المزيد",
+      "specialGift": "هدية مميزة"
+    },
+    "shipping": {
+      "title": "خدمة الشحن والتوصيل",
+      "description": "نقدم خدمة توصيل سريعة وموثوقة في جميع أنحاء المملكة العربية السعودية. مع إمكانية التوصيل في نفس اليوم في المناطق الرئيسية، نضمن وصول هداياك في الوقت المناسب.",
+      "badge": "توصيل نشط",
+      "features": {
+        "sameDay": {
+          "title": "توصيل في نفس اليوم",
+          "description": "للطلبات قبل الساعة 2 ظهراً في الرياض وجدة والدمام"
+        },
+        "nationwide": {
+          "title": "تغطية شاملة",
+          "description": "نصل إلى جميع مدن ومحافظات المملكة العربية السعودية"
+        },
+        "secure": {
+          "title": "تغليف آمن",
+          "description": "نضمن وصول هداياك بحالة مثالية مع تغليف احترافي"
+        },
+        "tracking": {
+          "title": "تتبع الطلب",
+          "description": "تابع طلبك لحظة بلحظة من التحضير حتى التسليم"
+        }
+      },
+      "specialOffer": {
+        "title": "عرض خاص للمناسبات",
+        "description": "توصيل مجاني للطلبات أكثر من 200 ريال خلال المناسبات الخاصة"
+      }
+    },
+    "downloadApp": {
+      "title": "حمّل تطبيقنا",
+      "description": "استمتع بتجربة تسوق سلسة مع تطبيق زاجل السعادة، اطلب هداياك المميزة بسهولة وسرعة!",
+      "iosPlatform": "آي أو إس",
+      "androidPlatform": "أندرويد",
+      "downloadOn": "تنزيل من",
+      "getItOn": "احصل عليه من",
+      "appStore": "متجر التطبيقات",
+      "features": {
+        "feature1": "اختيار هدايا مخصصة بسهولة",
+        "feature2": "توصيل سريع وموثوق",
+        "feature3": "تجربة تسوق سلسة وسهلة"
+      }
+    },
+    "magicGift": {
+      "title": "مساعد اختيار الهدية المثالية",
+      "description": "دعنا نساعدك في العثور على الهدية المثالية من خلال تحليل ذكي لاحتياجاتك وتفضيلاتك",
+      "explore": "ابدأ الآن"
+    },
+    "testimonials": {
+      "title": "آراء العملاء",
+      "items": {
+        "quote1": "تجربة رائعة! الهدايا كانت مميزة ووصلت في الوقت المحدد.",
+        "quote2": "الجودة ممتازة والخدمة سريعة، أنصح الجميع بالتسوق من هنا!",
+        "quote3": "أحببت تنوع الهدايا وسهولة الطلب، سأعود مرة أخرى بالتأكيد."
+      }
+    },
+    "counter": {
+      "days": "أيام",
+      "hours": "ساعات",
+      "minutes": "دقائق",
+      "seconds": "ثوانٍ",
+      "eidMessage": "عيد أضحى مبارك"
+    }
+  },
+  "notifications": {
+    "title": "إرسال التهاني",
+    "description": "أرسل تهاني جميلة لأحبائك عبر البريد الإلكتروني أو الرسائل النصية",
+    "recipientName": "اسم المستقبل",
+    "recipientEmail": "البريد الإلكتروني",
+    "recipientPhone": "رقم الهاتف",
+    "occasion": "المناسبة",
+    "selectOccasion": "اختر مناسبة",
+    "message": "رسالتك",
+    "messagePlaceholder": "اكتب رسالة التهنئة هنا...",
+    "sendMethod": "طريقة الإرسال",
+    "email": "إيميل",
+    "sms": "رسالة نصية",
+    "both": "كلاهما",
+    "sendGreeting": "إرسال التهنئة",
+    "successMessage": "تم إرسال تهنئتك بنجاح!",
+    "recentNotifications": "التهاني الأخيرة",
+    "sampleMessage1": "عيد ميلاد سعيد! أتمنى لك كل الخير في يومك المميز.",
+    "sampleMessage2": "مبروك التخرج! فخور جداً بإنجازك.",
+    "occasions": {
+      "birthday": "عيد ميلاد",
+      "anniversary": "ذكرى سنوية",
+      "wedding": "زفاف",
+      "graduation": "تخرج",
+      "eid": "عيد",
+      "thankYou": "شكر",
+      "congratulations": "تهنئة"
+    }
+  },
+  "favorites": {
+    "title": "المفضلة",
+    "description": "العناصر المحفوظة للوصول السهل",
+    "empty": "لا توجد مفضلات بعد",
+    "startShopping": "ابدأ التسوق",
+    "addToCart": "أضف للسلة",
+    "recommendations": "قد يعجبك أيضاً"
+  },
+  "packages": {
+    "title": "باقات الهدايا",
+    "description": "اختر من باقات الهدايا المنسقة",
+    "popular": "الأكثر شعبية",
+    "save": "وفر",
+    "selectPackage": "اختر الباقة",
+    "basic": {
+      "name": "الباقة الأساسية",
+      "description": "مثالية للمناسبات البسيطة",
+      "feature1": "تنسيق زهور واحد",
+      "feature2": "تغليف هدايا مشمول",
+      "feature3": "توصيل عادي"
+    },
+    "premium": {
+      "name": "الباقة المميزة",
+      "description": "مثالية للاحتفالات الخاصة",
+      "feature1": "تنسيقان من الزهور",
+      "feature2": "صندوق هدايا مميز",
+      "feature3": "توصيل سريع",
+      "feature4": "بطاقة شخصية"
+    },
+    "luxury": {
+      "name": "الباقة الفاخرة",
+      "description": "تجربة هدايا استثنائية",
+      "feature1": "3 تنسيقات فاخرة",
+      "feature2": "تغليف هدايا فاخر",
+      "feature3": "توصيل في نفس اليوم",
+      "feature4": "رسالة شخصية",
+      "feature5": "شوكولاتة مجانية"
+    },
+    "custom": {
+      "title": "تحتاج باقة مخصصة؟",
+      "description": "تواصل معنا لإنشاء باقة هدايا شخصية",
+      "contact": "تواصل معنا"
+    }
+  },
+  "product": {
+    "addToCart": "إضافة للسلة",
+    "description": "الوصف",
+    "relatedProducts": "قد يعجبك أيضاً",
+    "notFound": "المنتج غير موجود",
+    "backToHome": "العودة إلى الرئيسية"
+  },
+  "cart": {
+    "title": "سلة التسوق",
+    "empty": "سلة التسوق فارغة",
+    "loginRequired": "تسجيل الدخول مطلوب",
+    "loginRequiredMessage": "يجب تسجيل الدخول لعرض وإدارة سلة التسوق",
+    "continueShopping": "مواصلة التسوق",
+    "checkout": "إتمام الشراء",
+    "total": "المجموع",
+    "summary": "ملخص الطلب",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "tax": "الضريبة",
+    "discount": "الخصم",
+    "clearCart": "إفراغ السلة"
+  },
+  "footer": {
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "terms": "الشروط والأحكام",
+    "privacy": "سياسة الخصوصية",
+    "faq": "الأسئلة الشائعة",
+    "delivery": "معلومات التوصيل",
+    "returns": "الإرجاع والاسترداد",
+    "followUs": "تابعنا",
+    "copyright": "© 2025 زاجل السعادة. جميع الحقوق محفوظة.",
+    "aboutDescription": "زاجل السعادة هو متجر متخصص في تقديم الهدايا الفريدة والمميزة لجميع المناسبات، نسعى دائماً لإدخال السعادة إلى قلوب الناس من خلال هدايانا المميزة.",
+    "quickLinks": "روابط سريعة",
+    "legal": "معلومات قانونية",
+    "contactUs": "تواصل معنا",
+    "location": "الرياض، المملكة العربية السعودية"
+  },
+  "delivery": {
+    "locations": "مناطق التوصيل",
+    "time": "مدة التوصيل",
+    "process": "عملية التوصيل",
+    "contactUs": "تواصل معنا للمزيد من المعلومات"
+  },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "subtitle": "مرحباً بك مرة أخرى",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "rememberMe": "تذكرني",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "signIn": "تسجيل الدخول",
+      "signInWithGoogle": "تسجيل الدخول بجوجل",
+      "noAccount": "ليس لديك حساب؟",
+      "signUp": "إنشاء حساب جديد",
+      "phoneLogin": "تسجيل الدخول بالهاتف",
+      "emailLogin": "تسجيل الدخول بالإيميل"
+    },
+    "signup": {
+      "title": "إنشاء حساب جديد",
+      "subtitle": "انضم إلينا اليوم",
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "createAccount": "إنشاء الحساب",
+      "haveAccount": "لديك حساب بالفعل؟",
+      "signIn": "تسجيل الدخول",
+      "agreeToTerms": "أوافق على الشروط والأحكام وسياسة الخصوصية",
+      "passwordStrength": {
+        "weak": "ضعيف",
+        "fair": "متوسط",
+        "good": "جيد",
+        "strong": "قوي"
+      }
+    },
+    "verification": {
+      "email": {
+        "title": "تحقق من بريدك الإلكتروني",
+        "subtitle": "لقد أرسلنا رمز التحقق إلى",
+        "code": "رمز التحقق",
+        "verify": "تحقق من الرمز",
+        "resend": "إعادة إرسال الرمز",
+        "didntReceive": "لم تستلم الرمز؟",
+        "changeEmail": "تريد تغيير البريد الإلكتروني؟",
+        "backToSignup": "العودة للتسجيل"
+      },
+      "phone": {
+        "title": "تحقق من رقم الهاتف",
+        "subtitle": "لقد أرسلنا رمز التحقق إلى",
+        "code": "رمز التحقق",
+        "verify": "تحقق من الرمز",
+        "resend": "إعادة إرسال الرمز",
+        "didntReceive": "لم تستلم الرمز؟"
+      },
+      "phoneSetup": {
+        "title": "أضف رقم هاتفك",
+        "subtitle": "لاستكمال إنشاء حسابك، يرجى إضافة رقم هاتفك وتأكيده",
+        "phoneNumber": "رقم الهاتف",
+        "sendCode": "إرسال رمز التحقق",
+        "verifyTitle": "تحقق من رقم الهاتف",
+        "verifySubtitle": "أدخل الرمز المرسل إلى رقم هاتفك",
+        "completeRegistration": "تأكيد وإنهاء التسجيل",
+        "whyPhone": "لماذا نحتاج رقم هاتفك؟",
+        "securityReason": "تأمين حسابك بشكل إضافي",
+        "notificationsReason": "إشعارات الطلبات المهمة",
+        "loginReason": "تسجيل دخول سريع بالهاتف",
+        "deliveryReason": "تحديثات التوصيل",
+        "changePhone": "تغيير رقم الهاتف",
+        "requiredStep": "هذه الخطوة مطلوبة لتأمين حسابك وتحسين تجربة التسوق"
+      }
+    },
+    "forgotPassword": {
+      "title": "نسيت كلمة المرور؟",
+      "subtitle": "لا تقلق، سنرسل لك رابط إعادة التعيين",
+      "email": "البريد الإلكتروني",
+      "sendLink": "إرسال رابط إعادة التعيين",
+      "linkSent": "تم إرسال الرابط",
+      "checkEmail": "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني",
+      "backToLogin": "العودة لتسجيل الدخول"
+    },
+    "resetPassword": {
+      "title": "إعادة تعيين كلمة المرور",
+      "subtitle": "أدخل كلمة المرور الجديدة",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "updatePassword": "تحديث كلمة المرور",
+      "passwordsNotMatch": "كلمات المرور غير متطابقة"
+    },
+    "google": {
+      "processing": "جاري المعالجة...",
+      "success": "تم تسجيل الدخول بنجاح",
+      "error": "فشل في المصادقة",
+      "welcome": "مرحباً بك! سيتم إعادة توجيهك للصفحة الرئيسية"
+    }
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "personalInfo": "المعلومات الشخصية",
+    "accountSettings": "إعدادات الحساب",
+    "security": "الأمان",
+    "fullName": "الاسم الكامل",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "profilePicture": "الصورة الشخصية",
+    "updateProfile": "تحديث الملف الشخصي",
+    "changePassword": "تغيير كلمة المرور",
+    "updateEmail": "تحديث البريد الإلكتروني",
+    "deleteAccount": "حذف الحساب",
+    "verified": "موثق",
+    "notVerified": "غير موثق",
+    "memberSince": "عضو منذ",
+    "edit": "تعديل",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "newEmail": "البريد الإلكتروني الجديد",
+    "verificationCode": "رمز التحقق",
+    "sendVerificationCode": "إرسال رمز التحقق",
+    "verifyCode": "تحقق من الرمز",
+    "updatePassword": "تحديث كلمة المرور",
+    "updateEmailAddress": "تحديث عنوان البريد الإلكتروني",
+    "typeDeleteToConfirm": "اكتب DELETE للتأكيد",
+    "passwordStrength": {
+      "weak": "ضعيف",
+      "fair": "متوسط",
+      "good": "جيد",
+      "strong": "قوي"
+    }
+  },
+  "orders": {
+    "title": "طلباتي",
+    "description": "تتبع وإدارة طلباتك",
+    "orderNumber": "رقم الطلب",
+    "orderDate": "تاريخ الطلب",
+    "status": "الحالة",
+    "total": "المجموع",
+    "items": "المنتجات",
+    "shippingInfo": "معلومات الشحن",
+    "trackingNumber": "رقم التتبع",
+    "viewDetails": "عرض التفاصيل",
+    "trackOrder": "تتبع الطلب",
+    "cancelOrder": "إلغاء الطلب",
+    "rateOrder": "تقييم الطلب",
+    "noOrders": "لا توجد طلبات",
+    "noOrdersDescription": "لم تقم بأي طلبات بعد. ابدأ التسوق الآن!",
+    "startShopping": "ابدأ التسوق",
+    "searchOrders": "البحث في الطلبات...",
+    "allOrders": "جميع الطلبات",
+    "statusOptions": {
+      "pending": "في الانتظار",
+      "processing": "قيد المعالجة",
+      "shipped": "تم الشحن",
+      "delivered": "تم التسليم",
+      "cancelled": "ملغي"
+    }
+  }
+}

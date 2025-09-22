@@ -1,0 +1,41 @@
+[
+  {
+    "id": 701,
+    "nameEn": "Crystal Flower Vase",
+    "nameAr": "فازة زهور كريستال",
+    "price": 399,
+    "imageUrl": "https://m.media-amazon.com/images/I/81fUFu2hpiL._UF894%2C1000_QL80_.jpg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "vases",
+    "occasionId": "wedding",
+    "descriptionEn": "An elegant crystal vase perfect for displaying beautiful flower arrangements. This handcrafted piece features intricate cut patterns that refract light beautifully, creating stunning visual effects. Made from premium crystal glass, it's both functional and decorative.",
+    "descriptionAr": "فازة كريستال أنيقة مثالية لعرض تنسيقات الزهور الجميلة. هذه القطعة المصنوعة يدوياً تتميز بأنماط قطع معقدة تكسر الضوء بجمال، مما يخلق تأثيرات بصرية مذهلة. مصنوعة من زجاج كريستال مميز، فهي عملية وزخرفية معاً."
+  },
+  {
+    "id": 702,
+    "nameEn": "Ceramic Decorative Vase",
+    "nameAr": "فازة سيراميك زخرفية",
+    "price": 199,
+    "imageUrl": "https://floralsupplies.com/cdn/shop/files/016bc965b05454b8c54421aa97978ef3.jpg?v=1722746858",
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "categoryId": "vases",
+    "occasionId": "new-year",
+    "descriptionEn": "A beautiful ceramic vase with intricate patterns for home decoration. This artisan-crafted piece features traditional motifs with a modern twist. The glazed finish provides durability while maintaining the artistic beauty of the hand-painted details.",
+    "descriptionAr": "فازة سيراميك جميلة بأنماط معقدة لتزيين المنزل. هذه القطعة المصنوعة بحرفية تتميز بزخارف تقليدية مع لمسة عصرية. اللمسة النهائية المزججة توفر المتانة مع الحفاظ على الجمال الفني للتفاصيل المرسومة يدوياً."
+  },
+  {
+    "id": 703,
+    "nameEn": "Modern Glass Vase Set",
+    "nameAr": "طقم فازات زجاج عصري",
+    "price": 249,
+    "imageUrl": "https://m.media-amazon.com/images/I/61KVbKSnozL.jpg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "vases",
+    "occasionId": "thank-you",
+    "descriptionEn": "A set of modern glass vases in different sizes for versatile decoration. These sleek, contemporary pieces feature clean lines and minimalist design. Perfect for creating stunning floral displays or as standalone decorative elements in any modern home.",
+    "descriptionAr": "طقم من فازات الزجاج العصرية بأحجام مختلفة للتزيين المتنوع. هذه القطع الأنيقة والعصرية تتميز بخطوط نظيفة وتصميم بسيط. مثالية لخلق عروض زهور مذهلة أو كعناصر زخرفية منفردة في أي منزل عصري."
+  }
+]

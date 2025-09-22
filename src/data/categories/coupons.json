@@ -1,0 +1,41 @@
+[
+  {
+    "id": 901,
+    "nameEn": "Spa Day Gift Voucher",
+    "nameAr": "قسيمة هدية يوم سبا",
+    "price": 499,
+    "imageUrl": "https://images.pexels.com/photos/6675832/pexels-photo-6675832.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "coupons",
+    "occasionId": "mothers-day",
+    "descriptionEn": "A luxurious spa day voucher for ultimate relaxation and pampering. This premium gift certificate includes access to full spa facilities, massage treatments, and wellness services. The perfect way to show someone you care about their well-being and deserve some self-care time.",
+    "descriptionAr": "قسيمة يوم سبا فاخر للاسترخاء والتدليل المطلق. شهادة الهدية المميزة هذه تشمل الوصول لمرافق السبا الكاملة وعلاجات التدليك وخدمات العافية. الطريقة المثالية لإظهار اهتمامك برفاهية شخص ما واستحقاقه لوقت العناية بالذات."
+  },
+  {
+    "id": 902,
+    "nameEn": "Restaurant Dining Voucher",
+    "nameAr": "قسيمة عشاء مطعم",
+    "price": 299,
+    "imageUrl": "https://images.pexels.com/photos/6675832/pexels-photo-6675832.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "coupons",
+    "occasionId": "anniversary",
+    "descriptionEn": "A dining voucher for a romantic dinner at premium restaurants. This elegant gift certificate allows the recipient to enjoy fine dining experiences at top-rated establishments. Perfect for celebrating special occasions or creating memorable moments together.",
+    "descriptionAr": "قسيمة عشاء لوجبة رومانسية في المطاعم المميزة. شهادة الهدية الأنيقة هذه تسمح للمستلم بالاستمتاع بتجارب طعام راقية في مؤسسات عالية التقييم. مثالية للاحتفال بالمناسبات الخاصة أو خلق لحظات لا تُنسى معاً."
+  },
+  {
+    "id": 903,
+    "nameEn": "Shopping Gift Card",
+    "nameAr": "بطاقة هدية تسوق",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/6675832/pexels-photo-6675832.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "coupons",
+    "occasionId": "graduation",
+    "descriptionEn": "A flexible shopping gift card for choosing the perfect gift. This versatile voucher can be used at various retail locations, giving the recipient the freedom to select exactly what they want. Ideal when you want to give the gift of choice.",
+    "descriptionAr": "بطاقة هدية تسوق مرنة لاختيار الهدية المثالية. هذه القسيمة المتنوعة يمكن استخدامها في مواقع تجارية مختلفة، مما يعطي المستلم حرية اختيار ما يريده بالضبط. مثالية عندما تريد إعطاء هدية الاختيار."
+  }
+]

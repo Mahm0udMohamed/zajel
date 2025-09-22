@@ -1,0 +1,41 @@
+[
+  {
+    "id": 401,
+    "nameEn": "Luxury Oud Perfume",
+    "nameAr": "عطر عود فاخر",
+    "price": 599,
+    "imageUrl": "https://purrfumery.com/cdn/shop/files/Rosejasminesmall_1024x1024.jpg?v=1696875945",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "perfumes",
+    "occasionId": "eid-adha",
+    "descriptionEn": "An exquisite oud perfume with rich, long-lasting fragrance. This premium blend combines traditional oud with modern perfumery techniques, creating a sophisticated scent that evolves throughout the day. Presented in an elegant bottle that reflects the luxury within.",
+    "descriptionAr": "عطر عود رائع برائحة غنية وطويلة الأمد. هذا المزيج المميز يجمع بين العود التقليدي وتقنيات العطور الحديثة، مما يخلق رائحة راقية تتطور طوال اليوم. مقدم في زجاجة أنيقة تعكس الفخامة بداخلها."
+  },
+  {
+    "id": 402,
+    "nameEn": "Rose & Jasmine Blend",
+    "nameAr": "خليط ورد وياسمين",
+    "price": 349,
+    "imageUrl": "https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "perfumes",
+    "occasionId": "valentines-day",
+    "descriptionEn": "A romantic blend of rose and jasmine for special moments. This delicate fragrance captures the essence of blooming gardens, with top notes of fresh rose petals and heart notes of exotic jasmine. Perfect for romantic occasions and everyday elegance.",
+    "descriptionAr": "خليط رومانسي من الورد والياسمين للحظات الخاصة. هذه الرائحة الدقيقة تلتقط جوهر الحدائق المزهرة، مع نوتات علوية من بتلات الورد الطازجة ونوتات قلبية من الياسمين الاستوائي. مثالي للمناسبات الرومانسية والأناقة اليومية."
+  },
+  {
+    "id": 403,
+    "nameEn": "Fresh Citrus Cologne",
+    "nameAr": "كولونيا حمضيات منعشة",
+    "price": 199,
+    "imageUrl": "https://m.media-amazon.com/images/I/51ht7ZhfnJL._UF1000%2C1000_QL80_.jpg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "perfumes",
+    "occasionId": "graduation",
+    "descriptionEn": "A refreshing citrus cologne perfect for daily wear. This energizing fragrance features bright notes of lemon, orange, and bergamot, creating an uplifting scent that's perfect for active lifestyles. Light yet memorable, ideal for any time of day.",
+    "descriptionAr": "كولونيا حمضيات منعشة مثالية للاستخدام اليومي. هذه الرائحة المنشطة تتميز بنوتات مشرقة من الليمون والبرتقال والبرغموت، مما يخلق رائحة مرفعة للمعنويات مثالية لأنماط الحياة النشطة. خفيفة لكن لا تُنسى، مثالية لأي وقت من اليوم."
+  }
+]

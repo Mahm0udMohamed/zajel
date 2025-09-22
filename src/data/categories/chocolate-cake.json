@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1101,
+    "nameEn": "Luxury Chocolate Cake",
+    "nameAr": "كيكة شوكولاتة فاخرة",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/11076351/pexels-photo-11076351.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "chocolate-cake",
+    "occasionId": "birthdays",
+    "descriptionEn": "A rich and decadent chocolate cake perfect for special celebrations. This masterpiece features layers of moist chocolate sponge filled with premium chocolate ganache and topped with silky chocolate frosting. Made with the finest Belgian chocolate for an unforgettable taste experience.",
+    "descriptionAr": "كيكة شوكولاتة غنية ولذيذة مثالية للاحتفالات الخاصة. هذه التحفة الفنية تتميز بطبقات من الإسفنج الشوكولاتة الرطب المحشو بجاناش الشوكولاتة المميز ومغطى بكريمة الشوكولاتة الحريرية. مصنوعة بأجود شوكولاتة بلجيكية لتجربة طعم لا تُنسى."
+  },
+  {
+    "id": 1102,
+    "nameEn": "Premium Chocolate Box",
+    "nameAr": "صندوق شوكولاتة مميز",
+    "price": 149,
+    "imageUrl": "https://images.pexels.com/photos/11076350/pexels-photo-11076350.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "chocolate-cake",
+    "occasionId": "valentines-day",
+    "descriptionEn": "A selection of premium chocolates in an elegant gift box. This curated collection features handcrafted chocolates with various fillings including caramel, nuts, and fruit essences. Each piece is a work of art, perfect for sharing or savoring alone.",
+    "descriptionAr": "مجموعة مختارة من الشوكولاتة المميزة في صندوق هدايا أنيق. هذه المجموعة المنسقة تتميز بشوكولاتة مصنوعة يدوياً بحشوات مختلفة تشمل الكراميل والمكسرات وخلاصات الفواكه. كل قطعة عمل فني، مثالية للمشاركة أو التذوق وحدك."
+  },
+  {
+    "id": 1103,
+    "nameEn": "Custom Anniversary Cake",
+    "nameAr": "كيكة ذكرى سنوية مخصصة",
+    "price": 249,
+    "imageUrl": "https://images.pexels.com/photos/12118046/pexels-photo-12118046.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "chocolate-cake",
+    "occasionId": "anniversary",
+    "descriptionEn": "A custom-designed cake to celebrate your special anniversary. This personalized creation can be tailored to your preferences with custom decorations, flavors, and messages. Each cake is uniquely crafted to make your celebration truly memorable and special.",
+    "descriptionAr": "كيكة مصممة خصيصاً للاحتفال بذكراكم السنوية الخاصة. هذا الإبداع الشخصي يمكن تخصيصه حسب تفضيلاتك مع زينة ونكهات ورسائل مخصصة. كل كيكة مصنوعة بشكل فريد لجعل احتفالك لا يُنسى ومميز حقاً."
+  }
+]

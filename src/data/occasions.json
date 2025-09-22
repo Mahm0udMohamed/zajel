@@ -1,0 +1,59 @@
+[
+  {
+    "id": "valentines-day",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380331/11_fn5kci.png",
+    "nameKey": "home.occasions.items.valentinesDay"
+  },
+  {
+    "id": "mothers-day",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380319/10_irszez.png",
+    "nameKey": "home.occasions.items.mothersDay"
+  },
+  {
+    "id": "eid-adha",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380331/2_v0y9ih.png",
+    "nameKey": "home.occasions.items.eidAdha"
+  },
+  {
+    "id": "birthdays",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380301/4_yking7.png",
+    "nameKey": "home.occasions.items.birthdays"
+  },
+  {
+    "id": "thank-you",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380306/8_y1qhto.png",
+    "nameKey": "home.occasions.items.thankYou"
+  },
+
+  {
+    "id": "new-year",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380330/9_aqbhq5.png",
+    "nameKey": "home.occasions.items.newYear"
+  },
+  {
+    "id": "wedding",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380294/7_s7wisp.png",
+    "nameKey": "home.occasions.items.wedding"
+  },
+  {
+    "id": "graduation",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380324/5_dsmjak.png",
+    "nameKey": "home.occasions.items.graduation"
+  },
+  {
+    "id": "eid-fitr",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380280/1_x582mj.png",
+    "nameKey": "home.occasions.items.eidFitr"
+  },
+  {
+    "id": "anniversary",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380316/6_uhejji.png",
+    "nameKey": "home.occasions.items.anniversary"
+  },
+
+  {
+    "id": "el-hajj",
+    "imageUrl": "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380327/3_rbemtv.png",
+    "nameKey": "home.occasions.items.elHajj"
+  }
+]

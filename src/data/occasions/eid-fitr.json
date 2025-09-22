@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2001,
+    "nameEn": "Eid Fitr Gift Basket",
+    "nameAr": "سلة هدايا عيد الفطر",
+    "price": 299,
+    "imageUrl": "https://images.pexels.com/photos/28769885/pexels-photo-28769885.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "coupons",
+    "occasionId": "eid-fitr",
+    "descriptionEn": "A festive gift basket filled with traditional sweets and treats for Eid Fitr. This beautiful collection includes premium dates, traditional Middle Eastern sweets, nuts, and chocolates. Elegantly packaged to celebrate the joy and blessings of Eid Fitr with your loved ones.",
+    "descriptionAr": "سلة هدايا احتفالية مليئة بالحلويات والمأكولات التقليدية لعيد الفطر. هذه المجموعة الجميلة تشمل تمور مميزة وحلويات شرق أوسطية تقليدية ومكسرات وشوكولاتة. مغلفة بأناقة للاحتفال بفرحة وبركات عيد الفطر مع أحبائك."
+  },
+  {
+    "id": 2002,
+    "nameEn": "Eid Fitr Flower Arrangement",
+    "nameAr": "تنسيق زهور عيد الفطر",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/7249186/pexels-photo-7249186.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "flowers",
+    "occasionId": "eid-fitr",
+    "descriptionEn": "A beautiful floral arrangement to celebrate the joy of Eid Fitr. This elegant display features fresh flowers in festive colors, symbolizing renewal and celebration. Perfect for decorating your home or gifting to family and friends during this blessed occasion.",
+    "descriptionAr": "تنسيق زهور جميل للاحتفال بفرحة عيد الفطر. هذا العرض الأنيق يتميز بزهور طازجة بألوان احتفالية، ترمز للتجديد والاحتفال. مثالي لتزيين منزلك أو إهدائه للعائلة والأصدقاء خلال هذه المناسبة المباركة."
+  },
+  {
+    "id": 2003,
+    "nameEn": "Eid Fitr Perfume Gift Set",
+    "nameAr": "طقم عطور هدية عيد الفطر",
+    "price": 399,
+    "imageUrl": "https://images.pexels.com/photos/461060/pexels-photo-461060.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "perfumes",
+    "occasionId": "eid-fitr",
+    "descriptionEn": "A luxurious perfume gift set perfect for Eid Fitr celebrations. This exquisite collection features premium fragrances with traditional and modern scents. Beautifully packaged to make an elegant gift for this special religious holiday.",
+    "descriptionAr": "طقم عطور فاخر مثالي لاحتفالات عيد الفطر. هذه المجموعة الرائعة تتميز بعطور مميزة بروائح تقليدية وعصرية. مغلفة بجمال لتكون هدية أنيقة لهذا العيد الديني الخاص."
+  }
+]

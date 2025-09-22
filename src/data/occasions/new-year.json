@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2701,
+    "nameEn": "New Year Celebration Set",
+    "nameAr": "طقم احتفال رأس السنة",
+    "price": 299,
+    "imageUrl": "https://images.pexels.com/photos/5716517/pexels-photo-5716517.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "party-favors",
+    "occasionId": "new-year",
+    "descriptionEn": "A festive celebration set to welcome the new year with joy.",
+    "descriptionAr": "طقم احتفال مبهج لاستقبال السنة الجديدة بفرح."
+  },
+  {
+    "id": 2702,
+    "nameEn": "New Year Prosperity Plant",
+    "nameAr": "نبتة ازدهار السنة الجديدة",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/30682895/pexels-photo-30682895.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "plants",
+    "occasionId": "new-year",
+    "descriptionEn": "A prosperity plant to bring good luck and growth in the new year.",
+    "descriptionAr": "نبتة ازدهار لجلب الحظ الجيد والنمو في السنة الجديدة."
+  },
+  {
+    "id": 2703,
+    "nameEn": "New Year Decorative Vase",
+    "nameAr": "فازة زخرفية رأس السنة",
+    "price": 249,
+    "imageUrl": "https://images.pexels.com/photos/6691747/pexels-photo-6691747.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "vases",
+    "occasionId": "new-year",
+    "descriptionEn": "A decorative vase to add elegance to new year celebrations.",
+    "descriptionAr": "فازة زخرفية لإضافة الأناقة لاحتفالات رأس السنة."
+  }
+]

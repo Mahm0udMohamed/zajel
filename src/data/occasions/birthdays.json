@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2201,
+    "nameEn": "Birthday Celebration Package",
+    "nameAr": "باقة احتفال عيد ميلاد",
+    "price": 249,
+    "imageUrl": "https://images.pexels.com/photos/25025695/pexels-photo-25025695.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "balloons",
+    "occasionId": "birthdays",
+    "descriptionEn": "A complete birthday celebration package with balloons, cake, and decorations. This festive collection includes everything needed to create a memorable birthday party. Features colorful balloons, party decorations, and a delicious birthday cake to make the celebration extra special.",
+    "descriptionAr": "باقة احتفال عيد ميلاد كاملة تحتوي على بالونات وكيكة وزينة. هذه المجموعة الاحتفالية تشمل كل ما هو مطلوب لخلق حفلة عيد ميلاد لا تُنسى. تتميز ببالونات ملونة وزينة حفلات وكيكة عيد ميلاد لذيذة لجعل الاحتفال مميزاً جداً."
+  },
+  {
+    "id": 2202,
+    "nameEn": "Birthday Flower Bouquet",
+    "nameAr": "باقة زهور عيد ميلاد",
+    "price": 179,
+    "imageUrl": "https://images.pexels.com/photos/8103099/pexels-photo-8103099.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "flowers",
+    "occasionId": "birthdays",
+    "descriptionEn": "A vibrant flower bouquet to brighten someone's special day. This cheerful arrangement features fresh seasonal flowers in bright, happy colors. Each bouquet is carefully crafted to bring joy and celebration to any birthday occasion.",
+    "descriptionAr": "باقة زهور نابضة بالحياة لإضاءة يوم شخص مميز. هذا التنسيق المبهج يتميز بزهور موسمية طازجة بألوان مشرقة وسعيدة. كل باقة مصنوعة بعناية لجلب الفرح والاحتفال لأي مناسبة عيد ميلاد."
+  },
+  {
+    "id": 2203,
+    "nameEn": "Birthday Chocolate Cake",
+    "nameAr": "كيكة شوكولاتة عيد ميلاد",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/19036040/pexels-photo-19036040.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "chocolate-cake",
+    "occasionId": "birthdays",
+    "descriptionEn": "A delicious chocolate birthday cake to make the celebration sweeter. This rich, moist chocolate cake is layered with creamy chocolate frosting and decorated with birthday candles. Perfect for making any birthday celebration memorable and delicious.",
+    "descriptionAr": "كيكة شوكولاتة عيد ميلاد لذيذة لجعل الاحتفال أحلى. هذه الكيكة الشوكولاتة الغنية والرطبة مطبقة بكريمة الشوكولاتة الكريمية ومزينة بشموع عيد الميلاد. مثالية لجعل أي احتفال عيد ميلاد لا يُنسى ولذيذ."
+  }
+]

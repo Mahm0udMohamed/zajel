@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2901,
+    "nameEn": "Valentine's Day Romance Package",
+    "nameAr": "باقة رومانسية عيد الحب",
+    "price": 399,
+    "imageUrl": "https://images.pexels.com/photos/5714433/pexels-photo-5714433.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": true,
+    "categoryId": "flowers",
+    "occasionId": "valentines-day",
+    "descriptionEn": "The ultimate romance package with roses, chocolates, and love notes.",
+    "descriptionAr": "الباقة الرومانسية المثلى مع ورود وشوكولاتة ورسائل حب."
+  },
+  {
+    "id": 2902,
+    "nameEn": "Valentine's Heart Balloons",
+    "nameAr": "بالونات قلوب عيد الحب",
+    "price": 99,
+    "imageUrl": "https://images.pexels.com/photos/30632274/pexels-photo-30632274/free-photo-of-romantic-red-and-white-rose-bouquet-with-boxed-chocolates.png?auto=compress&cs=tinysrgb&dpr=1&h=750&w=1260",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "balloons",
+    "occasionId": "valentines-day",
+    "descriptionEn": "Romantic heart-shaped balloons to express your love.",
+    "descriptionAr": "بالونات رومانسية على شكل قلب للتعبير عن حبك."
+  },
+  {
+    "id": 2903,
+    "nameEn": "Valentine's Chocolate Box",
+    "nameAr": "صندوق شوكولاتة عيد الحب",
+    "price": 179,
+    "imageUrl": "https://images.pexels.com/photos/19978725/pexels-photo-19978725.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "chocolate-cake",
+    "occasionId": "valentines-day",
+    "descriptionEn": "A heart-shaped box filled with premium chocolates for your valentine.",
+    "descriptionAr": "صندوق على شكل قلب مليء بالشوكولاتة المميزة لحبيبك."
+  }
+]

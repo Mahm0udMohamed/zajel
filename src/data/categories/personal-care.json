@@ -1,0 +1,41 @@
+[
+  {
+    "id": 601,
+    "nameEn": "Spa Gift Basket",
+    "nameAr": "سلة هدايا سبا",
+    "price": 299,
+    "imageUrl": "https://images.pexels.com/photos/6305950/pexels-photo-6305950.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "categoryId": "personal-care",
+    "occasionId": "mothers-day",
+    "descriptionEn": "A relaxing spa gift basket with bath essentials and aromatherapy items. This luxurious collection includes bath salts, body scrub, essential oils, scented candles, and a plush towel. Everything needed for a rejuvenating spa experience at home.",
+    "descriptionAr": "سلة هدايا سبا مريحة تحتوي على أساسيات الاستحمام ومنتجات العلاج العطري. هذه المجموعة الفاخرة تشمل أملاح استحمام ومقشر للجسم وزيوت أساسية وشموع معطرة ومنشفة ناعمة. كل ما هو مطلوب لتجربة سبا منعشة في المنزل."
+  },
+  {
+    "id": 602,
+    "nameEn": "Luxury Bath Bomb Set",
+    "nameAr": "طقم كرات استحمام فاخرة",
+    "price": 149,
+    "imageUrl": "https://cdn11.bigcommerce.com/s-vgf04pj0/images/stencil/original/products/267/1036/IMG_E8138_PS_B-Day_Deluxe__70280.1637000042.jpg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "personal-care",
+    "occasionId": "thank-you",
+    "descriptionEn": "A set of luxury bath bombs with natural ingredients and essential oils. Each bath bomb is handcrafted with moisturizing oils and therapeutic fragrances. Transform your bath into a relaxing retreat with these fizzing, aromatic spheres of bliss.",
+    "descriptionAr": "طقم من كرات الاستحمام الفاخرة بمكونات طبيعية وزيوت أساسية. كل كرة استحمام مصنوعة يدوياً بزيوت مرطبة وروائح علاجية. حول حمامك إلى ملاذ مريح مع هذه الكرات الفوارة والعطرة من النعيم."
+  },
+  {
+    "id": 603,
+    "nameEn": "Aromatherapy Candle Collection",
+    "nameAr": "مجموعة شموع العلاج العطري",
+    "price": 199,
+    "imageUrl": "https://cdn11.bigcommerce.com/s-vgf04pj0/images/stencil/1280x1280/products/371/1074/Zen_IMG_7403_Hyacinth_pixl_adj__39646.1729974027.jpg?c=2",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "personal-care",
+    "occasionId": "anniversary",
+    "descriptionEn": "A collection of aromatherapy candles for relaxation and stress relief. Each candle is made with natural soy wax and infused with therapeutic essential oils. Create a calming atmosphere and promote wellness with these beautifully scented candles.",
+    "descriptionAr": "مجموعة من شموع العلاج العطري للاسترخاء وتخفيف التوتر. كل شمعة مصنوعة من شمع الصويا الطبيعي ومنقوعة بزيوت أساسية علاجية. اخلق جواً هادئاً وعزز العافية مع هذه الشموع ذات الرائحة الجميلة."
+  }
+]

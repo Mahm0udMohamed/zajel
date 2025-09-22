@@ -1,0 +1,41 @@
+[
+  {
+    "id": 801,
+    "nameEn": "Birthday Balloon Bouquet",
+    "nameAr": "باقة بالونات عيد ميلاد",
+    "price": 99,
+    "imageUrl": "https://images.pexels.com/photos/17285664/pexels-photo-17285664.jpeg",
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "categoryId": "balloons",
+    "occasionId": "birthdays",
+    "descriptionEn": "A colorful balloon bouquet perfect for birthday celebrations. This festive arrangement includes helium-filled balloons in various shapes and colors, creating a joyful atmosphere. Each bouquet is carefully assembled to bring smiles and excitement to any birthday party.",
+    "descriptionAr": "باقة بالونات ملونة مثالية لاحتفالات أعياد الميلاد. هذا التنسيق الاحتفالي يشمل بالونات مملوءة بالهيليوم بأشكال وألوان مختلفة، مما يخلق جواً مفرحاً. كل باقة مجمعة بعناية لجلب الابتسامات والإثارة لأي حفلة عيد ميلاد."
+  },
+  {
+    "id": 802,
+    "nameEn": "Heart-Shaped Love Balloons",
+    "nameAr": "بالونات حب على شكل قلب",
+    "price": 79,
+    "imageUrl": "https://images.pexels.com/photos/6629582/pexels-photo-6629582.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": true,
+    "categoryId": "balloons",
+    "occasionId": "valentines-day",
+    "descriptionEn": "Romantic heart-shaped balloons perfect for expressing love. These special balloons come in romantic colors and are ideal for Valentine's Day, anniversaries, or any romantic gesture. Made with high-quality materials for longer-lasting celebrations.",
+    "descriptionAr": "بالونات رومانسية على شكل قلب مثالية للتعبير عن الحب. هذه البالونات الخاصة تأتي بألوان رومانسية ومثالية لعيد الحب أو الذكرى السنوية أو أي إيماءة رومانسية. مصنوعة بمواد عالية الجودة لاحتفالات تدوم أطول."
+  },
+  {
+    "id": 803,
+    "nameEn": "Graduation Celebration Balloons",
+    "nameAr": "بالونات احتفال التخرج",
+    "price": 89,
+    "imageUrl": "https://images.pexels.com/photos/18928253/pexels-photo-18928253.jpeg",
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "categoryId": "balloons",
+    "occasionId": "graduation",
+    "descriptionEn": "Special balloons to celebrate graduation achievements. This collection features congratulatory messages and academic-themed designs. Perfect for honoring the graduate's hard work and marking this important milestone in their educational journey.",
+    "descriptionAr": "بالونات خاصة للاحتفال بإنجازات التخرج. هذه المجموعة تتميز برسائل تهنئة وتصاميم أكاديمية. مثالية لتكريم عمل الخريج الشاق وتمييز هذا الإنجاز المهم في رحلته التعليمية."
+  }
+]
