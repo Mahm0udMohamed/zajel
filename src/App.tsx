@@ -92,150 +92,153 @@ function App() {
                 style={{ scrollBehavior: "smooth" }}
               >
                 <Header />
-                <main className="flex-grow pb-0 md:pb-0 relative" style={{ position: 'relative', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', overflowY: 'auto' }}>
-                  <Suspense
-                    fallback={
-                      <div className="flex justify-center items-center min-h-screen">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                      </div>
-                    }
-                  >
-                    <Routes>
-                      <Route path="/" element={<HomePage />} />
-                      <Route path="/categories" element={<CategoryPage />} />
-                      <Route
-                        path="/category/:slug"
-                        element={<CategoryPage />}
-                      />
-                      <Route path="/product/:id" element={<ProductPage />} />
-                      <Route path="/products" element={<ProductsPage />} />
-                      <Route path="/cart" element={<CartPage />} />
-                      <Route path="/about" element={<AboutPage />} />
-                      <Route path="/contact" element={<ContactPage />} />
-                      <Route path="/faq" element={<FAQPage />} />
-                      <Route path="/delivery" element={<DeliveryPage />} />
-                      <Route path="/occasions" element={<OccasionsPage />} />
-                      <Route
-                        path="/occasion/:slug"
-                        element={<OccasionsPage />}
-                      />
-                      <Route path="/brands" element={<BrandsPage />} />
-                      <Route
-                        path="/special-gifts"
-                        element={<SpecialGiftsPage />}
-                      />
-                      <Route
-                        path="/notifications"
-                        element={<NotificationsPage />}
-                      />
-                      <Route
-                        path="/favorites"
-                        element={
-                          <ProtectedRoute requireAuthForFavorites={true}>
-                            <FavoritesPage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route path="/packages" element={<PackagesPage />} />
-                      <Route
-                        path="/gift-assistant"
-                        element={<GiftAssistantPage />}
-                      />
+                <main
+                  className="flex-grow pb-0 md:pb-0 relative"
+                  style={{ position: "relative", overflow: "hidden" }}
+                >
+                  <div style={{ height: "100%", overflowY: "auto" }}>
+                    <Suspense
+                      fallback={
+                        <div className="flex justify-center items-center min-h-screen">
+                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                        </div>
+                      }
+                    >
+                      <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/categories" element={<CategoryPage />} />
+                        <Route
+                          path="/category/:slug"
+                          element={<CategoryPage />}
+                        />
+                        <Route path="/product/:id" element={<ProductPage />} />
+                        <Route path="/products" element={<ProductsPage />} />
+                        <Route path="/cart" element={<CartPage />} />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/contact" element={<ContactPage />} />
+                        <Route path="/faq" element={<FAQPage />} />
+                        <Route path="/delivery" element={<DeliveryPage />} />
+                        <Route path="/occasions" element={<OccasionsPage />} />
+                        <Route
+                          path="/occasion/:slug"
+                          element={<OccasionsPage />}
+                        />
+                        <Route path="/brands" element={<BrandsPage />} />
+                        <Route
+                          path="/special-gifts"
+                          element={<SpecialGiftsPage />}
+                        />
+                        <Route
+                          path="/notifications"
+                          element={<NotificationsPage />}
+                        />
+                        <Route
+                          path="/favorites"
+                          element={
+                            <ProtectedRoute requireAuthForFavorites={true}>
+                              <FavoritesPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route path="/packages" element={<PackagesPage />} />
+                        <Route
+                          path="/gift-assistant"
+                          element={<GiftAssistantPage />}
+                        />
 
-                      {/* Auth Routes - Only for non-authenticated users */}
-                      <Route
-                        path="/auth/login"
-                        element={
-                          <ProtectedRoute requireAuth={false}>
-                            <LoginPage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/auth/signup"
-                        element={
-                          <ProtectedRoute requireAuth={false}>
-                            <SignupPage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/auth/verify-email"
-                        element={
-                          <ProtectedRoute requireAuth={false}>
-                            <EmailVerificationPage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/auth/forgot-password"
-                        element={
-                          <ProtectedRoute requireAuth={false}>
-                            <ForgotPasswordPage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/auth/reset-password"
-                        element={
-                          <ProtectedRoute requireAuth={false}>
-                            <ResetPasswordPage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/auth/verify-phone"
-                        element={
-                          <ProtectedRoute>
-                            <PhoneVerificationPage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/auth/phone-setup"
-                        element={
-                          <ProtectedRoute>
-                            <PhoneSetupPage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/auth/verify-phone-login"
-                        element={
-                          <ProtectedRoute requireAuth={false}>
-                            <PhoneLoginVerificationPage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/auth/google/callback"
-                        element={<GoogleCallbackPage />}
-                      />
+                        {/* Auth Routes - Only for non-authenticated users */}
+                        <Route
+                          path="/auth/login"
+                          element={
+                            <ProtectedRoute requireAuth={false}>
+                              <LoginPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/auth/signup"
+                          element={
+                            <ProtectedRoute requireAuth={false}>
+                              <SignupPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/auth/verify-email"
+                          element={
+                            <ProtectedRoute requireAuth={false}>
+                              <EmailVerificationPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/auth/forgot-password"
+                          element={
+                            <ProtectedRoute requireAuth={false}>
+                              <ForgotPasswordPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/auth/reset-password"
+                          element={
+                            <ProtectedRoute requireAuth={false}>
+                              <ResetPasswordPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/auth/verify-phone"
+                          element={
+                            <ProtectedRoute>
+                              <PhoneVerificationPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/auth/phone-setup"
+                          element={
+                            <ProtectedRoute>
+                              <PhoneSetupPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/auth/verify-phone-login"
+                          element={
+                            <ProtectedRoute requireAuth={false}>
+                              <PhoneLoginVerificationPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/auth/google/callback"
+                          element={<GoogleCallbackPage />}
+                        />
 
-                      {/* User Routes - Only for authenticated users */}
-                      <Route
-                        path="/profile"
-                        element={
-                          <ProtectedRoute requirePhoneVerification={true}>
-                            <ProfilePage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/orders"
-                        element={
-                          <ProtectedRoute requirePhoneVerification={true}>
-                            <OrdersPage />
-                          </ProtectedRoute>
-                        }
-                      />
+                        {/* User Routes - Only for authenticated users */}
+                        <Route
+                          path="/profile"
+                          element={
+                            <ProtectedRoute requirePhoneVerification={true}>
+                              <ProfilePage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/orders"
+                          element={
+                            <ProtectedRoute requirePhoneVerification={true}>
+                              <OrdersPage />
+                            </ProtectedRoute>
+                          }
+                        />
 
-                      <Route path="*" element={<NotFoundPage />} />
-                    </Routes>
-                  </Suspense>
+                        <Route path="*" element={<NotFoundPage />} />
+                      </Routes>
+                    </Suspense>
                   </div>
-                  
+
                   <GradualBlur
                     target="parent"
                     position="bottom"

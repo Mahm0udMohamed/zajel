@@ -232,27 +232,27 @@ const GiftAssistantPage: React.FC = () => {
 
   if (showResults) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 py-8 px-4 sm:px-6 lg:px-8 font-serif text-neutral-800">
+      <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 py-8 px-4 sm:px-6 lg:px-8 font-serif text-text-primary">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-success-500 to-success-600 rounded-full mb-6">
               <CheckCircle className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-purple-800 mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-primary-800 mb-4">
               {isRtl ? "اقتراحاتنا المثالية لك" : "Our Perfect Recommendations"}
             </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto mb-6">
+            <p className="text-text-secondary max-w-2xl mx-auto mb-6">
               {isRtl
                 ? "بناءً على اختياراتك، وجدنا هذه الهدايا المثالية التي ستسعد المستقبل"
                 : "Based on your choices, we found these perfect gifts that will delight the recipient"}
             </p>
             <button
               onClick={resetAssistant}
-              className="text-purple-600 hover:text-purple-700 font-medium transition-colors"
+              className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
             >
               {isRtl ? "بحث جديد" : "New Search"}
             </button>
@@ -266,7 +266,7 @@ const GiftAssistantPage: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-300"
+                  className="bg-background-primary rounded-2xl shadow-lg border border-border-primary overflow-hidden group hover:shadow-xl transition-all duration-300"
                 >
                   <div className="relative aspect-square overflow-hidden">
                     <ProductImage
@@ -281,7 +281,7 @@ const GiftAssistantPage: React.FC = () => {
                       priority={index < 3}
                       showZoom={false}
                     />
-                    <div className="absolute top-3 left-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                    <div className="absolute top-3 left-3 bg-gradient-to-r from-success-500 to-success-600 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                       <Star size={12} />
                       {isRtl ? "مقترح" : "Recommended"}
                     </div>

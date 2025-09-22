@@ -24,11 +24,11 @@ const Footer: React.FC = () => {
 
   return (
     <footer
-      className="bg-neutral-50 text-neutral-700"
+      className="bg-background-secondary text-text-primary"
       dir={isRtl ? "rtl" : "ltr"}
     >
       {/* Top announcement bar */}
-      <div className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white py-2.5">
+      <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-2.5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -74,8 +74,8 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Section */}
           <div className="lg:col-span-1">
-            <Logo className="text-emerald-500 h-8 w-auto" />
-            <p className="mt-4 text-neutral-500 text-sm leading-relaxed">
+            <Logo className="text-primary-500 h-8 w-auto" />
+            <p className="mt-4 text-text-secondary text-sm leading-relaxed">
               {i18n.language === "ar"
                 ? "نحن نقدم تجربة تسوق فريدة ومجموعة واسعة من المنتجات عالية الجودة لتلبية جميع احتياجاتك."
                 : "We provide a unique shopping experience and a wide range of high-quality products to meet all your needs."}
@@ -90,7 +90,7 @@ const Footer: React.FC = () => {
                 <motion.a
                   key={name}
                   href={href}
-                  className="p-2 rounded-full text-neutral-500 hover:text-emerald-500 hover:bg-emerald-100 transition-colors duration-300"
+                  className="p-2 rounded-full text-text-secondary hover:text-primary-500 hover:bg-primary-100 transition-colors duration-300"
                   aria-label={name}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -137,11 +137,11 @@ const Footer: React.FC = () => {
                 <li key={index}>
                   <Link
                     to={link.to}
-                    className="text-neutral-600 hover:text-emerald-500 transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
+                    className="text-text-secondary hover:text-primary-500 transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
                   >
                     <ChevronRight
                       size={14}
-                      className={`text-neutral-500 transition-transform duration-300 ${
+                      className={`text-text-tertiary transition-transform duration-300 ${
                         isRtl ? "rotate-180" : ""
                       } ${
                         isRtl
@@ -183,11 +183,11 @@ const Footer: React.FC = () => {
                 <li key={index}>
                   <Link
                     to={link.to}
-                    className="text-neutral-600 hover:text-emerald-500 transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
+                    className="text-text-secondary hover:text-primary-500 transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
                   >
                     <ChevronRight
                       size={14}
-                      className={`text-neutral-500 transition-transform duration-300 ${
+                      className={`text-text-tertiary transition-transform duration-300 ${
                         isRtl ? "rotate-180" : ""
                       } ${
                         isRtl
@@ -213,13 +213,13 @@ const Footer: React.FC = () => {
             </h3>
             <ul className="space-y-3">
               <li className="flex items-center gap-2">
-                <Phone size={16} className="text-emerald-500 flex-shrink-0" />
+                <Phone size={16} className="text-primary-500 flex-shrink-0" />
                 <span className="text-neutral-600 text-sm">
                   +966 12 345 6789
                 </span>
               </li>
               <li className="flex items-center gap-2">
-                <Mail size={16} className="text-emerald-500 flex-shrink-0" />
+                <Mail size={16} className="text-primary-500 flex-shrink-0" />
                 <span className="text-neutral-600 text-sm">
                   info@company.com
                 </span>
@@ -263,7 +263,7 @@ const Footer: React.FC = () => {
                 ].map(({ icon: Icon, name }) => (
                   <motion.div
                     key={name}
-                    className="p-2 rounded-lg bg-neutral-200 text-neutral-600 hover:bg-emerald-100 hover:text-emerald-500 transition-colors duration-300"
+                    className="p-2 rounded-lg bg-neutral-200 text-neutral-600 hover:bg-primary-100 hover:text-primary-500 transition-colors duration-300"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >

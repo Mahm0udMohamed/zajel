@@ -1,0 +1,170 @@
+[
+  {
+    "id": 1001,
+    "nameEn": "Diamond Rose Gold Ring",
+    "nameAr": "خاتم ذهب وردي مرصع بالماس",
+    "price": 2999,
+    "imageUrl": "https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg",
+      "https://images.pexels.com/photos/3373735/pexels-photo-3373735.jpeg",
+      "https://images.pexels.com/photos/3373734/pexels-photo-3373734.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isLuxuryGift": true,
+    "categoryId": "jewelry",
+    "occasionId": "anniversary",
+    "descriptionEn": "Exquisite rose gold ring featuring a brilliant diamond center stone, surrounded by smaller diamonds. Crafted with precision and elegance, this luxury piece symbolizes eternal love and commitment.",
+    "descriptionAr": "خاتم ذهب وردي رائع يتميز بحجر ماسي لامع في الوسط، محاط بماسات أصغر. مصنوع بدقة وأناقة، هذه القطعة الفاخرة ترمز إلى الحب الأبدي والالتزام.",
+    "careTipsEn": "Store in a soft jewelry box. Clean with mild soap and water. Avoid contact with chemicals and perfumes.",
+    "careTipsAr": "احفظ في صندوق مجوهرات ناعم. نظف بصابون خفيف وماء. تجنب ملامسة المواد الكيميائية والعطور."
+  },
+  {
+    "id": 1002,
+    "nameEn": "Luxury Perfume Set",
+    "nameAr": "مجموعة عطور فاخرة",
+    "price": 899,
+    "imageUrl": "https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg",
+      "https://images.pexels.com/photos/965990/pexels-photo-965990.jpeg",
+      "https://images.pexels.com/photos/965991/pexels-photo-965991.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isLuxuryGift": true,
+    "categoryId": "perfumes",
+    "occasionId": "birthdays",
+    "descriptionEn": "Premium collection of luxury fragrances featuring exclusive scents from renowned perfumers. Each bottle is beautifully crafted and presented in an elegant gift box.",
+    "descriptionAr": "مجموعة مميزة من العطور الفاخرة تتميز بعطور حصرية من عطورات مشهورة. كل زجاجة مصنوعة بجمال وتقدم في صندوق هدية أنيق.",
+    "careTipsEn": "Store in a cool, dry place away from direct sunlight. Keep bottles upright to prevent leakage.",
+    "careTipsAr": "احفظ في مكان بارد وجاف بعيداً عن أشعة الشمس المباشرة. احتفظ بالزجاجات في وضع مستقيم لمنع التسريب."
+  },
+  {
+    "id": 1003,
+    "nameEn": "Gold-Plated Watch",
+    "nameAr": "ساعة مطلية بالذهب",
+    "price": 1599,
+    "imageUrl": "https://images.pexels.com/photos/393047/pexels-photo-393047.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/393047/pexels-photo-393047.jpeg",
+      "https://images.pexels.com/photos/393048/pexels-photo-393048.jpeg",
+      "https://images.pexels.com/photos/393049/pexels-photo-393049.jpeg"
+    ],
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "isLuxuryGift": true,
+    "categoryId": "jewelry",
+    "occasionId": "graduation",
+    "descriptionEn": "Elegant gold-plated watch with Swiss movement, featuring a classic design that never goes out of style. Perfect for special occasions and daily wear.",
+    "descriptionAr": "ساعة أنيقة مطلية بالذهب مع حركة سويسرية، تتميز بتصميم كلاسيكي لا يخرج عن الموضة أبداً. مثالية للمناسبات الخاصة والاستخدام اليومي.",
+    "careTipsEn": "Avoid water contact. Clean with soft cloth. Store in watch box when not wearing.",
+    "careTipsAr": "تجنب ملامسة الماء. نظف بقطعة قماش ناعمة. احفظ في صندوق الساعة عند عدم الاستخدام."
+  },
+  {
+    "id": 1004,
+    "nameEn": "Crystal Vase Collection",
+    "nameAr": "مجموعة مزهريات كريستال",
+    "price": 1299,
+    "imageUrl": "https://images.pexels.com/photos/1458916/pexels-photo-1458916.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/1458916/pexels-photo-1458916.jpeg",
+      "https://images.pexels.com/photos/1458917/pexels-photo-1458917.jpeg",
+      "https://images.pexels.com/photos/1458918/pexels-photo-1458918.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isLuxuryGift": true,
+    "categoryId": "vases",
+    "occasionId": "wedding",
+    "descriptionEn": "Handcrafted crystal vase collection featuring intricate designs and premium quality. Each piece is unique and adds elegance to any space.",
+    "descriptionAr": "مجموعة مزهريات كريستال مصنوعة يدوياً تتميز بتصاميم معقدة وجودة مميزة. كل قطعة فريدة وتضيف الأناقة لأي مساحة.",
+    "careTipsEn": "Hand wash with mild detergent. Dry with soft cloth. Handle with care to avoid scratches.",
+    "careTipsAr": "اغسل يدوياً بمنظف خفيف. جفف بقطعة قماش ناعمة. تعامل بحذر لتجنب الخدوش."
+  },
+  {
+    "id": 1005,
+    "nameEn": "Premium Chocolate Box",
+    "nameAr": "صندوق شوكولاتة مميز",
+    "price": 599,
+    "imageUrl": "https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg",
+      "https://images.pexels.com/photos/65883/chocolate-dark-coffee-confiserie-65883.jpeg",
+      "https://images.pexels.com/photos/65884/chocolate-dark-coffee-confiserie-65884.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isLuxuryGift": true,
+    "categoryId": "chocolate-cake",
+    "occasionId": "valentines-day",
+    "descriptionEn": "Artisanal chocolate collection featuring handcrafted truffles and pralines. Made with premium Belgian chocolate and exotic ingredients.",
+    "descriptionAr": "مجموعة شوكولاتة حرفية تتميز بالترافل والبرالين المصنوعة يدوياً. مصنوعة من شوكولاتة بلجيكية مميزة ومكونات غريبة.",
+    "careTipsEn": "Store in cool, dry place. Consume within 30 days. Keep away from strong odors.",
+    "careTipsAr": "احفظ في مكان بارد وجاف. استهلك خلال 30 يوماً. احتفظ بعيداً عن الروائح القوية."
+  },
+  {
+    "id": 1007,
+    "nameEn": "Premium Leather Wallet Set",
+    "nameAr": "مجموعة محافظ جلد فاخرة",
+    "price": 1299,
+    "imageUrl": "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg",
+      "https://images.pexels.com/photos/996330/pexels-photo-996330.jpeg",
+      "https://images.pexels.com/photos/996331/pexels-photo-996331.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isLuxuryGift": true,
+    "categoryId": "personal-care",
+    "occasionId": "graduation",
+    "descriptionEn": "Exquisite leather wallet set featuring premium Italian leather craftsmanship. Includes multiple compartments for cards, cash, and documents with elegant stitching and metal accents.",
+    "descriptionAr": "مجموعة محافظ جلد رائعة تتميز بحرفية الجلد الإيطالي المميز. تشمل أقسام متعددة للبطاقات والنقود والوثائق مع خياطة أنيقة وتفاصيل معدنية.",
+    "careTipsEn": "Clean with leather conditioner. Store in dry place. Avoid water contact.",
+    "careTipsAr": "نظف بمرطب الجلد. احفظ في مكان جاف. تجنب ملامسة الماء."
+  },
+  {
+    "id": 1008,
+    "nameEn": "Crystal Decorative Bowl",
+    "nameAr": "وعاء زخرفي كريستال",
+    "price": 899,
+    "imageUrl": "https://images.pexels.com/photos/1458916/pexels-photo-1458916.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/1458916/pexels-photo-1458916.jpeg",
+      "https://images.pexels.com/photos/1458917/pexels-photo-1458917.jpeg",
+      "https://images.pexels.com/photos/1458918/pexels-photo-1458918.jpeg"
+    ],
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "isLuxuryGift": true,
+    "categoryId": "vases",
+    "occasionId": "anniversary",
+    "descriptionEn": "Handcrafted crystal decorative bowl featuring intricate cut patterns and premium clarity. Perfect for displaying fruits, flowers, or as a standalone decorative piece.",
+    "descriptionAr": "وعاء زخرفي كريستال مصنوع يدوياً يتميز بأنماط قطع معقدة ووضوح مميز. مثالي لعرض الفواكه أو الزهور أو كقطعة زخرفية منفردة.",
+    "careTipsEn": "Hand wash with mild detergent. Dry with soft cloth. Handle with care.",
+    "careTipsAr": "اغسل يدوياً بمنظف خفيف. جفف بقطعة قماش ناعمة. تعامل بحذر."
+  },
+  {
+    "id": 1006,
+    "nameEn": "Luxury Silk Scarf",
+    "nameAr": "وشاح حرير فاخر",
+    "price": 799,
+    "imageUrl": "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg",
+      "https://images.pexels.com/photos/1043475/pexels-photo-1043475.jpeg",
+      "https://images.pexels.com/photos/1043476/pexels-photo-1043476.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isLuxuryGift": true,
+    "categoryId": "personal-care",
+    "occasionId": "mothers-day",
+    "descriptionEn": "Exquisite silk scarf featuring hand-painted designs and premium quality silk. A timeless accessory that adds sophistication to any outfit.",
+    "descriptionAr": "وشاح حرير رائع يتميز بتصاميم مرسومة يدوياً وحرير عالي الجودة. إكسسوار خالد يضيف الأناقة لأي زي.",
+    "careTipsEn": "Dry clean only. Store flat or hang on padded hanger. Avoid direct sunlight.",
+    "careTipsAr": "تنظيف جاف فقط. احفظ مسطحاً أو علق على شماعة مبطنة. تجنب أشعة الشمس المباشرة."
+  }
+]

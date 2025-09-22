@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { ChevronRight, ChevronLeft, Flame } from "lucide-react";
-import { getBestSellers } from "../../data";
+import { ChevronRight, ChevronLeft, Crown, Flame } from "lucide-react";
+import { getLuxuryGifts } from "../../data";
 import { ProductImage } from "../../features/images";
 import { useImagePreloader } from "../../features/images";
 
@@ -12,6 +12,7 @@ interface Product {
   nameAr: string;
   price: number;
   imageUrl: string;
+  isLuxuryGift?: boolean;
   isBestSeller?: boolean;
 }
 
@@ -28,26 +29,26 @@ const RiyalSymbol = ({ className = "w-4 h-4" }) => (
   </svg>
 );
 
-const BestSellersSection: React.FC = () => {
+const LuxuryGiftsSection: React.FC = () => {
   const { i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const bestSellers: Product[] = React.useMemo(() => getBestSellers(), []);
+  const luxuryProducts: Product[] = useMemo(() => getLuxuryGifts(), []);
 
   // ترجمة النصوص مباشرة في الملف
   const translations = {
-    title: isRtl ? "الأكثر مبيعاً" : "Best Sellers",
+    title: isRtl ? "هدايا فاخرة" : "Luxury Gifts",
     scrollLeft: isRtl ? "التمرير لليسار" : "Scroll Left",
     scrollRight: isRtl ? "التمرير لليمين" : "Scroll Right",
-    bestSeller: isRtl ? "الأكثر مبيعاً" : "Best Seller",
+    luxuryGift: isRtl ? "هدية فاخرة" : "Luxury Gift",
   };
 
-  const bestSellerImages = React.useMemo(
-    () => bestSellers.slice(0, 8).map((product) => product.imageUrl),
-    [bestSellers]
+  const luxuryImages = useMemo(
+    () => luxuryProducts.slice(0, 8).map((product) => product.imageUrl),
+    [luxuryProducts]
   );
-  useImagePreloader(bestSellerImages, { priority: true });
+  useImagePreloader(luxuryImages, { priority: true });
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -114,7 +115,7 @@ const BestSellersSection: React.FC = () => {
               scrollbarColor: isMobile ? "transparent" : "#0ea5e9 transparent",
             }}
           >
-            {bestSellers.map((product, index) => (
+            {luxuryProducts.map((product, index) => (
               <div
                 key={product.id}
                 className="group flex flex-shrink-0 w-44 sm:w-52 flex-col overflow-hidden rounded-3xl"
@@ -141,7 +142,13 @@ const BestSellersSection: React.FC = () => {
                       {product.isBestSeller && (
                         <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
                           <Flame size={10} />
-                          {translations.bestSeller}
+                          {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
+                        </span>
+                      )}
+                      {product.isLuxuryGift && (
+                        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-accent-500 to-warning-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
+                          <Crown size={10} />
+                          {translations.luxuryGift}
                         </span>
                       )}
                     </div>
@@ -175,4 +182,4 @@ const BestSellersSection: React.FC = () => {
   );
 };
 
-export default React.memo(BestSellersSection);
+export default React.memo(LuxuryGiftsSection);

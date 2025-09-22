@@ -194,24 +194,24 @@ const FavoritesPage: React.FC = () => {
   // Show login prompt if not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 flex items-center justify-center p-4 font-serif text-neutral-800">
+      <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 flex items-center justify-center p-4 font-serif text-text-primary">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/20 text-center"
+          className="bg-background-primary rounded-2xl shadow-2xl p-8 w-full max-w-md border border-border-primary text-center"
         >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6"
+            className="w-16 h-16 bg-gradient-to-r from-secondary-500 to-primary-500 rounded-full flex items-center justify-center mx-auto mb-6"
           >
             <Heart className="w-8 h-8 text-white" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-purple-800 mb-4">
+          <h1 className="text-2xl font-bold text-primary-800 mb-4">
             {isRtl ? "تسجيل الدخول مطلوب" : "Login Required"}
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-text-secondary mb-8">
             {isRtl
               ? "يجب تسجيل الدخول لعرض وإدارة المفضلة الخاصة بك"
               : "Please login to view and manage your favorites"}
@@ -219,13 +219,13 @@ const FavoritesPage: React.FC = () => {
           <div className="flex flex-col gap-3">
             <Link
               to="/auth/login"
-              className="bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 px-6 rounded-xl font-medium hover:from-purple-700 hover:to-pink-600 transition-all shadow-lg"
+              className="bg-gradient-to-r from-primary-600 to-secondary-500 text-white py-3 px-6 rounded-xl font-medium hover:from-primary-700 hover:to-secondary-600 transition-all shadow-lg"
             >
               {isRtl ? "تسجيل الدخول" : "Login"}
             </Link>
             <Link
               to="/auth/signup"
-              className="bg-white text-purple-600 border border-purple-200 py-3 px-6 rounded-xl font-medium hover:bg-purple-50 transition-all"
+              className="bg-background-primary text-primary-600 border border-primary-200 py-3 px-6 rounded-xl font-medium hover:bg-primary-50 transition-all"
             >
               {isRtl ? "إنشاء حساب جديد" : "Create Account"}
             </Link>
@@ -238,7 +238,7 @@ const FavoritesPage: React.FC = () => {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 flex items-center justify-center p-4">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 font-medium">

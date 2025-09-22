@@ -87,10 +87,10 @@ const SignupForm: React.FC = () => {
   };
 
   const getStrengthColor = () => {
-    if (passwordStrength < 25) return "bg-red-500";
-    if (passwordStrength < 50) return "bg-yellow-500";
-    if (passwordStrength < 75) return "bg-blue-500";
-    return "bg-green-500";
+    if (passwordStrength < 25) return "bg-error-500";
+    if (passwordStrength < 50) return "bg-warning-500";
+    if (passwordStrength < 75) return "bg-info-500";
+    return "bg-success-500";
   };
 
   const getStrengthText = () => {
@@ -101,25 +101,25 @@ const SignupForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 flex items-center justify-center p-4 font-serif text-neutral-800">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 flex items-center justify-center p-4 font-serif text-text-primary">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/20"
+        className="bg-background-primary rounded-2xl shadow-2xl p-8 w-full max-w-md border border-border-primary"
       >
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4"
+            className="w-16 h-16 bg-gradient-to-r from-primary-600 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-4"
           >
             <UserPlus className="w-8 h-8 text-white" />
           </motion.div>
           <h1 className="text-2xl font-bold text-purple-800 mb-2">
             {isRtl ? "إنشاء حساب جديد" : "Create Account"}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             {isRtl ? "انضم إلينا اليوم" : "Join us today"}
           </p>
         </div>
@@ -192,7 +192,7 @@ const SignupForm: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 rtl:left-3 rtl:right-auto top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 rtl:left-3 rtl:right-auto top-1/2 transform -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -206,7 +206,7 @@ const SignupForm: React.FC = () => {
                       style={{ width: `${passwordStrength}%` }}
                     />
                   </div>
-                  <span className="text-xs text-gray-600">
+                  <span className="text-xs text-text-secondary">
                     {getStrengthText()}
                   </span>
                 </div>
@@ -237,7 +237,7 @@ const SignupForm: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 rtl:left-3 rtl:right-auto top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 rtl:left-3 rtl:right-auto top-1/2 transform -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
               >
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -255,21 +255,21 @@ const SignupForm: React.FC = () => {
           <div className="flex items-start">
             <input
               type="checkbox"
-              className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 mt-1"
+              className="rounded border-border-primary text-primary-600 focus:ring-primary-500 mt-1"
               required
             />
-            <span className="ml-2 rtl:mr-2 rtl:ml-0 text-sm text-gray-600">
+            <span className="ml-2 rtl:mr-2 rtl:ml-0 text-sm text-text-secondary">
               {isRtl ? "أوافق على" : "I agree to the"}{" "}
               <Link
                 to="/terms"
-                className="text-purple-600 hover:text-purple-700"
+                className="text-primary-600 hover:text-primary-700"
               >
                 {isRtl ? "الشروط والأحكام" : "Terms & Conditions"}
               </Link>{" "}
               {isRtl ? "و" : "and"}{" "}
               <Link
                 to="/privacy"
-                className="text-purple-600 hover:text-purple-700"
+                className="text-primary-600 hover:text-primary-700"
               >
                 {isRtl ? "سياسة الخصوصية" : "Privacy Policy"}
               </Link>
@@ -297,7 +297,7 @@ const SignupForm: React.FC = () => {
         </form>
 
         <div className="mt-8 text-center">
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             {isRtl ? "لديك حساب بالفعل؟" : "Already have an account?"}{" "}
             <Link
               to="/auth/login"

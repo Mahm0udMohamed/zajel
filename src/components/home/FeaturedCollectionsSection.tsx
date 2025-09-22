@@ -30,11 +30,19 @@ const RiyalSymbol = ({ className = "w-4 h-4" }) => (
 );
 
 const FeaturedCollectionsSection: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const featuredProducts: Product[] = useMemo(() => getSpecialGifts(), []);
+
+  // ترجمة النصوص مباشرة في الملف
+  const translations = {
+    title: isRtl ? "المجموعات المميزة" : "Featured Collections",
+    scrollLeft: isRtl ? "التمرير لليسار" : "Scroll Left",
+    scrollRight: isRtl ? "التمرير لليمين" : "Scroll Right",
+    specialGift: isRtl ? "هدية مميزة" : "Special Gift",
+  };
 
   const featuredImages = useMemo(
     () => featuredProducts.slice(0, 8).map((product) => product.imageUrl),
@@ -67,15 +75,15 @@ const FeaturedCollectionsSection: React.FC = () => {
   const nextDirection = isRtl ? "left" : "right";
 
   return (
-    <section className="py-6 bg-white">
+    <section className="py-2 sm:py-6 bg-background-primary">
       <div className="container-custom px-4 sm:px-6">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-3">
           <h2
-            className={`text-lg sm:text-xl font-bold text-gray-900 ${
+            className={`text-lg sm:text-xl font-bold text-text-primary ${
               i18n.language === "ar" ? "font-tajawal" : "font-poppins"
             }`}
           >
-            {t("home.featuredCollections.title")}
+            {translations.title}
           </h2>
         </div>
 
@@ -84,15 +92,15 @@ const FeaturedCollectionsSection: React.FC = () => {
             <>
               <button
                 onClick={() => scroll(prevDirection)}
-                className="hidden md:flex items-center justify-center absolute top-[40%] -translate-y-1/2 bg-white/90 text-stone-600 rounded-full w-9 h-9 shadow ring-1 ring-stone-200 z-10 -left-8"
-                aria-label={t("common.scrollLeft")}
+                className="hidden md:flex items-center justify-center absolute top-[40%] -translate-y-1/2 bg-background-primary/90 text-text-secondary rounded-full w-9 h-9 shadow ring-1 ring-border-primary z-10 -left-8"
+                aria-label={translations.scrollLeft}
               >
                 <ChevronLeft size={18} />
               </button>
               <button
                 onClick={() => scroll(nextDirection)}
-                className="hidden md:flex items-center justify-center absolute top-[40%] -translate-y-1/2 bg-white/90 text-stone-600 rounded-full w-9 h-9 shadow ring-1 ring-stone-200 z-10 -right-8"
-                aria-label={t("common.scrollRight")}
+                className="hidden md:flex items-center justify-center absolute top-[40%] -translate-y-1/2 bg-background-primary/90 text-text-secondary rounded-full w-9 h-9 shadow ring-1 ring-border-primary z-10 -right-8"
+                aria-label={translations.scrollRight}
               >
                 <ChevronRight size={18} />
               </button>
@@ -100,11 +108,11 @@ const FeaturedCollectionsSection: React.FC = () => {
           )}
           <div
             ref={scrollRef}
-            className="flex overflow-x-auto gap-x-3 pb-4 snap-x snap-mandatory scroll-smooth touch-pan-x"
+            className="flex overflow-x-auto gap-x-3 pb-2 snap-x snap-mandatory scroll-smooth touch-pan-x"
             style={{
               WebkitOverflowScrolling: "touch",
               scrollbarWidth: isMobile ? "none" : "thin",
-              scrollbarColor: isMobile ? "transparent" : "#8A2BE2 transparent",
+              scrollbarColor: isMobile ? "transparent" : "#0ea5e9 transparent",
             }}
           >
             {featuredProducts.map((product, index) => (
@@ -132,23 +140,23 @@ const FeaturedCollectionsSection: React.FC = () => {
                     />
                     <div className="absolute start-2 top-2 flex flex-col gap-1">
                       {product.isBestSeller && (
-                        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
+                        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
                           <Flame size={10} />
                           {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
                         </span>
                       )}
                       {product.isSpecialGift && (
-                        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
+                        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-success-500 to-accent-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
                           <Gift size={10} />
-                          {isRtl ? "هدايا خاصة" : "Special Gifts"}
+                          {translations.specialGift}
                         </span>
                       )}
                     </div>
                   </div>
                 </Link>
-                <div className="p-3 flex flex-col h-full bg-white rounded-b-3xl">
+                <div className="p-3 flex flex-col h-full bg-background-primary rounded-b-3xl">
                   <Link to={`/product/${product.id}`} className="block">
-                    <h3 className="line-clamp-2 text-base font-bold text-neutral-900 transition-colors duration-200 leading-tight mb-0">
+                    <h3 className="line-clamp-2 text-base font-bold text-text-primary transition-colors duration-200 leading-tight mb-0">
                       {isRtl ? product.nameAr : product.nameEn}
                     </h3>
                   </Link>
@@ -158,7 +166,7 @@ const FeaturedCollectionsSection: React.FC = () => {
                         isRtl ? "flex-row-reverse" : ""
                       }`}
                     >
-                      <RiyalSymbol className="h-4 w-4 text-emerald-600" />
+                      <RiyalSymbol className="h-4 w-4 text-primary-600" />
                       <span className="text-base font-bold text-neutral-900">
                         {product.price}
                       </span>

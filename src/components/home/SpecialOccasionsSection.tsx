@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { ChevronRight, ChevronLeft, Flame } from "lucide-react";
-import { getBestSellers } from "../../data";
+import { ChevronRight, ChevronLeft, Star, Flame } from "lucide-react";
+import { getSpecialOccasions } from "../../data";
 import { ProductImage } from "../../features/images";
 import { useImagePreloader } from "../../features/images";
 
@@ -12,6 +12,7 @@ interface Product {
   nameAr: string;
   price: number;
   imageUrl: string;
+  isSpecialOccasion?: boolean;
   isBestSeller?: boolean;
 }
 
@@ -28,26 +29,30 @@ const RiyalSymbol = ({ className = "w-4 h-4" }) => (
   </svg>
 );
 
-const BestSellersSection: React.FC = () => {
+const SpecialOccasionsSection: React.FC = () => {
   const { i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const bestSellers: Product[] = React.useMemo(() => getBestSellers(), []);
+  const specialOccasionProducts: Product[] = useMemo(
+    () => getSpecialOccasions(),
+    []
+  );
 
   // ترجمة النصوص مباشرة في الملف
   const translations = {
-    title: isRtl ? "الأكثر مبيعاً" : "Best Sellers",
+    title: isRtl ? "مناسبة خاصة" : "Special Occasions",
     scrollLeft: isRtl ? "التمرير لليسار" : "Scroll Left",
     scrollRight: isRtl ? "التمرير لليمين" : "Scroll Right",
-    bestSeller: isRtl ? "الأكثر مبيعاً" : "Best Seller",
+    specialOccasion: isRtl ? "مناسبة خاصة" : "Special Occasion",
   };
 
-  const bestSellerImages = React.useMemo(
-    () => bestSellers.slice(0, 8).map((product) => product.imageUrl),
-    [bestSellers]
+  const specialOccasionImages = useMemo(
+    () =>
+      specialOccasionProducts.slice(0, 8).map((product) => product.imageUrl),
+    [specialOccasionProducts]
   );
-  useImagePreloader(bestSellerImages, { priority: true });
+  useImagePreloader(specialOccasionImages, { priority: true });
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -114,7 +119,7 @@ const BestSellersSection: React.FC = () => {
               scrollbarColor: isMobile ? "transparent" : "#0ea5e9 transparent",
             }}
           >
-            {bestSellers.map((product, index) => (
+            {specialOccasionProducts.map((product, index) => (
               <div
                 key={product.id}
                 className="group flex flex-shrink-0 w-44 sm:w-52 flex-col overflow-hidden rounded-3xl"
@@ -141,7 +146,13 @@ const BestSellersSection: React.FC = () => {
                       {product.isBestSeller && (
                         <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
                           <Flame size={10} />
-                          {translations.bestSeller}
+                          {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
+                        </span>
+                      )}
+                      {product.isSpecialOccasion && (
+                        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-secondary-500 to-accent-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
+                          <Star size={10} />
+                          {translations.specialOccasion}
                         </span>
                       )}
                     </div>
@@ -160,7 +171,7 @@ const BestSellersSection: React.FC = () => {
                       }`}
                     >
                       <RiyalSymbol className="h-4 w-4 text-primary-600" />
-                      <span className="text-base font-bold text-text-primary">
+                      <span className="text-base font-bold text-neutral-900">
                         {product.price}
                       </span>
                     </div>
@@ -175,4 +186,4 @@ const BestSellersSection: React.FC = () => {
   );
 };
 
-export default React.memo(BestSellersSection);
+export default React.memo(SpecialOccasionsSection);

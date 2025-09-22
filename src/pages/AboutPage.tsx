@@ -24,7 +24,7 @@ const AboutPage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 px-4 sm:px-6 lg:px-8 font-serif text-neutral-800"
+      className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 px-4 sm:px-6 lg:px-8 font-serif text-text-primary"
       dir={isArabic ? "rtl" : "ltr"}
     >
       <div className="max-w-7xl mx-auto py-12 sm:py-16">
@@ -33,16 +33,16 @@ const AboutPage: React.FC = () => {
           animate="visible"
           variants={containerVariants}
           // Responsive padding for the main card
-          className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 md:p-12 border border-neutral-100"
+          className="bg-background-primary rounded-2xl shadow-lg p-6 sm:p-8 md:p-12 border border-border-primary"
         >
           {/* Section 1: Hero */}
           <section className="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-12 md:mb-16">
             <motion.div variants={itemVariants}>
               {/* Responsive heading size */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-purple-800">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-primary-800">
                 {isArabic ? "من نحن" : "About Us"}
               </h1>
-              <p className="text-base sm:text-lg text-neutral-700 leading-relaxed font-medium mb-4">
+              <p className="text-base sm:text-lg text-text-secondary leading-relaxed font-medium mb-4">
                 {isArabic
                   ? "زاجل السعادة هو متجر متخصص في تقديم الهدايا الفريدة والمميزة لجميع المناسبات. نحن نؤمن بأن كل هدية تحمل معها لحظة من السعادة والبهجة."
                   : "Zajil Al-Saadah is a specialty store dedicated to providing unique and distinctive gifts for all occasions. We believe that every gift carries with it a moment of joy and happiness."}
@@ -70,7 +70,7 @@ const AboutPage: React.FC = () => {
                 priority={true}
                 showZoom={false}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/10 to-transparent rounded-2xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-primary-900/10 to-transparent rounded-2xl"></div>
             </motion.div>
           </section>
 

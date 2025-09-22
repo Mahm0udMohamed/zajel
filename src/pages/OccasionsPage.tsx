@@ -329,26 +329,26 @@ const OccasionsPage: React.FC = () => {
 
   if (slug && !occasions.some((occasion) => occasion.id === slug)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50 p-4 sm:p-6 lg:p-10">
+      <div className="min-h-screen flex items-center justify-center bg-background-secondary p-4 sm:p-6 lg:p-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center p-8 bg-white rounded-3xl shadow-lg max-w-md mx-4 border border-neutral-100/60"
+          className="text-center p-8 bg-background-primary rounded-3xl shadow-lg max-w-md mx-4 border border-border-primary"
         >
-          <div className="w-24 h-24 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-24 h-24 bg-background-secondary rounded-full flex items-center justify-center mx-auto mb-6">
             <Gift size={40} className="text-neutral-400" />
           </div>
-          <h1 className="text-2xl font-extrabold text-neutral-900 mb-4">
+          <h1 className="text-2xl font-extrabold text-text-primary mb-4">
             {isRtl ? "المناسبة غير موجودة" : "Occasion Not Found"}
           </h1>
-          <p className="text-neutral-600 mb-8 text-sm max-w-sm mx-auto">
+          <p className="text-text-secondary mb-8 text-sm max-w-sm mx-auto">
             {isRtl
               ? "عذراً، المناسبة المطلوبة غير متوفرة. جرب العودة إلى صفحة المنتجات."
               : "Sorry, the requested occasion is not available. Try returning to the products page."}
           </p>
           <Link
             to="/occasions/all"
-            className="px-6 py-3 bg-violet-500 text-white rounded-full hover:bg-violet-600 transition-colors text-sm font-bold shadow-md"
+            className="px-6 py-3 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors text-sm font-bold shadow-md"
           >
             {isRtl ? "العودة إلى الكل" : "Back to All"}
           </Link>
@@ -358,7 +358,7 @@ const OccasionsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-800 font-sans antialiased p-4 sm:p-6 lg:p-10">
+    <div className="min-h-screen bg-background-secondary text-text-primary font-sans antialiased p-4 sm:p-6 lg:p-10">
       <div className="mx-auto max-w-7xl">
         <main className="grid gap-8 lg:grid-cols-[300px_1fr] w-full min-w-[0]">
           {/* Filters Sidebar */}
@@ -368,10 +368,10 @@ const OccasionsPage: React.FC = () => {
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="hidden lg:block w-[300px] flex-shrink-0"
           >
-            <div className="sticky top-6 rounded-3xl border border-neutral-100 bg-white shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] overflow-hidden">
-              <div className="flex items-center justify-between gap-2 px-5 py-4 bg-emerald-500/10">
+            <div className="sticky top-6 rounded-3xl border border-border-primary bg-background-primary shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] overflow-hidden">
+              <div className="flex items-center justify-between gap-2 px-5 py-4 bg-primary-500/10">
                 <h3 className="flex items-center gap-2 text-base font-extrabold text-neutral-900">
-                  <SlidersHorizontal size={18} className="text-emerald-500" />
+                  <SlidersHorizontal size={18} className="text-primary-500" />
                   {isRtl ? "تخصيص" : "Customize"}
                 </h3>
                 {hasActiveFilters && (
@@ -403,7 +403,7 @@ const OccasionsPage: React.FC = () => {
                       }
                       className={`h-10 w-full ${
                         isRtl ? "pr-9 pl-3" : "pl-9 pr-3"
-                      } rounded-xl border border-neutral-200 bg-neutral-50/70 text-sm outline-none focus:border-emerald-500 focus:bg-white`}
+                      } rounded-xl border border-neutral-200 bg-neutral-50/70 text-sm outline-none focus:border-primary-500 focus:bg-white`}
                     />
                     {searchTerm && (
                       <button
@@ -546,7 +546,7 @@ const OccasionsPage: React.FC = () => {
                         className="p-4"
                       >
                         <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-neutral-900">
-                          <DollarSign size={16} className="text-emerald-500" />
+                          <DollarSign size={16} className="text-primary-500" />
                           {isRtl ? "نطاق السعر" : "Price Range"}
                         </h4>
                         <div className="grid gap-2">
@@ -597,7 +597,7 @@ const OccasionsPage: React.FC = () => {
                         className="p-4"
                       >
                         <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-neutral-900">
-                          <Sparkles size={16} className="text-emerald-500" />
+                          <Sparkles size={16} className="text-primary-500" />
                           {isRtl ? "المميزات" : "Features"}
                         </h4>
                         <div className="grid gap-2">
@@ -643,7 +643,7 @@ const OccasionsPage: React.FC = () => {
                         className="p-4"
                       >
                         <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-neutral-900">
-                          <Tag size={16} className="text-emerald-500" />
+                          <Tag size={16} className="text-primary-500" />
                           {isRtl ? "المناسبات" : "Occasions"}
                         </h4>
                         <div className="grid gap-2">
@@ -769,9 +769,9 @@ const OccasionsPage: React.FC = () => {
                               }}
                               className={`w-full ${
                                 isRtl ? "text-right" : "text-left"
-                              } px-4 py-2 text-sm transition-colors hover:bg-emerald-500/10 ${
+                              } px-4 py-2 text-sm transition-colors hover:bg-primary-500/10 ${
                                 filters.sortBy === option.value
-                                  ? "bg-emerald-500/10 text-neutral-900"
+                                  ? "bg-primary-500/10 text-neutral-900"
                                   : "text-neutral-700"
                               }`}
                             >
@@ -789,7 +789,7 @@ const OccasionsPage: React.FC = () => {
                       onClick={() => setViewMode("grid")}
                       className={`rounded-full p-2 ${
                         viewMode === "grid"
-                          ? "bg-white text-emerald-500 shadow-sm"
+                          ? "bg-white text-primary-500 shadow-sm"
                           : "text-neutral-500 hover:bg-neutral-200"
                       }`}
                       aria-label="Grid"
@@ -800,7 +800,7 @@ const OccasionsPage: React.FC = () => {
                       onClick={() => setViewMode("list")}
                       className={`rounded-full p-2 ${
                         viewMode === "list"
-                          ? "bg-white text-emerald-500 shadow-sm"
+                          ? "bg-white text-primary-500 shadow-sm"
                           : "text-neutral-500 hover:bg-neutral-200"
                       }`}
                       aria-label="List"

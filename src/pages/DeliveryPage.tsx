@@ -40,14 +40,14 @@ const StepCard: React.FC<{
   return (
     <motion.div
       variants={itemVariants}
-      className="relative flex flex-col items-center text-center p-6 bg-white rounded-2xl shadow-lg border border-neutral-100"
+      className="relative flex flex-col items-center text-center p-6 bg-background-primary rounded-2xl shadow-lg border border-border-primary"
     >
-      <div className="absolute -top-6 bg-gradient-to-r from-purple-600 to-pink-500 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shadow-md">
+      <div className="absolute -top-6 bg-gradient-to-r from-primary-600 to-secondary-500 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shadow-md">
         {step}
       </div>
-      <div className="mt-8 mb-4 text-purple-600">{icon}</div>
-      <h3 className="text-xl font-bold text-neutral-800 mb-2">{title}</h3>
-      <p className="text-neutral-600 leading-relaxed flex-grow">
+      <div className="mt-8 mb-4 text-primary-600">{icon}</div>
+      <h3 className="text-xl font-bold text-text-primary mb-2">{title}</h3>
+      <p className="text-text-secondary leading-relaxed flex-grow">
         {description}
       </p>
     </motion.div>
@@ -91,7 +91,7 @@ const DeliveryPage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 px-4 sm:px-6 lg:px-8 font-serif text-neutral-800"
+      className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 px-4 sm:px-6 lg:px-8 font-serif text-text-primary"
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="max-w-7xl mx-auto py-12 sm:py-16 lg:py-20">
@@ -105,8 +105,8 @@ const DeliveryPage: React.FC = () => {
             variants={itemVariants}
             className="text-center mb-16 md:mb-20"
           >
-            <Truck className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-purple-800 mb-4">
+            <Truck className="w-16 h-16 text-primary-600 mx-auto mb-4" />
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-primary-800 mb-4">
               {isRtl ? "معلومات التوصيل" : "Delivery Information"}
             </h1>
             <p className="text-lg sm:text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">

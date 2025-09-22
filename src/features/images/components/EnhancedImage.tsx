@@ -233,7 +233,7 @@ const EnhancedImage: React.FC<EnhancedImageProps> = ({
 
       {/* Error State - only shows on actual error */}
       {imageState === "error" && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 text-gray-500">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-background-secondary to-background-tertiary text-text-secondary">
           <LogoPlaceholder
             size={Math.min(placeholderSize, 32)}
             animate={false}

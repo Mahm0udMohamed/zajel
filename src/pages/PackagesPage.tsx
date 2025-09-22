@@ -95,28 +95,28 @@ const PackagesPage: React.FC = () => {
 
   const featureComparison: FeatureComparisonItem[] = [
     {
-      icon: <Shield size={24} className="text-purple-600" />,
+      icon: <Shield size={24} className="text-primary-600" />,
       title: isRtl ? "جودة مضمونة" : "Quality Guaranteed",
       description: isRtl
         ? "منتجات عالية الجودة مع ضمان الرضا."
         : "High-quality products with a satisfaction guarantee.",
     },
     {
-      icon: <Truck size={24} className="text-purple-600" />,
+      icon: <Truck size={24} className="text-primary-600" />,
       title: isRtl ? "توصيل سريع وموثوق" : "Fast & Reliable Delivery",
       description: isRtl
         ? "توصيل في الوقت المحدد لجميع الباقات."
         : "On-time delivery for all packages.",
     },
     {
-      icon: <Heart size={24} className="text-purple-600" />,
+      icon: <Heart size={24} className="text-primary-600" />,
       title: isRtl ? "تصميم مخصص" : "Custom Design",
       description: isRtl
         ? "باقات مصممة خصيصاً لتناسب مناسبتك."
         : "Packages designed specifically for your occasion.",
     },
     {
-      icon: <Award size={24} className="text-purple-600" />,
+      icon: <Award size={24} className="text-primary-600" />,
       title: isRtl ? "خدمة عملاء متميزة" : "Premium Service",
       description: isRtl
         ? "دعم عملاء متخصص ومتاح دائماً لمساعدتك."
@@ -127,20 +127,20 @@ const PackagesPage: React.FC = () => {
   const getPackageStyle = (pkg: PackageData) => {
     const styles = {
       blue: {
-        ring: "ring-blue-200",
-        button: "bg-blue-600 hover:bg-blue-700",
-        icon: "bg-blue-100 text-blue-600",
+        ring: "ring-info-200",
+        button: "bg-info-600 hover:bg-info-700",
+        icon: "bg-info-100 text-info-600",
       },
       purple: {
-        ring: "ring-purple-200",
+        ring: "ring-primary-200",
         button:
-          "bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600",
-        icon: "bg-purple-100 text-purple-600",
+          "bg-gradient-to-r from-primary-600 to-secondary-500 hover:from-primary-700 hover:to-secondary-600",
+        icon: "bg-primary-100 text-primary-600",
       },
       amber: {
-        ring: "ring-amber-200",
-        button: "bg-amber-500 hover:bg-amber-600",
-        icon: "bg-amber-100 text-amber-500",
+        ring: "ring-accent-200",
+        button: "bg-accent-500 hover:bg-accent-600",
+        icon: "bg-accent-100 text-accent-500",
       },
     };
     return styles[pkg.color as keyof typeof styles] || styles.purple;
@@ -166,7 +166,7 @@ const PackagesPage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 font-serif text-neutral-800"
+      className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 font-serif text-text-primary"
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
@@ -179,19 +179,19 @@ const PackagesPage: React.FC = () => {
         >
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-500 rounded-2xl mb-6 shadow-lg"
+            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary-600 to-secondary-500 rounded-2xl mb-6 shadow-lg"
           >
             <Gift className="w-8 h-8 text-white" />
           </motion.div>
           <motion.h1
             variants={itemVariants}
-            className="text-4xl sm:text-5xl md:text-6xl font-bold text-purple-800 tracking-tight mb-4"
+            className="text-4xl sm:text-5xl md:text-6xl font-bold text-primary-800 tracking-tight mb-4"
           >
             {isRtl ? "باقات الهدايا لدينا" : "Our Gift Packages"}
           </motion.h1>
           <motion.p
             variants={itemVariants}
-            className="mt-4 text-lg max-w-3xl mx-auto leading-relaxed text-neutral-600"
+            className="mt-4 text-lg max-w-3xl mx-auto leading-relaxed text-text-secondary"
           >
             {isRtl
               ? "اختر الباقة المثالية التي تعبر عن مشاعرك. كل باقة مصممة بعناية لتقديم تجربة لا تُنسى."
@@ -207,8 +207,8 @@ const PackagesPage: React.FC = () => {
           <span
             className={`font-semibold transition-colors ${
               billingCycle === "monthly"
-                ? "text-purple-700"
-                : "text-neutral-500"
+                ? "text-primary-700"
+                : "text-text-tertiary"
             }`}
           >
             {isRtl ? "شهرياً" : "Monthly"}

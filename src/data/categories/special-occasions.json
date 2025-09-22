@@ -1,0 +1,170 @@
+[
+  {
+    "id": 2001,
+    "nameEn": "Anniversary Memory Box",
+    "nameAr": "صندوق ذكريات الذكرى السنوية",
+    "price": 399,
+    "imageUrl": "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg",
+      "https://images.pexels.com/photos/1024994/pexels-photo-1024994.jpeg",
+      "https://images.pexels.com/photos/1024995/pexels-photo-1024995.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isSpecialOccasion": true,
+    "categoryId": "party-favors",
+    "occasionId": "anniversary",
+    "descriptionEn": "Beautiful memory box designed to preserve precious moments and memories. Features elegant compartments for photos, letters, and keepsakes from your special day.",
+    "descriptionAr": "صندوق ذكريات جميل مصمم لحفظ اللحظات والذكريات الثمينة. يتميز بأقسام أنيقة للصور والرسائل والتذكارات من يومك الخاص.",
+    "careTipsEn": "Keep in dry place. Handle with care. Store away from direct sunlight.",
+    "careTipsAr": "احفظ في مكان جاف. تعامل بحذر. احفظ بعيداً عن أشعة الشمس المباشرة."
+  },
+  {
+    "id": 2002,
+    "nameEn": "Graduation Success Kit",
+    "nameAr": "مجموعة نجاح التخرج",
+    "price": 299,
+    "imageUrl": "https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg",
+      "https://images.pexels.com/photos/267886/pexels-photo-267886.jpeg",
+      "https://images.pexels.com/photos/267887/pexels-photo-267887.jpeg"
+    ],
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "isSpecialOccasion": true,
+    "categoryId": "party-favors",
+    "occasionId": "graduation",
+    "descriptionEn": "Complete graduation celebration kit including diploma frame, graduation cap, and success-themed accessories. Perfect for celebrating academic achievements.",
+    "descriptionAr": "مجموعة احتفال التخرج الكاملة تشمل إطار الدبلوم وقبعة التخرج وإكسسوارات بموضوع النجاح. مثالية للاحتفال بالإنجازات الأكاديمية.",
+    "careTipsEn": "Handle diploma frame with care. Keep accessories in original packaging.",
+    "careTipsAr": "تعامل مع إطار الدبلوم بحذر. احتفظ بالإكسسوارات في التغليف الأصلي."
+  },
+  {
+    "id": 2003,
+    "nameEn": "Wedding Bliss Collection",
+    "nameAr": "مجموعة سعادة الزفاف",
+    "price": 799,
+    "imageUrl": "https://images.pexels.com/photos/265856/pexels-photo-265856.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/265856/pexels-photo-265856.jpeg",
+      "https://images.pexels.com/photos/265857/pexels-photo-265857.jpeg",
+      "https://images.pexels.com/photos/265858/pexels-photo-265858.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isSpecialOccasion": true,
+    "categoryId": "flowers",
+    "occasionId": "wedding",
+    "descriptionEn": "Elegant wedding collection featuring white roses, baby's breath, and elegant ribbons. Perfect for creating beautiful wedding decorations and bouquets.",
+    "descriptionAr": "مجموعة زفاف أنيقة تتميز بالورود البيضاء ونفس الطفل والأشرطة الأنيقة. مثالية لإنشاء زخارف وباقات زفاف جميلة.",
+    "careTipsEn": "Keep flowers in water. Store in cool place. Use within 24-48 hours.",
+    "careTipsAr": "احتفظ بالزهور في الماء. احفظ في مكان بارد. استخدم خلال 24-48 ساعة."
+  },
+  {
+    "id": 2004,
+    "nameEn": "New Year Celebration Set",
+    "nameAr": "مجموعة احتفال رأس السنة",
+    "price": 199,
+    "imageUrl": "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg",
+      "https://images.pexels.com/photos/1267321/pexels-photo-1267321.jpeg",
+      "https://images.pexels.com/photos/1267322/pexels-photo-1267322.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isSpecialOccasion": true,
+    "categoryId": "balloons",
+    "occasionId": "new-year",
+    "descriptionEn": "Complete New Year celebration set with confetti, party hats, noise makers, and festive decorations. Perfect for ringing in the new year with style.",
+    "descriptionAr": "مجموعة احتفال رأس السنة الكاملة مع الكونفيتي وقبعات الحفلات وصانعات الضوضاء والزخارف الاحتفالية. مثالية لاستقبال السنة الجديدة بأناقة.",
+    "careTipsEn": "Store in dry place. Use decorations carefully. Dispose of confetti responsibly.",
+    "careTipsAr": "احفظ في مكان جاف. استخدم الزخارف بحذر. تخلص من الكونفيتي بمسؤولية."
+  },
+  {
+    "id": 2005,
+    "nameEn": "Mother's Day Spa Kit",
+    "nameAr": "مجموعة سبا عيد الأم",
+    "price": 499,
+    "imageUrl": "https://images.pexels.com/photos/3992209/pexels-photo-3992209.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/3992209/pexels-photo-3992209.jpeg",
+      "https://images.pexels.com/photos/3992210/pexels-photo-3992210.jpeg",
+      "https://images.pexels.com/photos/3992211/pexels-photo-3992211.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isSpecialOccasion": true,
+    "categoryId": "beauty-care",
+    "occasionId": "mothers-day",
+    "descriptionEn": "Luxurious spa kit designed for mothers, featuring premium skincare products, bath salts, and relaxation accessories. Perfect for pampering the special woman in your life.",
+    "descriptionAr": "مجموعة سبا فاخرة مصممة للأمهات، تتميز بمنتجات العناية بالبشرة المميزة وأملاح الاستحمام وإكسسوارات الاسترخاء. مثالية لتدليل المرأة الخاصة في حياتك.",
+    "careTipsEn": "Store in cool, dry place. Use products before expiration date. Patch test new products.",
+    "careTipsAr": "احفظ في مكان بارد وجاف. استخدم المنتجات قبل تاريخ انتهاء الصلاحية. اختبر المنتجات الجديدة على بقعة صغيرة."
+  },
+  {
+    "id": 2007,
+    "nameEn": "Eid Celebration Gift Box",
+    "nameAr": "صندوق هدايا احتفال العيد",
+    "price": 399,
+    "imageUrl": "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg",
+      "https://images.pexels.com/photos/1024994/pexels-photo-1024994.jpeg",
+      "https://images.pexels.com/photos/1024995/pexels-photo-1024995.jpeg"
+    ],
+    "isBestSeller": false,
+    "isSpecialGift": false,
+    "isSpecialOccasion": true,
+    "categoryId": "party-favors",
+    "occasionId": "eid-fitr",
+    "descriptionEn": "Beautiful Eid celebration gift box featuring traditional sweets, decorative items, and festive accessories. Perfect for sharing joy during Eid celebrations.",
+    "descriptionAr": "صندوق هدايا احتفال العيد الجميل يتميز بالحلويات التقليدية والعناصر الزخرفية والإكسسوارات الاحتفالية. مثالي لمشاركة الفرح خلال احتفالات العيد.",
+    "careTipsEn": "Store sweets in cool place. Use decorative items carefully. Share with family and friends.",
+    "careTipsAr": "احفظ الحلويات في مكان بارد. استخدم العناصر الزخرفية بحذر. شارك مع العائلة والأصدقاء."
+  },
+  {
+    "id": 2008,
+    "nameEn": "Thank You Appreciation Set",
+    "nameAr": "مجموعة تقدير شكراً",
+    "price": 299,
+    "imageUrl": "https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg",
+      "https://images.pexels.com/photos/267886/pexels-photo-267886.jpeg",
+      "https://images.pexels.com/photos/267887/pexels-photo-267887.jpeg"
+    ],
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "isSpecialOccasion": true,
+    "categoryId": "flowers",
+    "occasionId": "thank-you",
+    "descriptionEn": "Heartfelt thank you appreciation set featuring beautiful flowers, thank you card, and gratitude-themed accessories. Perfect for expressing sincere appreciation.",
+    "descriptionAr": "مجموعة تقدير شكراً من القلب تتميز بزهور جميلة وبطاقة شكر وإكسسوارات بموضوع الامتنان. مثالية للتعبير عن التقدير الصادق.",
+    "careTipsEn": "Keep flowers in water. Read thank you card aloud. Display appreciation items prominently.",
+    "careTipsAr": "احتفظ بالزهور في الماء. اقرأ بطاقة الشكر بصوت عالٍ. اعرض عناصر التقدير في مكان بارز."
+  },
+  {
+    "id": 2006,
+    "nameEn": "Valentine's Romance Package",
+    "nameAr": "باقة رومانسية عيد الحب",
+    "price": 599,
+    "imageUrl": "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg",
+      "https://images.pexels.com/photos/1024994/pexels-photo-1024994.jpeg",
+      "https://images.pexels.com/photos/1024995/pexels-photo-1024995.jpeg"
+    ],
+    "isBestSeller": true,
+    "isSpecialGift": false,
+    "isSpecialOccasion": true,
+    "categoryId": "flowers",
+    "occasionId": "valentines-day",
+    "descriptionEn": "Romantic Valentine's package featuring red roses, heart-shaped chocolates, and love-themed accessories. Perfect for expressing your love on this special day.",
+    "descriptionAr": "باقة عيد الحب الرومانسية تتميز بالورود الحمراء والشوكولاتة على شكل قلب وإكسسوارات بموضوع الحب. مثالية للتعبير عن حبك في هذا اليوم الخاص.",
+    "careTipsEn": "Keep roses in water. Store chocolates in cool place. Use within recommended time.",
+    "careTipsAr": "احتفظ بالورود في الماء. احفظ الشوكولاتة في مكان بارد. استخدم خلال الوقت الموصى به."
+  }
+]

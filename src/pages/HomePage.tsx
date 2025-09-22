@@ -14,11 +14,11 @@ const BestSellersSection = lazy(
 const FeaturedCollectionsSection = lazy(
   () => import("../components/home/FeaturedCollectionsSection")
 );
-const ShippingDeliverySection = lazy(
-  () => import("../components/home/ShippingDeliverySection")
+const LuxuryGiftsSection = lazy(
+  () => import("../components/home/LuxuryGiftsSection")
 );
-const DownloadAppSection = lazy(
-  () => import("../components/home/DownloadAppSection")
+const SpecialOccasionsSection = lazy(
+  () => import("../components/home/SpecialOccasionsSection")
 );
 const MagicGiftSection = lazy(
   () => import("../components/home/MagicGiftSection")
@@ -32,16 +32,16 @@ const HomePage: React.FC = () => {
   }, [t]);
 
   return (
-    <div className="bg-white">
+    <div className="bg-background-primary">
       <Suspense fallback={<div>Loading...</div>}>
         <HeroSlider />
         <ShopByOccasionSection />
         <CategoriesSection />
         <BestSellersSection />
         <FeaturedCollectionsSection />
-        <ShippingDeliverySection />
+        <LuxuryGiftsSection />
+        <SpecialOccasionsSection />
         <MagicGiftSection />
-        <DownloadAppSection />
       </Suspense>
     </div>
   );

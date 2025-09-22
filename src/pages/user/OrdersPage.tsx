@@ -177,33 +177,33 @@ const OrdersPage: React.FC = () => {
     const statusMap = {
       pending: {
         label: isRtl ? "في الانتظار" : "Pending",
-        color: "text-amber-700 bg-amber-100 border-amber-200",
+        color: "text-warning-700 bg-warning-100 border-warning-200",
         icon: <Clock size={16} />,
-        bgGradient: "from-amber-50 to-yellow-50",
+        bgGradient: "from-warning-50 to-warning-100",
       },
       processing: {
         label: isRtl ? "قيد المعالجة" : "Processing",
-        color: "text-blue-700 bg-blue-100 border-blue-200",
+        color: "text-info-700 bg-info-100 border-info-200",
         icon: <Package size={16} />,
-        bgGradient: "from-blue-50 to-cyan-50",
+        bgGradient: "from-info-50 to-info-100",
       },
       shipped: {
         label: isRtl ? "تم الشحن" : "Shipped",
-        color: "text-purple-700 bg-purple-100 border-purple-200",
+        color: "text-primary-700 bg-primary-100 border-primary-200",
         icon: <Truck size={16} />,
-        bgGradient: "from-purple-50 to-pink-50",
+        bgGradient: "from-primary-50 to-secondary-50",
       },
       delivered: {
         label: isRtl ? "تم التسليم" : "Delivered",
-        color: "text-green-700 bg-green-100 border-green-200",
+        color: "text-success-700 bg-success-100 border-success-200",
         icon: <CheckCircle size={16} />,
-        bgGradient: "from-green-50 to-emerald-50",
+        bgGradient: "from-success-50 to-success-100",
       },
       cancelled: {
         label: isRtl ? "ملغي" : "Cancelled",
-        color: "text-red-700 bg-red-100 border-red-200",
+        color: "text-error-700 bg-error-100 border-error-200",
         icon: <RotateCcw size={16} />,
-        bgGradient: "from-red-50 to-pink-50",
+        bgGradient: "from-error-50 to-secondary-50",
       },
     };
     return statusMap[status];
@@ -227,7 +227,7 @@ const OrdersPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 py-8 px-4 sm:px-6 lg:px-8 font-serif text-neutral-800">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 py-8 px-4 sm:px-6 lg:px-8 font-serif text-text-primary">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -235,13 +235,13 @@ const OrdersPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-10"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full mb-6 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary-600 to-secondary-500 rounded-full mb-6 shadow-lg">
             <ShoppingBag className="w-8 h-8 text-white" />
           </div>
-          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-medium text-purple-800 leading-tight">
+          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-medium text-primary-800 leading-tight">
             {isRtl ? "طلباتي" : "My Orders"}
           </h1>
-          <p className="mt-2.5 text-sm sm:text-base max-w-xs sm:max-w-md md:max-w-lg mx-auto leading-relaxed text-gray-600">
+          <p className="mt-2.5 text-sm sm:text-base max-w-xs sm:max-w-md md:max-w-lg mx-auto leading-relaxed text-text-secondary">
             {isRtl
               ? "تتبع وإدارة طلباتك بسهولة"
               : "Track and manage your orders easily"}
@@ -277,12 +277,12 @@ const OrdersPage: React.FC = () => {
                 <p className="text-gray-600 text-sm font-medium mb-1">
                   {isRtl ? "تم التسليم" : "Delivered"}
                 </p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-success-600">
                   {orders.filter((o) => o.status === "delivered").length}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-success-600" />
               </div>
             </div>
           </div>
@@ -703,7 +703,7 @@ const OrdersPage: React.FC = () => {
                                     <span className="text-gray-600">
                                       {isRtl ? "الشحن:" : "Shipping:"}
                                     </span>
-                                    <span className="font-medium text-green-600">
+                                    <span className="font-medium text-success-600">
                                       {isRtl ? "مجاني" : "Free"}
                                     </span>
                                   </div>

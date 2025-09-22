@@ -48,14 +48,14 @@ const BrandsPage: React.FC = () => {
   const isRtl = i18n.language === "ar";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 px-4 sm:px-6 lg:px-8 font-serif text-neutral-800">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 px-4 sm:px-6 lg:px-8 font-serif text-text-primary">
       <div className="max-w-7xl mx-auto py-12">
         <div className="text-center mb-12">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-4xl font-bold text-purple-800 mb-4"
+            className="text-4xl font-bold text-primary-800 mb-4"
           >
             {t("navigation.brands")}
           </motion.h1>
@@ -63,7 +63,7 @@ const BrandsPage: React.FC = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lg text-neutral-600 max-w-2xl mx-auto"
+            className="text-lg text-text-secondary max-w-2xl mx-auto"
           >
             {isRtl
               ? "اكتشف مجموعتنا المختارة من أفضل العلامات التجارية والماركات المميزة"
@@ -81,7 +81,7 @@ const BrandsPage: React.FC = () => {
             >
               <Link
                 to={`/brand/${brand.id}`}
-                className="group block bg-white rounded-2xl shadow-lg border border-neutral-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+                className="group block bg-background-primary rounded-2xl shadow-lg border border-border-primary overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
               >
                 <div className="relative aspect-square overflow-hidden">
                   <ProductImage
@@ -107,7 +107,7 @@ const BrandsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="p-4 bg-gradient-to-r from-purple-50 to-rose-50">
+                <div className="p-4 bg-gradient-to-r from-primary-50 to-secondary-50">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-neutral-600">
                       {isRtl ? "استكشف المجموعة" : "Explore Collection"}

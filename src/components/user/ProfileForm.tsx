@@ -93,18 +93,18 @@ const ProfileForm: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100"
+      className="bg-background-primary rounded-2xl shadow-lg p-8 border border-border-primary"
     >
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">
+        <h2 className="text-2xl font-bold text-text-primary">
           {isRtl ? "الملف الشخصي" : "Profile Information"}
         </h2>
         <button
           onClick={() => setIsEditing(!isEditing)}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
             isEditing
-              ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              : "bg-purple-500 text-white hover:bg-purple-600"
+              ? "bg-background-secondary text-text-secondary hover:bg-background-tertiary"
+              : "bg-primary-500 text-white hover:bg-primary-600"
           }`}
         >
           {isEditing ? <X size={18} /> : <Edit3 size={18} />}
@@ -123,8 +123,8 @@ const ProfileForm: React.FC = () => {
       {/* Profile Picture */}
       <div className="flex flex-col items-center mb-8">
         <div className="relative">
-          <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-r from-purple-500 to-pink-500 p-1">
-            <div className="w-full h-full rounded-full overflow-hidden bg-white">
+          <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-r from-primary-500 to-secondary-500 p-1">
+            <div className="w-full h-full rounded-full overflow-hidden bg-background-primary">
               {profile?.profilePicture ? (
                 <img
                   src={profile.profilePicture}
@@ -132,8 +132,8 @@ const ProfileForm: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                  <User size={48} className="text-gray-400" />
+                <div className="w-full h-full bg-background-secondary flex items-center justify-center">
+                  <User size={48} className="text-text-tertiary" />
                 </div>
               )}
             </div>
@@ -143,7 +143,7 @@ const ProfileForm: React.FC = () => {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingImage}
-              className="absolute bottom-0 right-0 w-10 h-10 bg-purple-500 text-white rounded-full flex items-center justify-center hover:bg-purple-600 transition-all shadow-lg"
+              className="absolute bottom-0 right-0 w-10 h-10 bg-primary-500 text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition-all shadow-lg"
             >
               {uploadingImage ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -162,16 +162,16 @@ const ProfileForm: React.FC = () => {
           className="hidden"
         />
 
-        <h3 className="text-xl font-bold text-gray-800 mt-4">
+        <h3 className="text-xl font-bold text-text-primary mt-4">
           {profile?.name}
         </h3>
-        <p className="text-gray-600">@{profile?.username}</p>
+        <p className="text-text-secondary">@{profile?.username}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <User size={16} className="inline mr-2 rtl:ml-2 rtl:mr-0" />
             {isRtl ? "الاسم الكامل" : "Full Name"}
           </label>
@@ -183,8 +183,8 @@ const ProfileForm: React.FC = () => {
             disabled={!isEditing}
             className={`w-full px-4 py-3 border rounded-xl transition-all ${
               isEditing
-                ? "border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                : "border-gray-200 bg-gray-50 cursor-not-allowed"
+                ? "border-border-primary focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                : "border-border-secondary bg-background-secondary cursor-not-allowed"
             }`}
             placeholder={isRtl ? "أدخل اسمك الكامل" : "Enter your full name"}
           />
@@ -192,7 +192,7 @@ const ProfileForm: React.FC = () => {
 
         {/* Username */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <UserCheck size={16} className="inline mr-2 rtl:ml-2 rtl:mr-0" />
             {isRtl ? "اسم المستخدم" : "Username"}
           </label>
@@ -204,8 +204,8 @@ const ProfileForm: React.FC = () => {
             disabled={!isEditing}
             className={`w-full px-4 py-3 border rounded-xl transition-all ${
               isEditing
-                ? "border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                : "border-gray-200 bg-gray-50 cursor-not-allowed"
+                ? "border-border-primary focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                : "border-border-secondary bg-background-secondary cursor-not-allowed"
             }`}
             placeholder={isRtl ? "أدخل اسم المستخدم" : "Enter your username"}
           />
@@ -213,7 +213,7 @@ const ProfileForm: React.FC = () => {
 
         {/* Email (Read-only) */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <Mail size={16} className="inline mr-2 rtl:ml-2 rtl:mr-0" />
             {isRtl ? "البريد الإلكتروني" : "Email Address"}
           </label>
@@ -222,13 +222,13 @@ const ProfileForm: React.FC = () => {
               type="email"
               value={profile?.email || ""}
               disabled
-              className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl cursor-not-allowed"
+              className="w-full px-4 py-3 border border-border-secondary bg-background-secondary rounded-xl cursor-not-allowed"
             />
-            <span className="absolute right-3 rtl:left-3 rtl:right-auto top-1/2 transform -translate-y-1/2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+            <span className="absolute right-3 rtl:left-3 rtl:right-auto top-1/2 transform -translate-y-1/2 text-xs text-text-tertiary bg-background-secondary px-2 py-1 rounded">
               {isRtl ? "محمي" : "Protected"}
             </span>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-text-tertiary mt-1">
             {isRtl
               ? 'لتغيير البريد الإلكتروني، استخدم قسم "تحديث البريد الإلكتروني"'
               : 'To change email, use the "Update Email" section'}
@@ -237,7 +237,7 @@ const ProfileForm: React.FC = () => {
 
         {/* Phone Number */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <Phone size={16} className="inline mr-2 rtl:ml-2 rtl:mr-0" />
             {isRtl ? "رقم الهاتف" : "Phone Number"}
           </label>
@@ -250,7 +250,7 @@ const ProfileForm: React.FC = () => {
               disabled={!isEditing}
               className={`flex-1 px-4 py-3 border rounded-xl transition-all ${
                 isEditing
-                  ? "border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  ? "border-border-primary focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   : "border-gray-200 bg-gray-50 cursor-not-allowed"
               }`}
               placeholder={isRtl ? "+966501234567" : "+966501234567"}

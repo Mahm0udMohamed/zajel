@@ -205,27 +205,27 @@ const ProductPage: React.FC = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-neutral-50 text-neutral-800 font-sans antialiased p-4 sm:p-6 lg:p-10">
+      <div className="min-h-screen bg-background-secondary text-text-primary font-sans antialiased p-4 sm:p-6 lg:p-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center p-8 bg-white rounded-3xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] max-w-md mx-auto border border-neutral-100"
+          className="text-center p-8 bg-background-primary rounded-3xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] max-w-md mx-auto border border-border-primary"
         >
-          <div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-            <Gift size={32} className="text-neutral-400" />
+          <div className="w-20 h-20 bg-background-secondary rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <Gift size={32} className="text-text-tertiary" />
           </div>
-          <h1 className="text-2xl font-bold mb-4 text-neutral-800">
+          <h1 className="text-2xl font-bold mb-4 text-text-primary">
             {isRtl ? "لا يوجد منتج" : "Product Not Found"}
           </h1>
-          <p className="text-neutral-600 mb-6 text-sm font-medium">
+          <p className="text-text-secondary mb-6 text-sm font-medium">
             {isRtl
               ? "عذراً، المنتج المطلوب غير متوفر."
               : "Sorry, the requested product is not available."}
           </p>
           <Link
             to="/"
-            className="px-5 py-2.5 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors flex items-center gap-2 mx-auto text-sm font-bold shadow-md"
+            className="px-5 py-2.5 bg-secondary-500 text-white rounded-full hover:bg-secondary-600 transition-colors flex items-center gap-2 mx-auto text-sm font-bold shadow-md"
           >
             {isRtl ? "العودة للرئيسية" : "Back to Home"}
           </Link>
@@ -235,7 +235,7 @@ const ProductPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-800 font-sans antialiased p-0 sm:p-6 lg:p-10">
+    <div className="min-h-screen bg-background-secondary text-text-primary font-sans antialiased p-0 sm:p-6 lg:p-10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -260,8 +260,8 @@ const ProductPage: React.FC = () => {
                       onClick={() => setSelectedImageIndex(index)}
                       className={`w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all ${
                         selectedImageIndex === index
-                          ? "border-pink-500 shadow-md"
-                          : "border-neutral-200 hover:border-neutral-300"
+                          ? "border-secondary-500 shadow-md"
+                          : "border-border-primary hover:border-border-secondary"
                       }`}
                       aria-label={`Select image ${index + 1}`}
                     >
@@ -284,7 +284,7 @@ const ProductPage: React.FC = () => {
               )}
               {/* Main Image Carousel */}
               <div
-                className="flex-1 bg-white lg:rounded-3xl shadow-none lg:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] border-none lg:border border-neutral-100 overflow-hidden relative"
+                className="flex-1 bg-background-primary lg:rounded-3xl shadow-none lg:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] border-none lg:border border-border-primary overflow-hidden relative"
                 onTouchStart={handleDragStart}
                 onTouchEnd={handleDragEnd}
               >
@@ -323,7 +323,7 @@ const ProductPage: React.FC = () => {
                 </div>
                 <div className="absolute start-4 top-4 flex flex-col gap-2 z-20">
                   {product.isBestSeller && (
-                    <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-rose-500 to-fuchsia-500 px-2 py-0.5 text-xs font-medium text-white shadow">
+                    <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-secondary-500 to-primary-500 px-2 py-0.5 text-xs font-medium text-white shadow">
                       <Flame size={12} />
                       {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
                     </span>
@@ -338,7 +338,7 @@ const ProductPage: React.FC = () => {
                 <div className="absolute end-4 top-4 flex flex-col gap-2 z-20">
                   <FavoriteButton
                     product={product}
-                    className="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-rose-500 border border-neutral-100 transition-colors duration-300 hover:bg-neutral-50"
+                    className="w-10 h-10 bg-background-primary rounded-full shadow-md flex items-center justify-center text-secondary-500 border border-border-primary transition-colors duration-300 hover:bg-background-secondary"
                     size={18}
                   />
                 </div>
@@ -349,8 +349,8 @@ const ProductPage: React.FC = () => {
                         key={index}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${
                           selectedImageIndex === index
-                            ? "bg-rose-500 w-5"
-                            : "bg-neutral-300"
+                            ? "bg-secondary-500 w-5"
+                            : "bg-border-primary"
                         }`}
                       />
                     ))}
@@ -367,7 +367,7 @@ const ProductPage: React.FC = () => {
             className="space-y-6 p-4 sm:p-0"
           >
             {/* Top Info Section */}
-            <div className="bg-white rounded-3xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] p-6 border border-neutral-100">
+            <div className="bg-background-primary rounded-3xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] p-6 border border-border-primary">
               <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-4">
                 <Link to="/" className="hover:text-rose-500 transition-colors">
                   {isRtl ? "الرئيسية" : "Home"}

@@ -192,7 +192,7 @@ const HeroSlider: React.FC = () => {
   if (allSlides.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden py-3 sm:py-12">
+    <section className="relative overflow-hidden py-2 sm:py-6">
       {isOccasionActive && currentSlideData?.type === "occasion" && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <Confetti
@@ -201,7 +201,7 @@ const HeroSlider: React.FC = () => {
             recycle={false}
             numberOfPieces={150}
             tweenDuration={6000}
-            colors={["#d8b4fe", "#c084fc", "#a855f7", "#7e22ce"]}
+            colors={["#d8b4fe", "#c084fc", "#8b4589", "#6d28d9"]}
           />
         </div>
       )}
@@ -209,7 +209,7 @@ const HeroSlider: React.FC = () => {
       <div className="container-custom px-4 sm:px-16">
         <div className="relative h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] xl:h-[650px] overflow-hidden rounded-2xl sm:rounded-[2rem] border border-white/50 backdrop-blur-sm">
           {/* Background Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-pink-900/20 z-10 rounded-2xl sm:rounded-[2rem]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-transparent to-secondary-900/20 z-10 rounded-2xl sm:rounded-[2rem]" />
 
           {/* Slides Container */}
           <motion.div

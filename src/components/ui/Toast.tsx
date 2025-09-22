@@ -56,46 +56,58 @@ const Toast: React.FC<ToastProps> = ({
     };
   } = {
     success: {
-      icon: <CheckCircle size={20} className="text-green-600" />,
-      colors: "bg-green-50 border-green-200 text-green-800",
-      gradient: "linear-gradient(to right, #ecfdf5, #d1fae5)",
-      iconBg: "bg-green-100 text-green-600",
-      progressGradient: "linear-gradient(to right, #10b981, #34d399)",
+      icon: <CheckCircle size={20} className="text-success-600" />,
+      colors: "bg-success-50 border-success-200 text-success-800",
+      gradient:
+        "linear-gradient(to right, theme('colors.success.50'), theme('colors.success.100'))",
+      iconBg: "bg-success-100 text-success-600",
+      progressGradient:
+        "linear-gradient(to right, theme('colors.success.500'), theme('colors.success.400'))",
     },
     error: {
-      icon: <X size={20} className="text-red-600" />,
-      colors: "bg-red-50 border-red-200 text-red-800",
-      gradient: "linear-gradient(to right, #fef2f2, #fee2e2)",
-      iconBg: "bg-red-100 text-red-600",
-      progressGradient: "linear-gradient(to right, #ef4444, #f87171)",
+      icon: <X size={20} className="text-error-600" />,
+      colors: "bg-error-50 border-error-200 text-error-800",
+      gradient:
+        "linear-gradient(to right, theme('colors.error.50'), theme('colors.error.100'))",
+      iconBg: "bg-error-100 text-error-600",
+      progressGradient:
+        "linear-gradient(to right, theme('colors.error.500'), theme('colors.error.400'))",
     },
     warning: {
-      icon: <AlertCircle size={20} className="text-yellow-600" />,
-      colors: "bg-yellow-50 border-yellow-200 text-yellow-800",
-      gradient: "linear-gradient(to right, #fffbeb, #fef3c7)",
-      iconBg: "bg-yellow-100 text-yellow-600",
-      progressGradient: "linear-gradient(to right, #f59e0b, #fbbf24)",
+      icon: <AlertCircle size={20} className="text-warning-600" />,
+      colors: "bg-warning-50 border-warning-200 text-warning-800",
+      gradient:
+        "linear-gradient(to right, theme('colors.warning.50'), theme('colors.warning.100'))",
+      iconBg: "bg-warning-100 text-warning-600",
+      progressGradient:
+        "linear-gradient(to right, theme('colors.warning.500'), theme('colors.warning.400'))",
     },
     info: {
-      icon: <Info size={20} className="text-blue-600" />,
-      colors: "bg-blue-50 border-blue-200 text-blue-800",
-      gradient: "linear-gradient(to right, #eff6ff, #dbeafe)",
-      iconBg: "bg-blue-100 text-blue-600",
-      progressGradient: "linear-gradient(to right, #3b82f6, #60a5fa)",
+      icon: <Info size={20} className="text-info-600" />,
+      colors: "bg-info-50 border-info-200 text-info-800",
+      gradient:
+        "linear-gradient(to right, theme('colors.info.50'), theme('colors.info.100'))",
+      iconBg: "bg-info-100 text-info-600",
+      progressGradient:
+        "linear-gradient(to right, theme('colors.info.500'), theme('colors.info.400'))",
     },
     "cart-success": {
-      icon: <CheckCircle size={20} className="text-violet-600" />,
-      colors: "bg-violet-50 border-violet-200 text-violet-800",
-      gradient: "linear-gradient(to right, #f5f3ff, #ede9fe)",
-      iconBg: "bg-violet-100 text-violet-600",
-      progressGradient: "linear-gradient(to right, #7c3aed, #8b5cf6)",
+      icon: <CheckCircle size={20} className="text-primary-600" />,
+      colors: "bg-primary-50 border-primary-200 text-primary-800",
+      gradient:
+        "linear-gradient(to right, theme('colors.primary.50'), theme('colors.primary.100'))",
+      iconBg: "bg-primary-100 text-primary-600",
+      progressGradient:
+        "linear-gradient(to right, theme('colors.primary.500'), theme('colors.primary.400'))",
     },
     "favorite-success": {
-      icon: <Heart size={20} className="text-pink-600" />,
-      colors: "bg-pink-50 border-pink-200 text-pink-800",
-      gradient: "linear-gradient(to right, #fdf2f8, #fce7f3)",
-      iconBg: "bg-pink-100 text-pink-600",
-      progressGradient: "linear-gradient(to right, #db2777, #ec4899)",
+      icon: <Heart size={20} className="text-secondary-600" />,
+      colors: "bg-secondary-50 border-secondary-200 text-secondary-800",
+      gradient:
+        "linear-gradient(to right, theme('colors.secondary.50'), theme('colors.secondary.100'))",
+      iconBg: "bg-secondary-100 text-secondary-600",
+      progressGradient:
+        "linear-gradient(to right, theme('colors.secondary.500'), theme('colors.secondary.400'))",
     },
   };
 

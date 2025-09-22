@@ -12,7 +12,7 @@ const LanguageSwitcher: React.FC = () => {
   return (
     <button
       onClick={toggleLanguage}
-      className="flex items-center text-gray-700 hover:text-primary transition-colors"
+      className="flex items-center text-text-primary hover:text-primary transition-colors"
     >
       <span className="text-sm font-medium">
         {i18n.language === "ar" ? "English" : "العربية"}

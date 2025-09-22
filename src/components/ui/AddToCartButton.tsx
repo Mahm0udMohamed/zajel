@@ -116,8 +116,8 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
         flex items-center justify-center h-8 w-8 rounded-full transition-all duration-300
         ${
           justAdded
-            ? "bg-emerald-500 hover:bg-emerald-600"
-            : "bg-gradient-to-r from-violet-500 to-fuchsia-500"
+            ? "bg-success-500 hover:bg-success-600"
+            : "bg-gradient-to-r from-primary-500 to-secondary-500"
         }
         text-white shadow-sm
         ${isAdding || justAdded ? "cursor-not-allowed opacity-90" : ""}

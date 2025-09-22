@@ -20,7 +20,7 @@ const OccasionCard: React.FC<{ occasion: Occasion }> = ({ occasion }) => {
       to={`/occasion/${occasion.id}`}
       className="flex flex-col items-center flex-shrink-0 w-20 sm:w-24 md:w-28 text-center snap-center"
     >
-      <div className="w-full aspect-square rounded-full overflow-hidden relative z-10 bg-gradient-to-br from-purple-100 to-pink-50 shadow-sm border border-purple-100">
+      <div className="w-full aspect-square rounded-full overflow-hidden relative z-10 ">
         <ProductImage
           src={occasion.imageUrl}
           alt={t(occasion.nameKey)}
@@ -36,7 +36,7 @@ const OccasionCard: React.FC<{ occasion: Occasion }> = ({ occasion }) => {
           fallbackSrc="/public/occasions/3.png"
         />
       </div>
-      <span className="text-stone-700 text-xs sm:text-sm font-medium mt-2 w-full line-clamp-1 leading-tight text-center">
+      <span className="text-text-primary text-xs sm:text-sm font-medium mt-2 w-full line-clamp-1 leading-tight text-center">
         {t(occasion.nameKey)}
       </span>
     </Link>
@@ -90,11 +90,11 @@ const ShopByOccasionSection: React.FC = () => {
   if (occasions.length === 0) return null;
 
   return (
-    <section className="py-6 bg-gray-50">
+    <section className="py-2 sm:py-6 bg-background-secondary">
       <div className="container-custom px-4 sm:px-6">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-3">
           <h2
-            className={`text-lg sm:text-xl font-bold text-gray-900 ${
+            className={`text-lg sm:text-xl font-bold text-text-primary ${
               i18n.language === "ar" ? "font-tajawal" : "font-poppins"
             }`}
           >
@@ -102,7 +102,7 @@ const ShopByOccasionSection: React.FC = () => {
           </h2>
           <Link
             to="/occasions"
-            className="text-orange-500 text-sm font-medium hover:text-orange-600 transition-colors"
+            className="text-primary-500 text-sm font-medium hover:text-primary-600 transition-colors"
           >
             {t("home.occasions.viewMore")}
           </Link>
@@ -111,7 +111,7 @@ const ShopByOccasionSection: React.FC = () => {
         <div className="relative">
           <div
             ref={scrollRef}
-            className="flex items-start overflow-x-auto gap-3 sm:gap-4 md:gap-4 pb-4 snap-x snap-mandatory scrollbar-hidden"
+            className="flex items-start overflow-x-auto gap-3 sm:gap-4 md:gap-4 pb-2 snap-x snap-mandatory scrollbar-hidden"
             style={{ scrollSnapStop: "always" }}
           >
             {occasions.map((occasion, index) => (

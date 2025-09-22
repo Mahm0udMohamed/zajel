@@ -52,9 +52,9 @@ const FAQItem: React.FC<{
   const isOpen = openIndex === index;
 
   return (
-    <div className="border-b border-purple-100 last:border-b-0">
+    <div className="border-b border-primary-100 last:border-b-0">
       <button
-        className={`w-full px-2 py-6 flex justify-between items-center text-lg font-semibold text-neutral-800 focus:outline-none ${
+        className={`w-full px-2 py-6 flex justify-between items-center text-lg font-semibold text-text-primary focus:outline-none ${
           isArabic ? "text-right" : "text-left"
         }`}
         onClick={() => setOpenIndex(isOpen ? null : index)}
@@ -69,8 +69,8 @@ const FAQItem: React.FC<{
           transition={{ duration: 0.3, ease: "easeInOut" }}
         >
           <ChevronDown
-            className={`w-6 h-6 text-purple-500 transition-colors ${
-              isOpen ? "text-purple-700" : ""
+            className={`w-6 h-6 text-primary-500 transition-colors ${
+              isOpen ? "text-primary-700" : ""
             }`}
           />
         </motion.span>
@@ -86,7 +86,7 @@ const FAQItem: React.FC<{
             className="overflow-hidden"
           >
             <div
-              className={`px-2 pb-6 text-neutral-600 leading-relaxed text-base ${
+              className={`px-2 pb-6 text-text-secondary leading-relaxed text-base ${
                 isArabic ? "text-right" : "text-left"
               }`}
             >
@@ -161,7 +161,7 @@ const FAQPage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 px-4 sm:px-6 lg:px-8 font-serif text-neutral-800"
+      className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 px-4 sm:px-6 lg:px-8 font-serif text-text-primary"
       dir={isArabic ? "rtl" : "ltr"}
     >
       <div className="max-w-7xl mx-auto py-12 sm:py-16 lg:py-20">

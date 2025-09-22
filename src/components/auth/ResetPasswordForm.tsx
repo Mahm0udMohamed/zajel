@@ -72,10 +72,10 @@ const ResetPasswordForm: React.FC = () => {
   };
 
   const getStrengthColor = () => {
-    if (passwordStrength < 25) return "bg-red-500";
-    if (passwordStrength < 50) return "bg-yellow-500";
-    if (passwordStrength < 75) return "bg-blue-500";
-    return "bg-green-500";
+    if (passwordStrength < 25) return "bg-error-500";
+    if (passwordStrength < 50) return "bg-warning-500";
+    if (passwordStrength < 75) return "bg-info-500";
+    return "bg-success-500";
   };
 
   const getStrengthText = () => {
@@ -86,38 +86,38 @@ const ResetPasswordForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 flex items-center justify-center p-4 font-serif text-neutral-800">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 flex items-center justify-center p-4 font-serif text-text-primary">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/20"
+        className="bg-background-primary rounded-2xl shadow-2xl p-8 w-full max-w-md border border-border-primary"
       >
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4"
+            className="w-16 h-16 bg-gradient-to-r from-success-500 to-success-600 rounded-full flex items-center justify-center mx-auto mb-4"
           >
             <Shield className="w-8 h-8 text-white" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-purple-800 mb-2">
+          <h1 className="text-2xl font-bold text-primary-800 mb-2">
             {isRtl ? "إعادة تعيين كلمة المرور" : "Reset Password"}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             {isRtl ? "أدخل كلمة المرور الجديدة" : "Enter your new password"}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               {isRtl ? "كلمة المرور الجديدة" : "New Password"}
             </label>
             <div className="relative">
               <Lock
                 size={18}
-                className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 transform -translate-y-1/2 text-text-tertiary"
               />
               <input
                 type={showPassword ? "text" : "password"}
@@ -141,13 +141,13 @@ const ResetPasswordForm: React.FC = () => {
             {formData.newPassword && (
               <div className="mt-2">
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <div className="flex-1 bg-background-secondary rounded-full h-2">
                     <div
                       className={`h-2 rounded-full transition-all duration-300 ${getStrengthColor()}`}
                       style={{ width: `${passwordStrength}%` }}
                     />
                   </div>
-                  <span className="text-xs text-gray-600">
+                  <span className="text-xs text-text-secondary">
                     {getStrengthText()}
                   </span>
                 </div>
@@ -156,13 +156,13 @@ const ResetPasswordForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               {isRtl ? "تأكيد كلمة المرور" : "Confirm Password"}
             </label>
             <div className="relative">
               <Lock
                 size={18}
-                className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 transform -translate-y-1/2 text-text-tertiary"
               />
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -200,7 +200,7 @@ const ResetPasswordForm: React.FC = () => {
               formData.newPassword !== formData.confirmPassword ||
               passwordStrength < 50
             }
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-4 rounded-xl font-medium hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-success-500 to-success-600 text-white py-3 px-4 rounded-xl font-medium hover:from-success-600 hover:to-success-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >

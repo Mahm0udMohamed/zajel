@@ -68,9 +68,9 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full bg-white sticky top-0 z-50 border-b border-neutral-200/50">
+    <header className="w-full bg-background-primary sticky top-0 z-50 border-b border-border-primary">
       {/* Top announcement bar */}
-      <div className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white py-2.5">
+      <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-2.5">
         <div
           className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center ${
             isRtl ? "justify-end flex-row-reverse" : "justify-start flex-row"
@@ -98,7 +98,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Mobile menu toggle */}
           <button
-            className="md:hidden p-2 rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all"
+            className="md:hidden p-2 rounded-full bg-background-secondary hover:bg-background-tertiary transition-all"
             onClick={toggleMenu}
             aria-label={isRtl ? "القائمة" : "Menu"}
           >
@@ -119,14 +119,14 @@ const Header = () => {
                 size={16}
                 className={`absolute ${
                   isRtl ? "right-3" : "left-3"
-                } top-1/2 -translate-y-1/2 text-neutral-400`}
+                } top-1/2 -translate-y-1/2 text-text-tertiary`}
               />
               <input
                 type="text"
                 placeholder={t("header.search")}
                 className={`w-full h-10 ${
                   isRtl ? "pr-10 pl-3" : "pl-10 pr-3"
-                } rounded-full border border-neutral-200/50 bg-white text-sm text-neutral-800 placeholder-neutral-400 outline-none focus:border-emerald-500 focus:bg-neutral-50 transition-all`}
+                } rounded-full border border-border-primary bg-background-primary text-sm text-text-primary placeholder-text-tertiary outline-none focus:border-primary-500 focus:bg-background-secondary transition-all`}
               />
             </div>
           </div>
@@ -137,9 +137,9 @@ const Header = () => {
             <div className="relative" ref={langMenuRef}>
               <button
                 onClick={() => setShowLangMenu(!showLangMenu)}
-                className="flex items-center gap-1 rounded-full bg-white px-2 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-all"
+                className="flex items-center gap-1 rounded-full bg-background-primary px-2 py-1.5 text-sm font-medium text-text-secondary hover:bg-background-secondary transition-all"
               >
-                <Globe size={16} className="text-emerald-500" />
+                <Globe size={16} className="text-primary-500" />
                 <span className="hidden sm:inline">
                   {isRtl ? "العربية" : "EN"}
                 </span>
@@ -151,7 +151,7 @@ const Header = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.2 }}
-                    className={`absolute mt-2 w-32 rounded-lg border border-neutral-200 bg-white shadow-md z-50 ${
+                    className={`absolute mt-2 w-32 rounded-lg border border-border-primary bg-background-primary shadow-md z-50 ${
                       isRtl ? "left-0" : "right-0"
                     }`}
                   >
@@ -162,9 +162,9 @@ const Header = () => {
                       }}
                       className={`w-full ${
                         isRtl ? "text-right" : "text-left"
-                      } px-3 py-2 text-sm hover:bg-emerald-50 ${
+                      } px-3 py-2 text-sm hover:bg-primary-50 ${
                         i18n.language === "ar"
-                          ? "text-emerald-600 font-medium"
+                          ? "text-primary-600 font-medium"
                           : "text-neutral-600"
                       }`}
                     >
@@ -177,9 +177,9 @@ const Header = () => {
                       }}
                       className={`w-full ${
                         isRtl ? "text-right" : "text-left"
-                      } px-3 py-2 text-sm hover:bg-emerald-50 ${
+                      } px-3 py-2 text-sm hover:bg-primary-50 ${
                         i18n.language === "en"
-                          ? "text-emerald-600 font-medium"
+                          ? "text-primary-600 font-medium"
                           : "text-neutral-600"
                       }`}
                     >
@@ -208,13 +208,13 @@ const Header = () => {
             {/* Cart */}
             <Link
               to="/cart"
-              className="relative flex items-center text-neutral-600 hover:text-emerald-500 transition-all"
+              className="relative flex items-center text-neutral-600 hover:text-primary-500 transition-all"
             >
-              <div className="p-1.5 rounded-full bg-neutral-100 hover:bg-emerald-100">
+              <div className="p-1.5 rounded-full bg-neutral-100 hover:bg-primary-100">
                 <ShoppingBasket size={18} />
               </div>
               {isAuthenticated && cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-emerald-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium">
+                <span className="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium">
                   {cartCount > 99 ? "99+" : cartCount}
                 </span>
               )}
@@ -234,7 +234,7 @@ const Header = () => {
                       className="w-7 h-7 rounded-full object-cover ring-1 ring-neutral-200"
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-medium">
+                    <div className="w-7 h-7 rounded-full bg-primary-500 flex items-center justify-center text-white text-xs font-medium">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -334,14 +334,14 @@ const Header = () => {
               placeholder={t("header.search")}
               className={`w-full h-10 ${
                 isRtl ? "pr-10 pl-3" : "pl-10 pr-3"
-              } rounded-full border border-neutral-200/50 bg-white text-sm text-neutral-800 placeholder-neutral-400 outline-none focus:border-emerald-500 focus:bg-neutral-50 transition-all`}
+              } rounded-full border border-neutral-200/50 bg-white text-sm text-neutral-800 placeholder-neutral-400 outline-none focus:border-primary-500 focus:bg-neutral-50 transition-all`}
             />
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="bg-emerald-50/50 border-t border-neutral-200/50">
+      <nav className="bg-primary-50/50 border-t border-neutral-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ul className="hidden md:flex items-center gap-6 py-3 text-neutral-700">
             <li>
@@ -349,8 +349,8 @@ const Header = () => {
                 to="/categories"
                 className={`text-sm font-semibold transition-colors ${
                   location.pathname === "/categories"
-                    ? "text-emerald-600"
-                    : "hover:text-emerald-600"
+                    ? "text-primary-600"
+                    : "hover:text-primary-600"
                 }`}
               >
                 {t("navigation.categories")}
@@ -361,8 +361,8 @@ const Header = () => {
                 to="/occasions"
                 className={`text-sm font-semibold transition-colors ${
                   location.pathname === "/occasions"
-                    ? "text-emerald-600"
-                    : "hover:text-emerald-600"
+                    ? "text-primary-600"
+                    : "hover:text-primary-600"
                 }`}
               >
                 {t("navigation.occasions")}
@@ -373,8 +373,8 @@ const Header = () => {
                 to="/brands"
                 className={`text-sm font-semibold transition-colors ${
                   location.pathname === "/brands"
-                    ? "text-emerald-600"
-                    : "hover:text-emerald-600"
+                    ? "text-primary-600"
+                    : "hover:text-primary-600"
                 }`}
               >
                 {t("navigation.brands")}
@@ -385,11 +385,11 @@ const Header = () => {
                 to="/special-gifts"
                 className={`flex items-center gap-1 text-sm font-semibold transition-colors ${
                   location.pathname === "/special-gifts"
-                    ? "text-emerald-600"
-                    : "hover:text-emerald-600"
+                    ? "text-primary-600"
+                    : "hover:text-primary-600"
                 }`}
               >
-                <Star size={14} className="text-emerald-600" />
+                <Star size={14} className="text-primary-600" />
                 {t("navigation.specialGifts")}
               </Link>
             </li>
@@ -398,8 +398,8 @@ const Header = () => {
                 to="/products"
                 className={`text-sm font-semibold transition-colors ${
                   location.pathname === "/products"
-                    ? "text-emerald-600"
-                    : "hover:text-emerald-600"
+                    ? "text-primary-600"
+                    : "hover:text-primary-600"
                 }`}
               >
                 {isRtl ? "جميع المنتجات" : "All Products"}
@@ -445,8 +445,8 @@ const Header = () => {
                       to="/categories"
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                         location.pathname === "/categories"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "text-neutral-600 hover:bg-emerald-50 hover:text-emerald-600"
+                          ? "bg-primary-50 text-primary-600"
+                          : "text-neutral-600 hover:bg-primary-50 hover:text-primary-600"
                       }`}
                       onClick={toggleMenu}
                     >
@@ -472,8 +472,8 @@ const Header = () => {
                       to="/occasions"
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                         location.pathname === "/occasions"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "text-neutral-600 hover:bg-emerald-50 hover:text-emerald-600"
+                          ? "bg-primary-50 text-primary-600"
+                          : "text-neutral-600 hover:bg-primary-50 hover:text-primary-600"
                       }`}
                       onClick={toggleMenu}
                     >
@@ -499,8 +499,8 @@ const Header = () => {
                       to="/brands"
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                         location.pathname === "/brands"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "text-neutral-600 hover:bg-emerald-50 hover:text-emerald-600"
+                          ? "bg-primary-50 text-primary-600"
+                          : "text-neutral-600 hover:bg-primary-50 hover:text-primary-600"
                       }`}
                       onClick={toggleMenu}
                     >
@@ -524,12 +524,12 @@ const Header = () => {
                       to="/special-gifts"
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                         location.pathname === "/special-gifts"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "text-neutral-600 hover:bg-emerald-50 hover:text-emerald-600"
+                          ? "bg-primary-50 text-primary-600"
+                          : "text-neutral-600 hover:bg-primary-50 hover:text-primary-600"
                       }`}
                       onClick={toggleMenu}
                     >
-                      <Star size={18} className="text-emerald-600" />
+                      <Star size={18} className="text-primary-600" />
                       {t("navigation.specialGifts")}
                     </Link>
                   </li>
@@ -538,8 +538,8 @@ const Header = () => {
                       to="/products"
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                         location.pathname === "/products"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "text-neutral-600 hover:bg-emerald-50 hover:text-emerald-600"
+                          ? "bg-primary-50 text-primary-600"
+                          : "text-neutral-600 hover:bg-primary-50 hover:text-primary-600"
                       }`}
                       onClick={toggleMenu}
                     >
@@ -564,8 +564,8 @@ const Header = () => {
                       to="/orders"
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                         location.pathname === "/orders"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "text-neutral-600 hover:bg-emerald-50 hover:text-emerald-600"
+                          ? "bg-primary-50 text-primary-600"
+                          : "text-neutral-600 hover:bg-primary-50 hover:text-primary-600"
                       }`}
                       onClick={toggleMenu}
                     >
@@ -579,8 +579,8 @@ const Header = () => {
                         to="/auth/login"
                         className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                           location.pathname === "/auth/login"
-                            ? "bg-emerald-50 text-emerald-600"
-                            : "text-neutral-600 hover:bg-emerald-50 hover:text-emerald-600"
+                            ? "bg-primary-50 text-primary-600"
+                            : "text-neutral-600 hover:bg-primary-50 hover:text-primary-600"
                         }`}
                         onClick={toggleMenu}
                       >
@@ -595,8 +595,8 @@ const Header = () => {
                           to="/profile"
                           className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                             location.pathname === "/profile"
-                              ? "bg-emerald-50 text-emerald-600"
-                              : "text-neutral-600 hover:bg-emerald-50 hover:text-emerald-600"
+                              ? "bg-primary-50 text-primary-600"
+                              : "text-neutral-600 hover:bg-primary-50 hover:text-primary-600"
                           }`}
                           onClick={toggleMenu}
                         >
@@ -633,8 +633,8 @@ const Header = () => {
                           to="/contact"
                           className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                             location.pathname === "/contact"
-                              ? "bg-emerald-50 text-emerald-600"
-                              : "text-neutral-600 hover:bg-emerald-50 hover:text-emerald-600"
+                              ? "bg-primary-50 text-primary-600"
+                              : "text-neutral-600 hover:bg-primary-50 hover:text-primary-600"
                           }`}
                           onClick={toggleMenu}
                         >

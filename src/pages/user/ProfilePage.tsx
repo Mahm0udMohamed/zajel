@@ -39,61 +39,61 @@ const ProfilePage: React.FC = () => {
       id: "profile",
       label: isRtl ? "الملف الشخصي" : "Profile",
       icon: <User size={20} />,
-      color: "from-purple-500 to-pink-500",
+      color: "from-primary-500 to-secondary-500",
       description: isRtl ? "معلوماتك الشخصية" : "Your personal information",
     },
     {
       id: "password",
       label: isRtl ? "كلمة المرور" : "Password",
       icon: <Shield size={20} />,
-      color: "from-orange-500 to-red-500",
+      color: "from-warning-500 to-error-500",
       description: isRtl ? "تأمين حسابك" : "Secure your account",
     },
     {
       id: "email",
       label: isRtl ? "البريد الإلكتروني" : "Email",
       icon: <Mail size={20} />,
-      color: "from-blue-500 to-cyan-500",
+      color: "from-info-500 to-info-600",
       description: isRtl ? "تحديث بريدك الإلكتروني" : "Update your email",
     },
     {
       id: "delete",
       label: isRtl ? "حذف الحساب" : "Delete Account",
       icon: <Trash2 size={20} />,
-      color: "from-red-500 to-pink-500",
+      color: "from-error-500 to-secondary-500",
       description: isRtl ? "حذف حسابك نهائياً" : "Permanently delete account",
     },
   ];
 
   const stats = [
     {
-      icon: <Package size={24} className="text-purple-600" />,
+      icon: <Package size={24} className="text-primary-600" />,
       label: isRtl ? "إجمالي الطلبات" : "Total Orders",
       value: "12",
-      color: "from-purple-50 to-purple-100",
+      color: "from-primary-50 to-primary-100",
     },
     {
-      icon: <Heart size={24} className="text-pink-600" />,
+      icon: <Heart size={24} className="text-secondary-600" />,
       label: isRtl ? "المفضلة" : "Favorites",
       value: favoritesCount.toString(),
-      color: "from-pink-50 to-pink-100",
+      color: "from-secondary-50 to-secondary-100",
     },
     {
-      icon: <Award size={24} className="text-amber-600" />,
+      icon: <Award size={24} className="text-accent-600" />,
       label: isRtl ? "نقاط الولاء" : "Loyalty Points",
       value: "1,250",
-      color: "from-amber-50 to-amber-100",
+      color: "from-accent-50 to-accent-100",
     },
     {
-      icon: <Package size={24} className="text-blue-600" />,
+      icon: <Package size={24} className="text-info-600" />,
       label: isRtl ? "السلة" : "Cart Items",
       value: cartCount.toString(),
-      color: "from-blue-50 to-blue-100",
+      color: "from-info-50 to-info-100",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 py-8 px-4 sm:px-6 lg:px-8 font-serif text-neutral-800">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 py-8 px-4 sm:px-6 lg:px-8 font-serif text-text-primary">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <motion.div
@@ -102,8 +102,8 @@ const ProfilePage: React.FC = () => {
           className="text-center mb-12"
         >
           <div className="relative inline-block mb-6">
-            <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-r from-purple-500 to-pink-500 p-1 shadow-xl">
-              <div className="w-full h-full rounded-full overflow-hidden bg-white">
+            <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-r from-primary-500 to-secondary-500 p-1 shadow-xl">
+              <div className="w-full h-full rounded-full overflow-hidden bg-background-primary">
                 {profile?.profilePicture ? (
                   <img
                     src={profile.profilePicture}
@@ -111,8 +111,8 @@ const ProfilePage: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
-                    <User size={48} className="text-purple-600" />
+                  <div className="w-full h-full bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center">
+                    <User size={48} className="text-primary-600" />
                   </div>
                 )}
               </div>
@@ -346,7 +346,7 @@ const ProfilePage: React.FC = () => {
 
                       {/* Account Status */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+                        <div className="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-xl p-4 border border-primary-100">
                           <div className="flex items-center gap-3">
                             <CheckCircle className="w-6 h-6 text-green-500" />
                             <div>
@@ -363,7 +363,7 @@ const ProfilePage: React.FC = () => {
                         <div
                           className={`rounded-xl p-4 border ${
                             profile?.isPhoneVerified
-                              ? "bg-gradient-to-br from-green-50 to-emerald-50 border-green-100"
+                              ? "bg-gradient-to-br from-primary-50 to-secondary-50 border-primary-100"
                               : "bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-100"
                           }`}
                         >
@@ -501,7 +501,7 @@ const ProfilePage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-100 mb-8">
+                      <div className="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-xl p-6 border border-primary-100 mb-8">
                         <div className="flex items-center gap-3 mb-3">
                           <CheckCircle className="w-6 h-6 text-green-500" />
                           <h4 className="font-semibold text-green-800">

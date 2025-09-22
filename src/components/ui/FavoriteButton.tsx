@@ -66,8 +66,8 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
       onClick={handleToggleFavorite}
       className={`
         flex items-center justify-center h-8 w-8 rounded-full transition-all duration-300
-        bg-white border border-neutral-200 shadow-sm
-        hover:bg-neutral-50
+        bg-background-primary border border-border-primary shadow-sm
+        hover:bg-background-secondary
         ${className}
       `}
       whileTap={{ scale: 0.9 }}

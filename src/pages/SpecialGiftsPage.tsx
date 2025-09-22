@@ -279,7 +279,7 @@ const SpecialGiftsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-800 font-sans antialiased p-4 sm:p-6 lg:p-10">
+    <div className="min-h-screen bg-background-secondary text-text-primary font-sans antialiased p-4 sm:p-6 lg:p-10">
       <div className="mx-auto max-w-7xl">
         <main className="grid gap-8 lg:grid-cols-[300px_1fr] w-full min-w-[0]">
           {/* Filters Sidebar */}
@@ -289,16 +289,16 @@ const SpecialGiftsPage: React.FC = () => {
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="hidden lg:block w-[300px] flex-shrink-0"
           >
-            <div className="sticky top-6 rounded-3xl border border-neutral-100 bg-white shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] overflow-hidden">
-              <div className="flex items-center justify-between gap-2 px-5 py-4 bg-emerald-500/10">
-                <h3 className="flex items-center gap-2 text-base font-extrabold text-neutral-900">
-                  <SlidersHorizontal size={18} className="text-emerald-500" />
+            <div className="sticky top-6 rounded-3xl border border-border-primary bg-background-primary shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] overflow-hidden">
+              <div className="flex items-center justify-between gap-2 px-5 py-4 bg-primary-500/10">
+                <h3 className="flex items-center gap-2 text-base font-extrabold text-text-primary">
+                  <SlidersHorizontal size={18} className="text-primary-500" />
                   {isRtl ? "تخصيص" : "Customize"}
                 </h3>
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="rounded-full bg-violet-500 px-3 py-1 text-xs font-semibold text-white hover:opacity-95"
+                    className="rounded-full bg-primary-500 px-3 py-1 text-xs font-semibold text-white hover:opacity-95"
                   >
                     {isRtl ? "مسح" : "Clear"}
                   </button>
@@ -324,7 +324,7 @@ const SpecialGiftsPage: React.FC = () => {
                       }
                       className={`h-10 w-full ${
                         isRtl ? "pr-9 pl-3" : "pl-9 pr-3"
-                      } rounded-xl border border-neutral-200 bg-neutral-50/70 text-sm outline-none focus:border-emerald-500 focus:bg-white`}
+                      } rounded-xl border border-neutral-200 bg-neutral-50/70 text-sm outline-none focus:border-primary-500 focus:bg-white`}
                     />
                     {searchTerm && (
                       <button
@@ -436,7 +436,7 @@ const SpecialGiftsPage: React.FC = () => {
                         className="p-4"
                       >
                         <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-neutral-900">
-                          <DollarSign size={16} className="text-emerald-500" />
+                          <DollarSign size={16} className="text-primary-500" />
                           {isRtl ? "نطاق السعر" : "Price Range"}
                         </h4>
                         <div className="grid gap-2">
@@ -487,7 +487,7 @@ const SpecialGiftsPage: React.FC = () => {
                         className="p-4"
                       >
                         <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-neutral-900">
-                          <Sparkles size={16} className="text-emerald-500" />
+                          <Sparkles size={16} className="text-primary-500" />
                           {isRtl ? "المميزات" : "Features"}
                         </h4>
                         <div className="grid gap-2">
@@ -610,9 +610,9 @@ const SpecialGiftsPage: React.FC = () => {
                               }}
                               className={`w-full ${
                                 isRtl ? "text-right" : "text-left"
-                              } px-4 py-2 text-sm transition-colors hover:bg-emerald-500/10 ${
+                              } px-4 py-2 text-sm transition-colors hover:bg-primary-500/10 ${
                                 filters.sortBy === option.value
-                                  ? "bg-emerald-500/10 text-neutral-900"
+                                  ? "bg-primary-500/10 text-neutral-900"
                                   : "text-neutral-700"
                               }`}
                             >
@@ -630,7 +630,7 @@ const SpecialGiftsPage: React.FC = () => {
                       onClick={() => setViewMode("grid")}
                       className={`rounded-full p-2 ${
                         viewMode === "grid"
-                          ? "bg-white text-emerald-500 shadow-sm"
+                          ? "bg-white text-primary-500 shadow-sm"
                           : "text-neutral-500 hover:bg-neutral-200"
                       }`}
                       aria-label="Grid"
@@ -641,7 +641,7 @@ const SpecialGiftsPage: React.FC = () => {
                       onClick={() => setViewMode("list")}
                       className={`rounded-full p-2 ${
                         viewMode === "list"
-                          ? "bg-white text-emerald-500 shadow-sm"
+                          ? "bg-white text-primary-500 shadow-sm"
                           : "text-neutral-500 hover:bg-neutral-200"
                       }`}
                       aria-label="List"
@@ -678,7 +678,7 @@ const SpecialGiftsPage: React.FC = () => {
                   exit={{ opacity: 0 }}
                   className="flex items-center justify-center py-20"
                 >
-                  <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-transparent border-emerald-500" />
+                  <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-transparent border-primary-500" />
                 </motion.div>
               ) : filteredProducts.length > 0 ? (
                 viewMode === "grid" ? (
@@ -730,7 +730,7 @@ const SpecialGiftsPage: React.FC = () => {
                                   </span>
                                 )}
                                 {product.isSpecialGift && (
-                                  <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
+                                  <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 px-2 py-0.5 text-[10px] font-medium text-white shadow">
                                     <Sparkles size={10} />
                                     {isRtl ? "مميز" : "Special"}
                                   </span>
@@ -758,7 +758,7 @@ const SpecialGiftsPage: React.FC = () => {
                                   isRtl ? "flex-row-reverse" : ""
                                 }`}
                               >
-                                <RiyalSymbol className="h-4 w-4 text-emerald-600" />
+                                <RiyalSymbol className="h-4 w-4 text-success-600" />
                                 <span className="text-base font-bold text-neutral-900">
                                   {product.price}
                                 </span>
@@ -837,7 +837,7 @@ const SpecialGiftsPage: React.FC = () => {
                                   </span>
                                 )}
                                 {product.isSpecialGift && (
-                                  <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-1 text-xs font-semibold text-white shadow-sm">
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 px-3 py-1 text-xs font-semibold text-white shadow-sm">
                                     <Sparkles size={12} />
                                     {isRtl ? "مميز" : "Special"}
                                   </span>
@@ -851,7 +851,7 @@ const SpecialGiftsPage: React.FC = () => {
                             </div>
                             <div className="flex items-center justify-between pt-2">
                               <div className="flex items-center gap-1">
-                                <RiyalSymbol className="h-4 w-4 text-emerald-600" />
+                                <RiyalSymbol className="h-4 w-4 text-success-600" />
                                 <span className="text-base font-bold text-neutral-900">
                                   {product.price}
                                 </span>
@@ -925,7 +925,7 @@ const SpecialGiftsPage: React.FC = () => {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
-                  <Filter size={16} className="text-emerald-500" />
+                  <Filter size={16} className="text-primary-500" />
                   {isRtl ? "الفلاتر" : "Filters"}
                 </h3>
                 <button
@@ -939,7 +939,7 @@ const SpecialGiftsPage: React.FC = () => {
               <div className="space-y-4">
                 <div className="border-b border-neutral-200 pb-4">
                   <h4 className="mb-2 text-sm font-semibold text-neutral-800 flex items-center gap-1.5">
-                    <DollarSign size={14} className="text-emerald-500" />
+                    <DollarSign size={14} className="text-primary-500" />
                     {isRtl ? "نطاق السعر" : "Price Range"}
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
@@ -949,7 +949,7 @@ const SpecialGiftsPage: React.FC = () => {
                         className={`flex items-center gap-2 p-2 rounded-lg text-sm cursor-pointer transition-colors ${
                           filters.priceRange[0] === option.range[0] &&
                           filters.priceRange[1] === option.range[1]
-                            ? "bg-emerald-100 text-emerald-700"
+                            ? "bg-primary-100 text-primary-700"
                             : "bg-neutral-50 hover:bg-neutral-100"
                         }`}
                       >
@@ -966,7 +966,7 @@ const SpecialGiftsPage: React.FC = () => {
                               option.range[1]
                             )
                           }
-                          className="h-4 w-4 text-emerald-500 focus:ring-emerald-400"
+                          className="h-4 w-4 text-primary-500 focus:ring-primary-400"
                         />
                         <span className="flex items-center gap-1 text-sm">
                           {option.label}
@@ -978,7 +978,7 @@ const SpecialGiftsPage: React.FC = () => {
                 </div>
                 <div className="border-b border-neutral-200 pb-4">
                   <h4 className="mb-2 text-sm font-semibold text-neutral-800 flex items-center gap-1.5">
-                    <Sparkles size={14} className="text-emerald-500" />
+                    <Sparkles size={14} className="text-primary-500" />
                     {isRtl ? "المميزات" : "Features"}
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
@@ -987,7 +987,7 @@ const SpecialGiftsPage: React.FC = () => {
                         key={feature.id}
                         className={`flex items-center gap-2 p-2 rounded-lg text-sm cursor-pointer transition-colors ${
                           filters.features.includes(feature.id)
-                            ? "bg-emerald-100 text-emerald-700"
+                            ? "bg-primary-100 text-primary-700"
                             : "bg-neutral-50 hover:bg-neutral-100"
                         }`}
                       >
@@ -997,7 +997,7 @@ const SpecialGiftsPage: React.FC = () => {
                           onChange={() =>
                             toggleArrayFilter("features", feature.id)
                           }
-                          className="h-4 w-4 text-emerald-500 focus:ring-emerald-400"
+                          className="h-4 w-4 text-primary-500 focus:ring-primary-400"
                         />
                         <span className="flex items-center gap-1 text-sm">
                           {feature.icon} {feature.nameKey}
@@ -1019,7 +1019,7 @@ const SpecialGiftsPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setShowMobileFilters(false)}
-                  className="flex-1 py-2 rounded-full bg-emerald-500 text-sm font-medium text-white hover:bg-emerald-600"
+                  className="flex-1 py-2 rounded-full bg-primary-500 text-sm font-medium text-white hover:bg-primary-600"
                 >
                   {isRtl ? "تطبيق" : "Apply"}
                 </button>

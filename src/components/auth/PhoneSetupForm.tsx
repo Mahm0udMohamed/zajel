@@ -69,18 +69,18 @@ const PhoneSetupForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 flex items-center justify-center p-4 font-serif text-neutral-800">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 flex items-center justify-center p-4 font-serif text-text-primary">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/20"
+        className="bg-background-primary rounded-2xl shadow-2xl p-8 w-full max-w-md border border-border-primary"
       >
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4"
+            className="w-16 h-16 bg-gradient-to-r from-success-500 to-success-600 rounded-full flex items-center justify-center mx-auto mb-4"
           >
             {step === "input" ? (
               <Phone className="w-8 h-8 text-white" />
@@ -88,7 +88,7 @@ const PhoneSetupForm: React.FC = () => {
               <Shield className="w-8 h-8 text-white" />
             )}
           </motion.div>
-          <h1 className="text-2xl font-bold text-purple-800 mb-2">
+          <h1 className="text-2xl font-bold text-primary-800 mb-2">
             {step === "input"
               ? isRtl
                 ? "أضف رقم هاتفك"
@@ -97,7 +97,7 @@ const PhoneSetupForm: React.FC = () => {
               ? "تحقق من رقم الهاتف"
               : "Verify Phone Number"}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             {step === "input"
               ? isRtl
                 ? "لاستكمال إنشاء حسابك، يرجى إضافة رقم هاتفك وتأكيده"
@@ -111,13 +111,13 @@ const PhoneSetupForm: React.FC = () => {
         {step === "input" ? (
           <form onSubmit={handlePhoneSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 {isRtl ? "رقم الهاتف" : "Phone Number"}
               </label>
               <div className="relative">
                 <Phone
                   size={18}
-                  className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 transform -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 transform -translate-y-1/2 text-text-tertiary"
                 />
                 <input
                   type="tel"
@@ -128,21 +128,21 @@ const PhoneSetupForm: React.FC = () => {
                   required
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-text-tertiary mt-2">
                 {isRtl
                   ? "يرجى إدخال رقم الهاتف السعودي (مثال: +966501234567)"
                   : "Please enter Saudi phone number (e.g., +966501234567)"}
               </p>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
+            <div className="bg-info-50 border border-info-200 rounded-xl p-4">
+              <h4 className="font-medium text-info-800 mb-2 flex items-center gap-2">
                 <Shield size={16} />
                 {isRtl
                   ? "لماذا نحتاج رقم هاتفك؟"
                   : "Why do we need your phone number?"}
               </h4>
-              <ul className="text-blue-700 text-sm space-y-1">
+              <ul className="text-info-700 text-sm space-y-1">
                 <li>
                   •{" "}
                   {isRtl
@@ -168,7 +168,7 @@ const PhoneSetupForm: React.FC = () => {
             <motion.button
               type="submit"
               disabled={isLoading || !phoneNumber}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-4 rounded-xl font-medium hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-success-500 to-success-600 text-white py-3 px-4 rounded-xl font-medium hover:from-success-600 hover:to-success-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -198,7 +198,7 @@ const PhoneSetupForm: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 {isRtl ? "رمز التحقق" : "Verification Code"}
               </label>
               <input
@@ -215,7 +215,7 @@ const PhoneSetupForm: React.FC = () => {
             <motion.button
               type="submit"
               disabled={isLoading || verificationCode.length !== 6}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-4 rounded-xl font-medium hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-success-500 to-success-600 text-white py-3 px-4 rounded-xl font-medium hover:from-success-600 hover:to-success-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >

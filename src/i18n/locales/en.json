@@ -81,57 +81,6 @@
         "chocolateCake": "Chocolate & Cake"
       }
     },
-    "bestSellers": {
-      "title": "Best Sellers",
-      "viewMore": "View More",
-      "bestSeller": "Best Seller"
-    },
-    "featuredCollections": {
-      "title": "Featured Collections",
-      "viewMore": "View More",
-      "specialGift": "Special Gift"
-    },
-    "shipping": {
-      "title": "Shipping & Delivery Service",
-      "description": "We provide fast and reliable delivery service throughout Saudi Arabia. With same-day delivery available in major cities, we ensure your gifts arrive at the perfect time.",
-      "badge": "Live Delivery",
-      "features": {
-        "sameDay": {
-          "title": "Same-Day Delivery",
-          "description": "For orders before 2 PM in Riyadh, Jeddah, and Dammam"
-        },
-        "nationwide": {
-          "title": "Nationwide Coverage",
-          "description": "We reach all cities and provinces across Saudi Arabia"
-        },
-        "secure": {
-          "title": "Secure Packaging",
-          "description": "We guarantee your gifts arrive in perfect condition with professional packaging"
-        },
-        "tracking": {
-          "title": "Order Tracking",
-          "description": "Track your order in real-time from preparation to delivery"
-        }
-      },
-      "specialOffer": {
-        "title": "Special Occasion Offer",
-        "description": "Free delivery for orders over 200 SAR during special occasions"
-      }
-    },
-    "downloadApp": {
-      "title": "Download Our App",
-      "description": "Enjoy a seamless shopping experience with the Zajil Al-Sa'adah app, order your premium gifts with ease and speed!",
-      "iosPlatform": "iOS",
-      "androidPlatform": "Android",
-      "downloadOn": "Download on",
-      "getItOn": "Get it on",
-      "appStore": "App Store",
-      "features": {
-        "feature1": "Easily select personalized gifts",
-        "feature2": "Fast and reliable delivery",
-        "feature3": "Seamless and easy shopping experience"
-      }
-    },
     "magicGift": {
       "title": "Perfect Gift Selection Assistant",
       "description": "Let us help you find the perfect gift through intelligent analysis of your needs and preferences",

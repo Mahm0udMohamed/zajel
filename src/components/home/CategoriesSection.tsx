@@ -95,7 +95,7 @@ function Stack({
           >
             <Link to={`/category/${card.categoryId}`}>
               <motion.div
-                className="rounded-full overflow-hidden border-3 border-white shadow-lg bg-gradient-to-br from-purple-100 to-pink-50"
+                className="rounded-full overflow-hidden border-3 border-white shadow-lg bg-gradient-to-br from-primary-100 to-secondary-50"
                 onClick={() => sendToBackOnClick && sendToBack(card.id)}
                 animate={{
                   rotateZ: (cards.length - index - 1) * 4 + randomRotate,
@@ -144,7 +144,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
       to={`/category/${category.id}`}
       className="flex flex-col items-center flex-shrink-0 w-20 sm:w-24 md:w-28 text-center snap-center"
     >
-      <div className="w-full aspect-square rounded-full overflow-hidden relative z-10 bg-gradient-to-br from-purple-100 to-pink-50 shadow-sm border border-purple-100 hover:shadow-md transition-shadow">
+      <div className="w-full aspect-square rounded-full overflow-hidden relative z-10 bg-gradient-to-br from-primary-100 to-secondary-50 shadow-sm border border-primary-100 hover:shadow-md transition-shadow">
         <ProductImage
           src={category.imageUrl}
           alt={t(category.nameKey)}
@@ -160,7 +160,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
           fallbackSrc="https://images.pexels.com/photos/1058775/pexels-photo-1058775.jpeg?auto=compress&cs=tinysrgb&w=400"
         />
       </div>
-      <span className="text-stone-700 text-xs sm:text-sm font-medium mt-2 w-full line-clamp-1 leading-tight text-center">
+      <span className="text-text-primary text-xs sm:text-sm font-medium mt-2 w-full line-clamp-1 leading-tight text-center">
         {t(category.nameKey)}
       </span>
     </Link>
@@ -211,11 +211,11 @@ const CategoriesSection: React.FC = () => {
   }));
 
   return (
-    <section className="py-6 bg-gray-50">
+    <section className="py-2 sm:py-6 bg-background-secondary">
       <div className="container-custom px-4 sm:px-6">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-3">
           <h2
-            className={`text-lg sm:text-xl font-bold text-gray-900 ${
+            className={`text-lg sm:text-xl font-bold text-text-primary ${
               i18n.language === "ar" ? "font-tajawal" : "font-poppins"
             }`}
           >
@@ -223,7 +223,7 @@ const CategoriesSection: React.FC = () => {
           </h2>
           <Link
             to="/categories"
-            className="text-orange-500 text-sm font-medium hover:text-orange-600 transition-colors"
+            className="text-primary-500 text-sm font-medium hover:text-primary-600 transition-colors"
           >
             {t("home.categories.viewMore")}
           </Link>
@@ -243,7 +243,7 @@ const CategoriesSection: React.FC = () => {
           <div className="relative">
             <div
               ref={scrollRef}
-              className="flex items-start overflow-x-auto gap-3 sm:gap-4 md:gap-4 pb-4 snap-x snap-mandatory scrollbar-hidden"
+              className="flex items-start overflow-x-auto gap-3 sm:gap-4 md:gap-4 pb-2 snap-x snap-mandatory scrollbar-hidden"
               style={{ scrollSnapStop: "always" }}
             >
               {categories.map((category: Category, index) => (

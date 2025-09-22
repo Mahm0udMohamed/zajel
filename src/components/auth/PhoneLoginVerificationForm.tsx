@@ -63,40 +63,40 @@ const PhoneLoginVerificationForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 flex items-center justify-center p-4 font-serif text-neutral-800">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 flex items-center justify-center p-4 font-serif text-text-primary">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/20"
+        className="bg-background-primary rounded-2xl shadow-2xl p-8 w-full max-w-md border border-border-primary"
       >
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4"
+            className="w-16 h-16 bg-gradient-to-r from-info-500 to-info-600 rounded-full flex items-center justify-center mx-auto mb-4"
           >
             <Phone className="w-8 h-8 text-white" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-purple-800 mb-2">
+          <h1 className="text-2xl font-bold text-primary-800 mb-2">
             {isRtl ? "تحقق من رقم الهاتف" : "Verify Phone Number"}
           </h1>
-          <p className="text-gray-600 mb-4">
+          <p className="text-text-secondary mb-4">
             {isRtl ? "أدخل الرمز المرسل إلى" : "Enter the code sent to"}
           </p>
-          <p className="text-blue-600 font-medium">{phoneNumber}</p>
+          <p className="text-info-600 font-medium">{phoneNumber}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               {isRtl ? "رمز التحقق" : "Verification Code"}
             </label>
             <input
               type="text"
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-center text-lg font-mono tracking-widest"
+              className="w-full px-4 py-3 border border-border-primary rounded-xl focus:ring-2 focus:ring-info-500 focus:border-transparent transition-all text-center text-lg font-mono tracking-widest"
               placeholder="000000"
               maxLength={6}
               required
@@ -106,7 +106,7 @@ const PhoneLoginVerificationForm: React.FC = () => {
           <motion.button
             type="submit"
             disabled={isLoading || verificationCode.length !== 6}
-            className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 px-4 rounded-xl font-medium hover:from-blue-600 hover:to-cyan-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-info-500 to-info-600 text-white py-3 px-4 rounded-xl font-medium hover:from-info-600 hover:to-info-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -122,13 +122,13 @@ const PhoneLoginVerificationForm: React.FC = () => {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-gray-600 mb-4">
+          <p className="text-text-secondary mb-4">
             {isRtl ? "لم تستلم الرمز؟" : "Didn't receive the code?"}
           </p>
           <button
             onClick={handleResendCode}
             disabled={countdown > 0 || isResending}
-            className="text-blue-600 hover:text-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+            className="text-info-600 hover:text-info-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
           >
             {isResending ? (
               <RefreshCw size={16} className="animate-spin" />
@@ -148,7 +148,7 @@ const PhoneLoginVerificationForm: React.FC = () => {
         <div className="mt-8 text-center">
           <button
             onClick={() => navigate("/auth/login")}
-            className="text-purple-600 hover:text-purple-700 font-medium transition-colors"
+            className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
           >
             {isRtl ? "العودة لتسجيل الدخول" : "Back to login"}
           </button>

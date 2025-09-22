@@ -75,38 +75,38 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 flex items-center justify-center p-4 font-serif text-neutral-800">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 flex items-center justify-center p-4 font-serif text-text-primary">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/20"
+        className="bg-background-primary rounded-2xl shadow-2xl p-8 w-full max-w-md border border-border-primary"
       >
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4"
+            className="w-16 h-16 bg-gradient-to-r from-primary-600 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-4"
           >
             <LogIn className="w-8 h-8 text-white" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-purple-800 mb-2">
+          <h1 className="text-2xl font-bold text-primary-800 mb-2">
             {isRtl ? "تسجيل الدخول" : "Sign In"}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             {isRtl ? "مرحباً بك مرة أخرى" : "Welcome back"}
           </p>
         </div>
 
         {/* Login Method Toggle */}
-        <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
+        <div className="flex bg-background-secondary rounded-xl p-1 mb-6">
           <button
             type="button"
             onClick={() => setLoginMethod("email")}
             className={`flex-1 py-2 px-4 rounded-lg transition-all ${
               loginMethod === "email"
-                ? "bg-white shadow-sm text-purple-600 font-medium"
-                : "text-gray-600"
+                ? "bg-background-primary shadow-sm text-primary-600 font-medium"
+                : "text-text-secondary"
             }`}
           >
             <Mail size={16} className="inline mr-2 rtl:ml-2 rtl:mr-0" />
@@ -117,8 +117,8 @@ const LoginForm: React.FC = () => {
             onClick={() => setLoginMethod("phone")}
             className={`flex-1 py-2 px-4 rounded-lg transition-all ${
               loginMethod === "phone"
-                ? "bg-white shadow-sm text-purple-600 font-medium"
-                : "text-gray-600"
+                ? "bg-background-primary shadow-sm text-primary-600 font-medium"
+                : "text-text-secondary"
             }`}
           >
             <Phone size={16} className="inline mr-2 rtl:ml-2 rtl:mr-0" />
@@ -175,7 +175,7 @@ const LoginForm: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 rtl:left-3 rtl:right-auto top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 rtl:left-3 rtl:right-auto top-1/2 transform -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -209,15 +209,15 @@ const LoginForm: React.FC = () => {
             <label className="flex items-center">
               <input
                 type="checkbox"
-                className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                className="rounded border-border-primary text-primary-600 focus:ring-primary-500"
               />
-              <span className="ml-2 rtl:mr-2 rtl:ml-0 text-sm text-gray-600">
+              <span className="ml-2 rtl:mr-2 rtl:ml-0 text-sm text-text-secondary">
                 {isRtl ? "تذكرني" : "Remember me"}
               </span>
             </label>
             <Link
               to="/auth/forgot-password"
-              className="text-sm text-purple-600 hover:text-purple-700 transition-colors"
+              className="text-sm text-primary-600 hover:text-primary-700 transition-colors"
             >
               {isRtl ? "نسيت كلمة المرور؟" : "Forgot password?"}
             </Link>
@@ -287,7 +287,7 @@ const LoginForm: React.FC = () => {
         )}
 
         <div className="mt-8 text-center">
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             {isRtl ? "ليس لديك حساب؟" : "Don't have an account?"}{" "}
             <Link
               to="/auth/signup"

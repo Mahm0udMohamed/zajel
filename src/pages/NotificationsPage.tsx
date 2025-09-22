@@ -71,12 +71,12 @@ const NotificationsPage: React.FC = () => {
       <Smile size={16} />,
     ];
     const colors = [
-      "text-purple-400",
-      "text-pink-400",
-      "text-rose-400",
-      "text-fuchsia-400",
-      "text-violet-400",
-      "text-indigo-400",
+      "text-primary-400",
+      "text-secondary-400",
+      "text-accent-400",
+      "text-success-400",
+      "text-warning-400",
+      "text-info-400",
     ];
 
     for (let i = 0; i < 10; i++) {
@@ -224,7 +224,7 @@ const NotificationsPage: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 relative overflow-hidden font-serif text-neutral-800"
+      className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 relative overflow-hidden font-serif text-text-primary"
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {floatingElements.map((element) => (
@@ -260,7 +260,7 @@ const NotificationsPage: React.FC = () => {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/90 rounded-full shadow-md mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-background-primary/90 rounded-full shadow-md mb-6">
               <Wand2 size={28} className="text-purple-800" />
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-medium text-purple-800 leading-tight">

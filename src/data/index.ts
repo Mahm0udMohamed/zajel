@@ -10,6 +10,8 @@ import balloonsData from "./categories/balloons.json";
 import couponsData from "./categories/coupons.json";
 import partyFavorsData from "./categories/party-favors.json";
 import chocolateCakeData from "./categories/chocolate-cake.json";
+import luxuryGiftsData from "./categories/luxury-gifts.json";
+import specialOccasionsData from "./categories/special-occasions.json";
 
 // Occasion imports
 import eidFitrData from "./occasions/eid-fitr.json";
@@ -36,6 +38,8 @@ export const allProducts = [
   ...couponsData,
   ...partyFavorsData,
   ...chocolateCakeData,
+  ...luxuryGiftsData,
+  ...specialOccasionsData,
   ...eidFitrData,
   ...eidAdhaData,
   ...birthdaysData,
@@ -61,6 +65,8 @@ export const categoryProducts = {
   coupons: couponsData,
   "party-favors": partyFavorsData,
   "chocolate-cake": chocolateCakeData,
+  "luxury-gifts": luxuryGiftsData,
+  "special-occasions": specialOccasionsData,
 };
 
 // Occasion-specific exports
@@ -126,6 +132,14 @@ export const getBestSellers = () => {
 
 export const getSpecialGifts = () => {
   return allProducts.filter((product) => product.isSpecialGift);
+};
+
+export const getLuxuryGifts = () => {
+  return allProducts.filter((product) => product.isLuxuryGift);
+};
+
+export const getSpecialOccasions = () => {
+  return allProducts.filter((product) => product.isSpecialOccasion);
 };
 
 export const getProductById = (id: number) => {

@@ -88,7 +88,7 @@ const ContactPage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 px-4 sm:px-6 lg:px-8 font-serif text-neutral-800"
+      className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 px-4 sm:px-6 lg:px-8 font-serif text-text-primary"
       dir={isArabic ? "rtl" : "ltr"}
     >
       <div className="max-w-7xl mx-auto py-12 sm:py-16">
@@ -102,10 +102,10 @@ const ContactPage: React.FC = () => {
             variants={itemVariants}
             className="text-center mb-12 md:mb-16"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-purple-800">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-primary-800">
               {isArabic ? "تواصل معنا" : "Get In Touch"}
             </h1>
-            <p className="mt-4 text-lg sm:text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="mt-4 text-lg sm:text-xl text-text-secondary max-w-3xl mx-auto leading-relaxed">
               {isArabic
                 ? "نحن هنا لمساعدتك. أرسل لنا استفسارك أو تفضل بزيارتنا."
                 : "We're here to help. Send us your inquiry or feel free to visit us."}
@@ -114,12 +114,12 @@ const ContactPage: React.FC = () => {
 
           <motion.div
             variants={itemVariants}
-            className="bg-white rounded-2xl shadow-lg border border-neutral-100 overflow-hidden"
+            className="bg-background-primary rounded-2xl shadow-lg border border-border-primary overflow-hidden"
           >
             <div className="grid lg:grid-cols-2">
               {/* Left Column: Contact Form */}
               <div className="p-6 sm:p-8">
-                <h2 className="text-2xl sm:text-3xl font-bold text-neutral-800 mb-6 md:mb-8 text-center lg:text-start">
+                <h2 className="text-2xl sm:text-3xl font-bold text-text-primary mb-6 md:mb-8 text-center lg:text-start">
                   {isArabic ? "أرسل لنا رسالة" : "Send Us a Message"}
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-5">

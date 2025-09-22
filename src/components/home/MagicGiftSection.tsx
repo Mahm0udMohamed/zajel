@@ -9,7 +9,7 @@ const MagicGiftSection: React.FC = () => {
 
   return (
     <section
-      className="py-3 sm:py-12"
+      className="py-2 sm:py-6"
       style={{
         backgroundImage:
           "url('https://res.cloudinary.com/djpl34pm6/image/upload/v1756382835/MagicGiftSection_knzvpy.png')",
@@ -23,10 +23,10 @@ const MagicGiftSection: React.FC = () => {
         <div className="relative p-6 md:p-10 text-center overflow-hidden">
           <div className="relative z-10">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6">
-              <Wand2 size={32} className="text-purple-800 " />
+              <Wand2 size={32} className="text-primary-800 " />
             </div>
 
-            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-medium text-purple-800 leading-tight mb-4">
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-medium text-primary-800 leading-tight mb-4">
               {t("home.magicGift.title", {
                 defaultValue: isRtl
                   ? "مساعد اختيار الهدية المثالية"
@@ -34,7 +34,7 @@ const MagicGiftSection: React.FC = () => {
               })}
             </h2>
 
-            <p className="text-gray-950 text-sm sm:text-base max-w-xs sm:max-w-md md:max-w-lg mx-auto leading-relaxed mb-8">
+            <p className="text-text-primary text-sm sm:text-base max-w-xs sm:max-w-md md:max-w-lg mx-auto leading-relaxed mb-8">
               {t("home.magicGift.description", {
                 defaultValue: isRtl
                   ? "دعنا نساعدك في العثور على الهدية المثالية من خلال تحليل ذكي لاحتياجاتك وتفضيلاتك"
@@ -44,12 +44,12 @@ const MagicGiftSection: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 max-w-3xl mx-auto">
               <div className="p-4">
-                <div className="text-purple-600 font-semibold text-sm">
+                <div className="text-primary-600 font-semibold text-sm">
                   {t("home.magicGift.features.smartAnalysis", {
                     defaultValue: isRtl ? "تحليل ذكي" : "Smart Analysis",
                   })}
                 </div>
-                <div className="text-gray-950 text-xs leading-relaxed">
+                <div className="text-text-primary text-xs leading-relaxed">
                   {t("home.magicGift.features.smartAnalysisDesc", {
                     defaultValue: isRtl
                       ? "بناءً على المناسبة والعلاقة"
@@ -58,14 +58,14 @@ const MagicGiftSection: React.FC = () => {
                 </div>
               </div>
               <div className="p-4">
-                <div className="text-purple-600 font-semibold text-sm">
+                <div className="text-primary-600 font-semibold text-sm">
                   {t("home.magicGift.features.personalized", {
                     defaultValue: isRtl
                       ? "اقتراحات مخصصة"
                       : "Personalized Suggestions",
                   })}
                 </div>
-                <div className="text-gray-950 text-xs leading-relaxed">
+                <div className="text-text-primary text-xs leading-relaxed">
                   {t("home.magicGift.features.personalizedDesc", {
                     defaultValue: isRtl
                       ? "حسب الميزانية والاهتمامات"
@@ -74,12 +74,12 @@ const MagicGiftSection: React.FC = () => {
                 </div>
               </div>
               <div className="p-4">
-                <div className="text-purple-600 font-semibold text-sm">
+                <div className="text-primary-600 font-semibold text-sm">
                   {t("home.magicGift.features.instant", {
                     defaultValue: isRtl ? "نتائج فورية" : "Instant Results",
                   })}
                 </div>
-                <div className="text-gray-950 text-xs leading-relaxed">
+                <div className="text-text-primary text-xs leading-relaxed">
                   {t("home.magicGift.features.instantDesc", {
                     defaultValue: isRtl
                       ? "احصل على اقتراحات فورية"
