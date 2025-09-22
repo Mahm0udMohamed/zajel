@@ -6,7 +6,6 @@ import React, {
   useCallback,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
 import { EnhancedImage } from "../../features/images";
@@ -313,10 +312,7 @@ const HeroSlider: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
                   >
-                    <Link
-                      to={`/occasion/${currentSlideData.occasion.id}`}
-                      className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30"
-                    >
+                    <div className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30">
                       <span>{t("home.hero.giftNow")}</span>
                       <motion.span
                         className={`${
@@ -334,7 +330,7 @@ const HeroSlider: React.FC = () => {
                       >
                         {isArabic ? "←" : "→"}
                       </motion.span>
-                    </Link>
+                    </div>
                   </motion.div>
                 </motion.div>
               ) : currentSlideData?.type === "promotion" &&
@@ -387,10 +383,7 @@ const HeroSlider: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4, duration: 0.6 }}
                   >
-                    <Link
-                      to={currentSlideData.promotion.link}
-                      className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30"
-                    >
+                    <div className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30">
                       <span>
                         {isArabic
                           ? currentSlideData.promotion.buttonTextAr
@@ -412,7 +405,7 @@ const HeroSlider: React.FC = () => {
                       >
                         {isArabic ? "←" : "→"}
                       </motion.span>
-                    </Link>
+                    </div>
                   </motion.div>
                 </motion.div>
               ) : null}

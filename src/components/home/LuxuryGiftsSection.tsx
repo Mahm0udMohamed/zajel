@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Crown, Flame } from "lucide-react";
 import { getLuxuryGifts } from "../../data";
 import { ProductImage } from "../../features/images";
@@ -108,7 +107,7 @@ const LuxuryGiftsSection: React.FC = () => {
           )}
           <div
             ref={scrollRef}
-            className="flex overflow-x-auto gap-x-3 pb-2 snap-x snap-mandatory scroll-smooth touch-pan-x"
+            className="flex overflow-x-auto gap-x-3 pb-2 snap-x snap-mandatory scroll-smooth"
             style={{
               WebkitOverflowScrolling: "touch",
               scrollbarWidth: isMobile ? "none" : "thin",
@@ -120,7 +119,7 @@ const LuxuryGiftsSection: React.FC = () => {
                 key={product.id}
                 className="group flex flex-shrink-0 w-44 sm:w-52 flex-col overflow-hidden rounded-3xl"
               >
-                <Link to={`/product/${product.id}`} className="block">
+                <div className="block">
                   <div className="relative aspect-[4/4.4] sm:aspect-[4/4.7] overflow-hidden rounded-3xl">
                     <ProductImage
                       src={product.imageUrl}
@@ -153,13 +152,13 @@ const LuxuryGiftsSection: React.FC = () => {
                       )}
                     </div>
                   </div>
-                </Link>
+                </div>
                 <div className="p-3 flex flex-col h-full bg-background-primary rounded-b-3xl">
-                  <Link to={`/product/${product.id}`} className="block">
+                  <div className="block">
                     <h3 className="line-clamp-2 text-base font-bold text-text-primary transition-colors duration-200 leading-tight mb-0">
                       {isRtl ? product.nameAr : product.nameEn}
                     </h3>
-                  </Link>
+                  </div>
                   <div className="flex items-center">
                     <div
                       className={`flex items-center gap-1 ${

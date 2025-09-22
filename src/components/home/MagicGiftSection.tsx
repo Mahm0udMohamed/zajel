@@ -89,10 +89,7 @@ const MagicGiftSection: React.FC = () => {
               </div>
             </div>
 
-            <Link
-              to="/gift-assistant"
-              className="inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold py-3 px-6 rounded-xl text-base transition-all duration-300 hover:from-purple-700 hover:to-purple-900 hover:scale-105"
-            >
+            <div className="inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold py-3 px-6 rounded-xl text-base transition-all duration-300 hover:from-purple-700 hover:to-purple-900 hover:scale-105">
               {t("home.magicGift.startNow", {
                 defaultValue: isRtl ? "ابدأ الآن" : "Start Now",
               })}
@@ -101,7 +98,7 @@ const MagicGiftSection: React.FC = () => {
               ) : (
                 <ArrowRight size={18} className="ml-2" />
               )}
-            </Link>
+            </div>
           </div>
         </div>
       </div>
