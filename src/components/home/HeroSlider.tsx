@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
 import { EnhancedImage } from "../../features/images";
@@ -312,25 +313,27 @@ const HeroSlider: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
                   >
-                    <div className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30">
-                      <span>{t("home.hero.giftNow")}</span>
-                      <motion.span
-                        className={`${
-                          isArabic ? "mr-1 sm:mr-2" : "ml-1 sm:ml-2"
-                        } text-lg sm:text-xl`}
-                        animate={{
-                          x: isArabic ? [-2, 0] : [0, 2],
-                        }}
-                        transition={{
-                          duration: 1.5,
-                          repeat: Infinity,
-                          repeatType: "reverse",
-                          ease: "easeInOut",
-                        }}
-                      >
-                        {isArabic ? "←" : "→"}
-                      </motion.span>
-                    </div>
+                    <Link to="/products">
+                      <div className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30">
+                        <span>{t("home.hero.giftNow")}</span>
+                        <motion.span
+                          className={`${
+                            isArabic ? "mr-1 sm:mr-2" : "ml-1 sm:ml-2"
+                          } text-lg sm:text-xl`}
+                          animate={{
+                            x: isArabic ? [-2, 0] : [0, 2],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            repeatType: "reverse",
+                            ease: "easeInOut",
+                          }}
+                        >
+                          {isArabic ? "←" : "→"}
+                        </motion.span>
+                      </div>
+                    </Link>
                   </motion.div>
                 </motion.div>
               ) : currentSlideData?.type === "promotion" &&
@@ -383,29 +386,31 @@ const HeroSlider: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4, duration: 0.6 }}
                   >
-                    <div className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30">
-                      <span>
-                        {isArabic
-                          ? currentSlideData.promotion.buttonTextAr
-                          : currentSlideData.promotion.buttonTextEn}
-                      </span>
-                      <motion.span
-                        className={`${
-                          isArabic ? "mr-1 sm:mr-2" : "ml-1 sm:ml-2"
-                        } text-lg sm:text-xl`}
-                        animate={{
-                          x: isArabic ? [-2, 0] : [0, 2],
-                        }}
-                        transition={{
-                          duration: 1.5,
-                          repeat: Infinity,
-                          repeatType: "reverse",
-                          ease: "easeInOut",
-                        }}
-                      >
-                        {isArabic ? "←" : "→"}
-                      </motion.span>
-                    </div>
+                    <Link to={currentSlideData.promotion.link || "/products"}>
+                      <div className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30">
+                        <span>
+                          {isArabic
+                            ? currentSlideData.promotion.buttonTextAr
+                            : currentSlideData.promotion.buttonTextEn}
+                        </span>
+                        <motion.span
+                          className={`${
+                            isArabic ? "mr-1 sm:mr-2" : "ml-1 sm:ml-2"
+                          } text-lg sm:text-xl`}
+                          animate={{
+                            x: isArabic ? [-2, 0] : [0, 2],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            repeatType: "reverse",
+                            ease: "easeInOut",
+                          }}
+                        >
+                          {isArabic ? "←" : "→"}
+                        </motion.span>
+                      </div>
+                    </Link>
                   </motion.div>
                 </motion.div>
               ) : null}

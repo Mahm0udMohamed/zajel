@@ -16,7 +16,10 @@ const OccasionCard: React.FC<{ occasion: Occasion }> = ({ occasion }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col items-center flex-shrink-0 w-20 sm:w-24 md:w-28 text-center snap-center">
+    <Link
+      to={`/occasions/${occasion.id}`}
+      className="flex flex-col items-center flex-shrink-0 w-20 sm:w-24 md:w-28 text-center snap-center"
+    >
       <div className="w-full aspect-square rounded-full overflow-hidden relative z-10 ">
         <ProductImage
           src={occasion.imageUrl}
@@ -36,7 +39,7 @@ const OccasionCard: React.FC<{ occasion: Occasion }> = ({ occasion }) => {
       <span className="text-text-primary text-xs sm:text-sm font-medium mt-2 w-full line-clamp-1 leading-tight text-center">
         {t(occasion.nameKey)}
       </span>
-    </div>
+    </Link>
   );
 };
 

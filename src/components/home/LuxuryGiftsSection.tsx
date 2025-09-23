@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Crown, Flame } from "lucide-react";
 import { getLuxuryGifts } from "../../data";
 import { ProductImage } from "../../features/images";
@@ -115,8 +116,9 @@ const LuxuryGiftsSection: React.FC = () => {
             }}
           >
             {luxuryProducts.map((product, index) => (
-              <div
+              <Link
                 key={product.id}
+                to={`/product/${product.id}`}
                 className="group flex flex-shrink-0 w-44 sm:w-52 flex-col overflow-hidden rounded-3xl"
               >
                 <div className="block">
@@ -172,7 +174,7 @@ const LuxuryGiftsSection: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

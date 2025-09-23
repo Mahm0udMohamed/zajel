@@ -98,7 +98,7 @@ function Stack({
             onSendToBack={() => sendToBack(card.id)}
             sensitivity={sensitivity}
           >
-            <div to={`/category/${card.categoryId}`}>
+            <Link to={`/category/${card.categoryId}`}>
               <motion.div
                 className="rounded-full overflow-hidden border-3 border-white shadow-lg bg-gradient-to-br from-primary-100 to-secondary-50"
                 onClick={() => sendToBackOnClick && sendToBack(card.id)}
@@ -124,7 +124,7 @@ function Stack({
                   className="w-full h-full object-cover pointer-events-none"
                 />
               </motion.div>
-            </div>
+            </Link>
           </CardRotate>
         );
       })}
@@ -145,7 +145,10 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col items-center flex-shrink-0 w-20 sm:w-24 md:w-28 text-center snap-center">
+    <Link
+      to={`/category/${category.id}`}
+      className="flex flex-col items-center flex-shrink-0 w-20 sm:w-24 md:w-28 text-center snap-center"
+    >
       <div className="w-full aspect-square rounded-full overflow-hidden relative z-10 bg-gradient-to-br from-primary-100 to-secondary-50 shadow-sm border border-primary-100 hover:shadow-md transition-shadow">
         <ProductImage
           src={category.imageUrl}
@@ -165,7 +168,7 @@ const CategoryCard: React.FC<{ category: Category; index: number }> = ({
       <span className="text-text-primary text-xs sm:text-sm font-medium mt-2 w-full line-clamp-1 leading-tight text-center">
         {t(category.nameKey)}
       </span>
-    </div>
+    </Link>
   );
 };
 
