@@ -11,8 +11,6 @@ import {
   Package,
   Star,
   ShieldCheck,
-  Truck,
-  Gift,
   Phone,
   Heart,
 } from "lucide-react";
@@ -69,26 +67,16 @@ const Header = () => {
 
   return (
     <header className="w-full bg-background-primary sticky top-0 z-50 border-b border-border-primary">
-      {/* Top announcement bar */}
-      <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-2.5">
-        <div
-          className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center ${
-            isRtl ? "justify-end flex-row-reverse" : "justify-start flex-row"
-          } gap-4`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <Truck size={14} className="text-white" />
-              <span className="text-xs font-semibold">
-                {isRtl ? "توصيل في نفس اليوم" : "Same-Day Delivery"}
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Gift size={14} className="text-white" />
-              <span className="text-xs font-semibold">
-                {isRtl ? "هدايا مصممة بعناية" : "Thoughtfully Curated Gifts"}
-              </span>
-            </div>
+      {/* Simple Clean Announcement Bar */}
+      <div className="bg-primary-500 text-white py-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center gap-2">
+            <Star size={14} className="text-white" />
+            <span className="text-sm font-medium">
+              {isRtl
+                ? "توصيل مجاني للطلبات فوق 200 ريال"
+                : "Free shipping on orders over 200 SAR"}
+            </span>
           </div>
         </div>
       </div>
@@ -132,14 +120,14 @@ const Header = () => {
           </div>
 
           {/* Header actions */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-3">
             {/* Language switcher */}
             <div className="relative" ref={langMenuRef}>
               <button
                 onClick={() => setShowLangMenu(!showLangMenu)}
-                className="flex items-center gap-1 rounded-full bg-background-primary px-2 py-1.5 text-sm font-medium text-text-secondary hover:bg-background-secondary transition-all"
+                className="flex items-center gap-1 px-2 py-1 text-sm text-neutral-600 hover:text-primary-500 transition-colors"
               >
-                <Globe size={16} className="text-primary-500" />
+                <Globe size={16} />
                 <span className="hidden sm:inline">
                   {isRtl ? "العربية" : "EN"}
                 </span>
@@ -151,7 +139,7 @@ const Header = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.2 }}
-                    className={`absolute mt-2 w-32 rounded-lg border border-border-primary bg-background-primary shadow-md z-50 ${
+                    className={`absolute mt-2 w-32 bg-white shadow-lg z-50 ${
                       isRtl ? "left-0" : "right-0"
                     }`}
                   >
@@ -162,7 +150,7 @@ const Header = () => {
                       }}
                       className={`w-full ${
                         isRtl ? "text-right" : "text-left"
-                      } px-3 py-2 text-sm hover:bg-primary-50 ${
+                      } px-3 py-2 text-sm hover:bg-neutral-50 ${
                         i18n.language === "ar"
                           ? "text-primary-600 font-medium"
                           : "text-neutral-600"
@@ -177,7 +165,7 @@ const Header = () => {
                       }}
                       className={`w-full ${
                         isRtl ? "text-right" : "text-left"
-                      } px-3 py-2 text-sm hover:bg-primary-50 ${
+                      } px-3 py-2 text-sm hover:bg-neutral-50 ${
                         i18n.language === "en"
                           ? "text-primary-600 font-medium"
                           : "text-neutral-600"
@@ -193,11 +181,9 @@ const Header = () => {
             {/* Favorites (Desktop only) */}
             <Link
               to="/favorites"
-              className="hidden md:flex relative items-center text-neutral-600 hover:text-rose-500 transition-all"
+              className="hidden md:flex relative items-center text-neutral-600 hover:text-rose-500 transition-colors"
             >
-              <div className="p-1.5 rounded-full bg-neutral-100 hover:bg-rose-100">
-                <Heart size={18} />
-              </div>
+              <Heart size={20} />
               {isAuthenticated && favoritesCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium">
                   {favoritesCount > 99 ? "99+" : favoritesCount}
@@ -208,11 +194,9 @@ const Header = () => {
             {/* Cart */}
             <Link
               to="/cart"
-              className="relative flex items-center text-neutral-600 hover:text-primary-500 transition-all"
+              className="relative flex items-center text-neutral-600 hover:text-primary-500 transition-colors"
             >
-              <div className="p-1.5 rounded-full bg-neutral-100 hover:bg-primary-100">
-                <ShoppingBasket size={18} />
-              </div>
+              <ShoppingBasket size={20} />
               {isAuthenticated && cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium">
                   {cartCount > 99 ? "99+" : cartCount}
@@ -225,16 +209,16 @@ const Header = () => {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-1.5 rounded-full bg-white px-2 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-all"
+                  className="flex items-center gap-1.5 px-2 py-1 text-sm text-neutral-600 hover:text-primary-500 transition-colors"
                 >
                   {user?.profilePicture ? (
                     <img
                       src={user.profilePicture}
                       alt={user.name}
-                      className="w-7 h-7 rounded-full object-cover ring-1 ring-neutral-200"
+                      className="w-6 h-6 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-primary-500 flex items-center justify-center text-white text-xs font-medium">
+                    <div className="w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center text-white text-xs font-medium">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -250,7 +234,7 @@ const Header = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.2 }}
-                      className={`absolute mt-2 w-48 rounded-lg border border-neutral-200 bg-white shadow-md z-50 ${
+                      className={`absolute mt-2 w-48 bg-white shadow-lg z-50 ${
                         isRtl ? "left-0" : "right-0"
                       }`}
                     >
@@ -311,9 +295,9 @@ const Header = () => {
             ) : (
               <Link
                 to="/auth/login"
-                className="flex items-center gap-1.5 rounded-full bg-white px-2 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-all"
+                className="flex items-center gap-1.5 px-2 py-1 text-sm text-neutral-600 hover:text-primary-500 transition-colors"
               >
-                <User size={18} />
+                <User size={16} />
                 <span className="hidden sm:inline">{t("header.login")}</span>
               </Link>
             )}

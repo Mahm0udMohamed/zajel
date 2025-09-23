@@ -31,7 +31,7 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-const API_BASE_URL = "https://localhost:3002/api/user";
+const API_BASE_URL = "http://localhost:3002/api/user";
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
