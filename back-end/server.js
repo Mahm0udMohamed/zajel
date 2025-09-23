@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import https from "https";
+import fs from "fs";
 
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -38,8 +40,10 @@ const allowedOrigins = [
   "https://medrxhelper.netlify.app",
   "http://localhost:3001",
   "http://localhost:3000",
-  "http://localhost:3002",
+  "https://localhost:3002",
   "http://localhost:5173",
+  "https://localhost:3002",
+  "https://localhost:5173",
   "https://appzajel1.netlify.app",
 ];
 
@@ -79,7 +83,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // false للتطوير المحلي مع HTTP
+      secure: process.env.NODE_ENV === "production", // true للإنتاج، false للتطوير المحلي
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
@@ -95,12 +99,20 @@ app.use("/api/user", userRoutes);
 app.use("/api/favorites", favoritesRoutes);
 app.use("/api/cart", cartRoutes);
 
-// ✅ إنشاء السيرفر باستخدام HTTP للتطوير المحلي
-const server = app;
+// ✅ إنشاء السيرفر باستخدام HTTPS للتطوير المحلي
+const PORT = process.env.PORT || 3002;
+
+// قراءة شهادات SSL
+const sslOptions = {
+  key: fs.readFileSync("./ssl/localhost-key.pem"),
+  cert: fs.readFileSync("./ssl/localhost-cert.pem"),
+};
+
+// إنشاء HTTPS server
+const server = https.createServer(sslOptions, app);
 
 // 🚀 تشغيل السيرفر
-const PORT = process.env.PORT || 3002;
 server.listen(PORT, () => {
-  console.log(`🚀 HTTP Server running on http://localhost:${PORT}`);
+  console.log(`🚀 HTTPS Server running on https://localhost:${PORT}`);
   printServiceStatus();
 });

@@ -36,7 +36,7 @@ const FavoritesContext = createContext<FavoritesContextType | undefined>(
   undefined
 );
 
-const API_BASE_URL = "http://localhost:3002/api/favorites";
+const API_BASE_URL = "https://localhost:3002/api/favorites";
 export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);

@@ -15,7 +15,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { useRecaptcha } from "../../hooks/useRecaptcha";
 
-const API_BASE_URL = "http://localhost:3002/api/auth";
+const API_BASE_URL = "https://localhost:3002/api/auth";
 
 const LoginForm: React.FC = () => {
   const { i18n } = useTranslation();

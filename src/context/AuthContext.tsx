@@ -47,7 +47,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE_URL = "http://localhost:3002/api/auth";
+const API_BASE_URL = "https://localhost:3002/api/auth";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      const response = await fetch("http://localhost:3002/api/user/me", {
+      const response = await fetch("https://localhost:3002/api/user/me", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
