@@ -18,26 +18,9 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence, Variants, Easing } from "framer-motion";
 import { ProductImage, usePreloadCriticalImages } from "../../features/images";
+import { usePerformanceMode } from "../../hooks/useMobileDetection";
 import FavoriteButton from "../ui/FavoriteButton";
 import AddToCartButton from "../ui/AddToCartButton";
-
-// Hook to detect mobile screen size
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
-    };
-
-    checkIsMobile();
-    window.addEventListener("resize", checkIsMobile);
-
-    return () => window.removeEventListener("resize", checkIsMobile);
-  }, []);
-
-  return isMobile;
-};
 
 export interface Product {
   id: number;
@@ -156,7 +139,7 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
 }) => {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
-  const isMobile = useIsMobile();
+  const { isMobile, shouldReduceAnimations } = usePerformanceMode();
   const sortDropdownRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -440,17 +423,25 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
   };
 
   const productCardVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } },
+    hidden: {
+      opacity: 0,
+      scale: shouldReduceAnimations ? 0.98 : 0.95,
+      transition: { duration: shouldReduceAnimations ? 0.1 : 0.2 },
+    },
     visible: (i: number) => ({
       opacity: 1,
       scale: 1,
       transition: {
-        delay: i * 0.05,
-        duration: 0.3,
+        delay: shouldReduceAnimations ? 0 : i * 0.01,
+        duration: shouldReduceAnimations ? 0.15 : 0.3,
         ease: "easeOut" as Easing,
       },
     }),
-    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } },
+    exit: {
+      opacity: 0,
+      scale: shouldReduceAnimations ? 0.98 : 0.95,
+      transition: { duration: shouldReduceAnimations ? 0.1 : 0.2 },
+    },
   };
 
   const removeChipHandler = (key: string, value?: string) => {
@@ -603,9 +594,15 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
         <main className="grid gap-8 lg:grid-cols-[300px_1fr] w-full min-w-[0]">
           {/* Filters Sidebar */}
           <motion.aside
-            initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
+            initial={{
+              opacity: 0,
+              x: shouldReduceAnimations ? 0 : isRtl ? 40 : -40,
+            }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{
+              duration: shouldReduceAnimations ? 0.2 : 0.4,
+              ease: "easeOut",
+            }}
             className="hidden lg:block w-[300px] flex-shrink-0"
           >
             <div className="sticky top-6 rounded-3xl border border-border-primary bg-background-primary shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] overflow-hidden">
@@ -724,10 +721,18 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                       config.filterTabs?.price !== false && (
                         <motion.div
                           key="price-tab"
-                          initial={{ opacity: 0, y: 10 }}
+                          initial={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : 10,
+                          }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.2 }}
+                          transition={{
+                            duration: shouldReduceAnimations ? 0.1 : 0.3,
+                          }}
+                          exit={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : -10,
+                          }}
                           className="p-4"
                         >
                           <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-neutral-900">
@@ -789,10 +794,18 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                       config.filterTabs?.features !== false && (
                         <motion.div
                           key="features-tab"
-                          initial={{ opacity: 0, y: 10 }}
+                          initial={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : 10,
+                          }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.2 }}
+                          exit={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : -10,
+                          }}
+                          transition={{
+                            duration: shouldReduceAnimations ? 0.1 : 0.3,
+                          }}
                           className="p-4"
                         >
                           <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-neutral-900">
@@ -850,10 +863,18 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                       categories.length > 0 && (
                         <motion.div
                           key="categories-tab"
-                          initial={{ opacity: 0, y: 10 }}
+                          initial={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : 10,
+                          }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.2 }}
+                          exit={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : -10,
+                          }}
+                          transition={{
+                            duration: shouldReduceAnimations ? 0.1 : 0.3,
+                          }}
                           className="p-4"
                         >
                           <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-neutral-900">
@@ -911,10 +932,18 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                       occasions.length > 0 && (
                         <motion.div
                           key="occasions-tab"
-                          initial={{ opacity: 0, y: 10 }}
+                          initial={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : 10,
+                          }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.2 }}
+                          exit={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : -10,
+                          }}
+                          transition={{
+                            duration: shouldReduceAnimations ? 0.1 : 0.3,
+                          }}
                           className="p-4"
                         >
                           <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-neutral-900">
@@ -976,9 +1005,9 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
           {/* Top bar */}
           <div className="lg:col-span-1 flex-1">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: shouldReduceAnimations ? 0 : 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: shouldReduceAnimations ? 0.2 : 0.4 }}
               className="relative z-20 mb-6 rounded-3xl border border-neutral-100/30 bg-white/50 p-4 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] backdrop-blur-md"
             >
               <div className="flex flex-row items-center justify-between gap-3 sm:gap-4">
@@ -1040,10 +1069,18 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                     <AnimatePresence>
                       {showSortOptions && (
                         <motion.div
-                          initial={{ opacity: 0, y: -8 }}
+                          initial={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : -8,
+                          }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -8 }}
-                          transition={{ duration: 0.16 }}
+                          transition={{
+                            duration: shouldReduceAnimations ? 0.1 : 0.2,
+                          }}
+                          exit={{
+                            opacity: 0,
+                            y: shouldReduceAnimations ? 0 : -8,
+                          }}
                           className={`absolute mt-2 w-52 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl ${
                             isRtl ? "left-0" : "right-0"
                           }`}
@@ -1132,6 +1169,7 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                   key="loading"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
+                  transition={{ duration: shouldReduceAnimations ? 0.1 : 0.3 }}
                   exit={{ opacity: 0 }}
                   className="flex items-center justify-center py-20"
                 >
@@ -1150,121 +1188,114 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
+                    transition={{
+                      duration: shouldReduceAnimations ? 0.1 : 0.3,
+                    }}
                     className="relative z-10 grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full min-w-[0]"
-                    style={{ contain: "layout" }}
+                    style={{
+                      contain: "layout",
+                      willChange: "auto",
+                    }}
                   >
                     <AnimatePresence>
-                      {filteredProducts.map((product, index) => {
-                        const ProductCard = isMobile ? "div" : motion.div;
-                        const cardProps = isMobile
-                          ? {
-                              key: `product-${product.id}-${index}`,
-                              className:
-                                "group flex w-full flex-col overflow-hidden rounded-3xl",
-                              style: { minWidth: 0 },
-                            }
-                          : {
-                              key: `product-${product.id}-${index}`,
-                              variants: productCardVariants,
-                              initial: "hidden",
-                              animate: "visible",
-                              exit: "exit",
-                              custom: index,
-                              layout: true,
-                              className:
-                                "group flex w-full flex-col overflow-hidden rounded-3xl",
-                              style: { minWidth: 0 },
-                            };
-
-                        return (
-                          <ProductCard {...cardProps}>
-                            <Link
-                              to={`/product/${product.id}`}
-                              className="block flex-1"
-                            >
-                              <div className="relative aspect-[4/4.4] sm:aspect-[4/4.7] overflow-hidden rounded-t-3xl rounded-b-3xl">
-                                <ProductImage
-                                  src={product.imageUrl}
-                                  alt={isRtl ? product.nameAr : product.nameEn}
-                                  className="h-full w-full object-cover rounded-t-3xl rounded-b-3xl"
-                                  width={400}
-                                  height={500}
-                                  aspectRatio="portrait"
-                                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                  quality={100}
-                                  priority={index < 4}
-                                  showZoom={false}
-                                  placeholderSize={80}
-                                  enableBlurUp={true}
-                                />
-                                <div className="absolute start-2 top-2 flex flex-col gap-1">
-                                  {product.isBestSeller && (
-                                    <span
-                                      className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-white shadow ${
-                                        config.gradientColors?.bestseller ||
-                                        "bg-gradient-to-r from-violet-500 to-fuchsia-500"
-                                      }`}
-                                    >
-                                      <Flame size={10} />
-                                      {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
-                                    </span>
-                                  )}
-                                  {product.isSpecialGift && (
-                                    <span
-                                      className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-white shadow ${
-                                        config.gradientColors?.special ||
-                                        "bg-gradient-to-r from-primary-500 to-secondary-500"
-                                      }`}
-                                    >
-                                      <Sparkles size={10} />
-                                      {isRtl ? "مميز" : "Special"}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </Link>
-                            <div className="p-3 flex flex-col h-full">
-                              <Link
-                                to={`/product/${product.id}`}
-                                className="block mb-1"
-                              >
-                                <h3 className="line-clamp-2 text-base font-bold text-neutral-900 ">
-                                  {isRtl ? product.nameAr : product.nameEn}
-                                </h3>
-                              </Link>
-                              <p className="line-clamp-2 text-xs text-neutral-500 mb-3">
-                                {isRtl
-                                  ? product.descriptionAr
-                                  : product.descriptionEn}
-                              </p>
-                              <div className="flex items-center justify-between mt-auto">
-                                <div
-                                  className={`flex items-center gap-1 ${
-                                    isRtl ? "flex-row-reverse" : ""
-                                  }`}
-                                >
-                                  <RiyalSymbol
-                                    className={`h-4 w-4 ${colorClass}`}
-                                  />
-                                  <span className="text-base font-bold text-neutral-900">
-                                    {product.price}
+                      {filteredProducts.map((product, index) => (
+                        <motion.div
+                          key={`product-${product.id}-${index}`}
+                          variants={productCardVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          custom={index}
+                          layout={false}
+                          className="group flex w-full flex-col overflow-hidden rounded-3xl"
+                          style={{ minWidth: 0 }}
+                        >
+                          <Link
+                            to={`/product/${product.id}`}
+                            className="block flex-1"
+                          >
+                            <div className="relative aspect-[4/4.4] sm:aspect-[4/4.7] overflow-hidden rounded-t-3xl rounded-b-3xl">
+                              <ProductImage
+                                src={product.imageUrl}
+                                alt={isRtl ? product.nameAr : product.nameEn}
+                                className="h-full w-full object-cover rounded-t-3xl rounded-b-3xl"
+                                width={400}
+                                height={500}
+                                aspectRatio="portrait"
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                quality={100}
+                                priority={index < 4}
+                                showZoom={false}
+                                placeholderSize={80}
+                                enableBlurUp={true}
+                              />
+                              <div className="absolute start-2 top-2 flex flex-col gap-1">
+                                {product.isBestSeller && (
+                                  <span
+                                    className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-white shadow ${
+                                      config.gradientColors?.bestseller ||
+                                      "bg-gradient-to-r from-violet-500 to-fuchsia-500"
+                                    }`}
+                                  >
+                                    <Flame size={10} />
+                                    {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
                                   </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <FavoriteButton
-                                    product={product}
-                                    className="shadow-md"
-                                  />
-                                  <AddToCartButton
-                                    product={product}
-                                    className="shadow-md"
-                                  />
-                                </div>
+                                )}
+                                {product.isSpecialGift && (
+                                  <span
+                                    className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-white shadow ${
+                                      config.gradientColors?.special ||
+                                      "bg-gradient-to-r from-primary-500 to-secondary-500"
+                                    }`}
+                                  >
+                                    <Sparkles size={10} />
+                                    {isRtl ? "مميز" : "Special"}
+                                  </span>
+                                )}
                               </div>
                             </div>
-                          </ProductCard>
-                        );
-                      })}
+                          </Link>
+                          <div className="p-3 flex flex-col h-full">
+                            <Link
+                              to={`/product/${product.id}`}
+                              className="block mb-1"
+                            >
+                              <h3 className="line-clamp-2 text-base font-bold text-neutral-900 ">
+                                {isRtl ? product.nameAr : product.nameEn}
+                              </h3>
+                            </Link>
+                            <p className="line-clamp-2 text-xs text-neutral-500 mb-3">
+                              {isRtl
+                                ? product.descriptionAr
+                                : product.descriptionEn}
+                            </p>
+                            <div className="flex items-center justify-between mt-auto">
+                              <div
+                                className={`flex items-center gap-1 ${
+                                  isRtl ? "flex-row-reverse" : ""
+                                }`}
+                              >
+                                <RiyalSymbol
+                                  className={`h-4 w-4 ${colorClass}`}
+                                />
+                                <span className="text-base font-bold text-neutral-900">
+                                  {product.price}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <FavoriteButton
+                                  product={product}
+                                  className="shadow-md"
+                                />
+                                <AddToCartButton
+                                  product={product}
+                                  className="shadow-md"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
                     </AnimatePresence>
                   </motion.div>
                 ) : (
@@ -1273,116 +1304,109 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
+                    transition={{
+                      duration: shouldReduceAnimations ? 0.1 : 0.3,
+                    }}
                     className="relative z-10 space-y-4 w-full min-w-[0]"
-                    style={{ contain: "layout" }}
+                    style={{
+                      contain: "layout",
+                      willChange: "auto",
+                    }}
                   >
                     <AnimatePresence>
-                      {filteredProducts.map((product, index) => {
-                        const ListProductCard = isMobile ? "div" : motion.div;
-                        const listCardProps = isMobile
-                          ? {
-                              key: `list-product-${product.id}-${index}`,
-                              className:
-                                "flex flex-col items-start gap-4 rounded-3xl p-4 sm:flex-row",
-                              style: { minWidth: 0 },
-                            }
-                          : {
-                              key: `list-product-${product.id}-${index}`,
-                              variants: productCardVariants,
-                              initial: "hidden",
-                              animate: "visible",
-                              exit: "exit",
-                              custom: index,
-                              layout: true,
-                              className:
-                                "flex flex-col items-start gap-4 rounded-3xl p-4 sm:flex-row",
-                              style: { minWidth: 0 },
-                            };
-
-                        return (
-                          <ListProductCard {...listCardProps}>
-                            <Link
-                              to={`/product/${product.id}`}
-                              className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-2xl border border-neutral-100 bg-neutral-50"
-                            >
-                              <ProductImage
-                                src={product.imageUrl}
-                                alt={isRtl ? product.nameAr : product.nameEn}
-                                className="h-full w-full rounded-2xl object-cover"
-                                width={200}
-                                height={200}
-                                aspectRatio="square"
-                                sizes="200px"
-                                quality={100}
-                                priority={index < 2}
-                                showZoom={false}
-                                placeholderSize={80}
-                                enableBlurUp={true}
-                              />
-                            </Link>
-                            <div className="flex w-full flex-1 flex-col justify-between">
-                              <div>
-                                <div className="mb-2">
-                                  <Link to={`/product/${product.id}`}>
-                                    <h3 className="text-lg font-bold text-neutral-900  transition-colors duration-200 leading-tight">
-                                      {isRtl ? product.nameAr : product.nameEn}
-                                    </h3>
-                                  </Link>
-                                </div>
-                                <div className="mb-3 flex flex-wrap gap-2">
-                                  {product.isBestSeller && (
-                                    <span
-                                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
-                                        config.gradientColors?.bestseller ||
-                                        "bg-gradient-to-r from-violet-500 to-fuchsia-500"
-                                      }`}
-                                    >
-                                      <Flame size={12} />
-                                      {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
-                                    </span>
-                                  )}
-                                  {product.isSpecialGift && (
-                                    <span
-                                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
-                                        config.gradientColors?.special ||
-                                        "bg-gradient-to-r from-primary-500 to-secondary-500"
-                                      }`}
-                                    >
-                                      <Sparkles size={12} />
-                                      {isRtl ? "مميز" : "Special"}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="line-clamp-2 text-sm text-neutral-600 leading-relaxed mb-3">
-                                  {isRtl
-                                    ? product.descriptionAr
-                                    : product.descriptionEn}
-                                </p>
+                      {filteredProducts.map((product, index) => (
+                        <motion.div
+                          key={`list-product-${product.id}-${index}`}
+                          variants={productCardVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          custom={index}
+                          layout={false}
+                          className="flex flex-col items-start gap-4 rounded-3xl p-4 sm:flex-row"
+                          style={{ minWidth: 0 }}
+                        >
+                          <Link
+                            to={`/product/${product.id}`}
+                            className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-2xl border border-neutral-100 bg-neutral-50"
+                          >
+                            <ProductImage
+                              src={product.imageUrl}
+                              alt={isRtl ? product.nameAr : product.nameEn}
+                              className="h-full w-full rounded-2xl object-cover"
+                              width={200}
+                              height={200}
+                              aspectRatio="square"
+                              sizes="200px"
+                              quality={100}
+                              priority={index < 2}
+                              showZoom={false}
+                              placeholderSize={80}
+                              enableBlurUp={true}
+                            />
+                          </Link>
+                          <div className="flex w-full flex-1 flex-col justify-between">
+                            <div>
+                              <div className="mb-2">
+                                <Link to={`/product/${product.id}`}>
+                                  <h3 className="text-lg font-bold text-neutral-900  transition-colors duration-200 leading-tight">
+                                    {isRtl ? product.nameAr : product.nameEn}
+                                  </h3>
+                                </Link>
                               </div>
-                              <div className="flex items-center justify-between pt-2">
-                                <div className="flex items-center gap-1">
-                                  <RiyalSymbol
-                                    className={`h-4 w-4 ${colorClass}`}
-                                  />
-                                  <span className="text-base font-bold text-neutral-900">
-                                    {product.price}
+                              <div className="mb-3 flex flex-wrap gap-2">
+                                {product.isBestSeller && (
+                                  <span
+                                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
+                                      config.gradientColors?.bestseller ||
+                                      "bg-gradient-to-r from-violet-500 to-fuchsia-500"
+                                    }`}
+                                  >
+                                    <Flame size={12} />
+                                    {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
                                   </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <FavoriteButton
-                                    product={product}
-                                    className="shadow-md"
-                                  />
-                                  <AddToCartButton
-                                    product={product}
-                                    className="shadow-md"
-                                  />
-                                </div>
+                                )}
+                                {product.isSpecialGift && (
+                                  <span
+                                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
+                                      config.gradientColors?.special ||
+                                      "bg-gradient-to-r from-primary-500 to-secondary-500"
+                                    }`}
+                                  >
+                                    <Sparkles size={12} />
+                                    {isRtl ? "مميز" : "Special"}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="line-clamp-2 text-sm text-neutral-600 leading-relaxed mb-3">
+                                {isRtl
+                                  ? product.descriptionAr
+                                  : product.descriptionEn}
+                              </p>
+                            </div>
+                            <div className="flex items-center justify-between pt-2">
+                              <div className="flex items-center gap-1">
+                                <RiyalSymbol
+                                  className={`h-4 w-4 ${colorClass}`}
+                                />
+                                <span className="text-base font-bold text-neutral-900">
+                                  {product.price}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <FavoriteButton
+                                  product={product}
+                                  className="shadow-md"
+                                />
+                                <AddToCartButton
+                                  product={product}
+                                  className="shadow-md"
+                                />
                               </div>
                             </div>
-                          </ListProductCard>
-                        );
-                      })}
+                          </div>
+                        </motion.div>
+                      ))}
                     </AnimatePresence>
                   </motion.div>
                 )
@@ -1391,6 +1415,7 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                   key="no-products"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
+                  transition={{ duration: shouldReduceAnimations ? 0.1 : 0.3 }}
                   className="rounded-3xl border border-neutral-100/60 bg-white/80 p-10 text-center shadow-[0_6px_24px_-8px_rgba(0,0,0,0.08)] w-full min-w-[0]"
                   style={{ contain: "layout" }}
                 >
@@ -1432,13 +1457,15 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: shouldReduceAnimations ? 0.1 : 0.3 }}
             className="fixed inset-0 z-50 bg-black/60 flex items-end"
             onClick={() => setShowMobileFilters(false)}
           >
             <motion.div
-              initial={{ y: "100%" }}
+              initial={{ y: shouldReduceAnimations ? 0 : "100%" }}
               animate={{ y: 0 }}
-              exit={{ y: "100%" }}
+              transition={{ duration: shouldReduceAnimations ? 0.1 : 0.3 }}
+              exit={{ y: shouldReduceAnimations ? 0 : "100%" }}
               className="w-full max-h-[80vh] overflow-y-auto bg-white rounded-t-3xl p-5 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >

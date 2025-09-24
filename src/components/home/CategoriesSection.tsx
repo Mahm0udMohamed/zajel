@@ -1,136 +1,11 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import categories from "../../data/categories.json";
 import { ProductImage } from "../../features/images";
 import { useImagePreloader } from "../../features/images";
-import { motion, useMotionValue, useTransform } from "framer-motion";
-
-interface CardRotateProps {
-  children: React.ReactNode;
-  onSendToBack: () => void;
-  sensitivity: number;
-}
-
-function CardRotate({ children, onSendToBack, sensitivity }: CardRotateProps) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotateX = useTransform(y, [-100, 100], [60, -60]);
-  const rotateY = useTransform(x, [-100, 100], [-60, 60]);
-  const isTouchDevice =
-    typeof window !== "undefined" &&
-    window.matchMedia &&
-    window.matchMedia("(pointer: coarse)").matches;
-
-  function handleDragEnd(_: never, info: { offset: { x: number; y: number } }) {
-    if (
-      Math.abs(info.offset.x) > sensitivity ||
-      Math.abs(info.offset.y) > sensitivity
-    ) {
-      onSendToBack();
-    } else {
-      x.set(0);
-      y.set(0);
-    }
-  }
-
-  return (
-    <motion.div
-      className="absolute cursor-grab"
-      style={{ x, y, rotateX, rotateY, touchAction: "pan-y" }}
-      drag={isTouchDevice ? false : "x"}
-      dragDirectionLock={!isTouchDevice}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.6}
-      whileTap={{ cursor: "grabbing" }}
-      onDragEnd={handleDragEnd}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-interface StackProps {
-  randomRotation?: boolean;
-  sensitivity?: number;
-  cardDimensions?: { width: number; height: number };
-  sendToBackOnClick?: boolean;
-  cardsData: { id: number; img: string; categoryId: string }[];
-  animationConfig?: { stiffness: number; damping: number };
-}
-
-function Stack({
-  randomRotation = false,
-  sensitivity = 200,
-  cardDimensions = { width: 208, height: 208 },
-  cardsData,
-  animationConfig = { stiffness: 260, damping: 20 },
-  sendToBackOnClick = false,
-}: StackProps) {
-  const [cards, setCards] = useState(cardsData);
-
-  const sendToBack = (id: number) => {
-    setCards((prev) => {
-      const newCards = [...prev];
-      const index = newCards.findIndex((card) => card.id === id);
-      const [card] = newCards.splice(index, 1);
-      newCards.unshift(card);
-      return newCards;
-    });
-  };
-
-  return (
-    <div
-      className="relative"
-      style={{
-        width: cardDimensions.width,
-        height: cardDimensions.height,
-        perspective: 600,
-      }}
-    >
-      {cards.map((card, index) => {
-        const randomRotate = randomRotation ? Math.random() * 10 - 5 : 0;
-
-        return (
-          <CardRotate
-            key={card.id}
-            onSendToBack={() => sendToBack(card.id)}
-            sensitivity={sensitivity}
-          >
-            <Link to={`/category/${card.categoryId}`}>
-              <motion.div
-                className="rounded-full overflow-hidden border-3 border-white shadow-lg bg-gradient-to-br from-primary-100 to-secondary-50"
-                onClick={() => sendToBackOnClick && sendToBack(card.id)}
-                animate={{
-                  rotateZ: (cards.length - index - 1) * 4 + randomRotate,
-                  scale: 1 + index * 0.06 - cards.length * 0.06,
-                  transformOrigin: "90% 90%",
-                }}
-                initial={false}
-                transition={{
-                  type: "spring",
-                  stiffness: animationConfig.stiffness,
-                  damping: animationConfig.damping,
-                }}
-                style={{
-                  width: cardDimensions.width,
-                  height: cardDimensions.height,
-                }}
-              >
-                <img
-                  src={card.img}
-                  alt={`card-${card.id}`}
-                  className="w-full h-full object-cover pointer-events-none"
-                />
-              </motion.div>
-            </Link>
-          </CardRotate>
-        );
-      })}
-    </div>
-  );
-}
+import { useMobileDetection } from "../../hooks/useMobileDetection";
 
 interface Category {
   id: string;
@@ -176,22 +51,13 @@ const CategoriesSection: React.FC = () => {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const { isMobile } = useMobileDetection();
 
   const categoryImages = React.useMemo(
     () => categories.slice(0, 8).map((category) => category.imageUrl),
     []
   );
   useImagePreloader(categoryImages, { priority: true });
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -208,12 +74,6 @@ const CategoriesSection: React.FC = () => {
       });
     }
   };
-
-  const cardsData = categories.map((category) => ({
-    id: parseInt(category.id, 10) || Math.random(),
-    img: category.imageUrl,
-    categoryId: category.id,
-  }));
 
   return (
     <section className="py-2 sm:py-6 bg-background-secondary">
@@ -235,14 +95,12 @@ const CategoriesSection: React.FC = () => {
         </div>
 
         {isMobile ? (
-          <div className="flex justify-center">
-            <Stack
-              randomRotation={true}
-              sensitivity={180}
-              sendToBackOnClick={true}
-              cardDimensions={{ width: 200, height: 200 }}
-              cardsData={cardsData}
-            />
+          <div className="flex items-start overflow-x-auto gap-3 pb-2 snap-x snap-mandatory scrollbar-hidden">
+            {categories.map((category: Category, index) => (
+              <div key={category.id} className="snap-start">
+                <CategoryCard category={category} index={index} />
+              </div>
+            ))}
           </div>
         ) : (
           <div className="relative">
@@ -252,11 +110,7 @@ const CategoriesSection: React.FC = () => {
               style={{ scrollSnapStop: "always" }}
             >
               {categories.map((category: Category, index) => (
-                <div
-                  key={category.id}
-                  className="animate-fade-in snap-start"
-                  style={{ animationDelay: `${index * 30}ms` }}
-                >
+                <div key={category.id} className="snap-start">
                   <CategoryCard category={category} index={index} />
                 </div>
               ))}

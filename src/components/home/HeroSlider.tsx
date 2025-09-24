@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
 import { EnhancedImage } from "../../features/images";
 import { usePreloadCriticalImages } from "../../features/images";
+import { usePerformanceMode } from "../../hooks/useMobileDetection";
 import heroOccasions from "../../data/heroOccasions.json";
 import promotionalSlides from "../../data/promotionalSlides.json";
 
@@ -52,6 +53,7 @@ const HeroSlider: React.FC = () => {
   const [transitionEnabled, setTransitionEnabled] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
   const [isOccasionActive, setIsOccasionActive] = useState(false);
+  const { isMobile, shouldReduceAnimations } = usePerformanceMode();
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const activeOccasions = useMemo(() => {
@@ -193,18 +195,20 @@ const HeroSlider: React.FC = () => {
 
   return (
     <section className="relative overflow-hidden py-4 sm:py-8">
-      {isOccasionActive && currentSlideData?.type === "occasion" && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <Confetti
-            width={window.innerWidth}
-            height={window.innerHeight}
-            recycle={false}
-            numberOfPieces={150}
-            tweenDuration={6000}
-            colors={["#d8b4fe", "#c084fc", "#8b4589", "#6d28d9"]}
-          />
-        </div>
-      )}
+      {!isMobile &&
+        isOccasionActive &&
+        currentSlideData?.type === "occasion" && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <Confetti
+              width={window.innerWidth}
+              height={window.innerHeight}
+              recycle={false}
+              numberOfPieces={100}
+              tweenDuration={4000}
+              colors={["#d8b4fe", "#c084fc", "#8b4589", "#6d28d9"]}
+            />
+          </div>
+        )}
 
       <div className="container-custom px-4 sm:px-16">
         <div className="relative h-[280px] sm:h-[380px] md:h-[480px] lg:h-[580px] xl:h-[620px] overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 backdrop-blur-sm shadow-lg">
@@ -221,8 +225,8 @@ const HeroSlider: React.FC = () => {
                 : -currentSlide * 100 + "%",
             }}
             transition={{
-              duration: 1.8,
-              ease: [0.16, 1, 0.3, 1],
+              duration: shouldReduceAnimations ? 0.5 : 1.2,
+              ease: shouldReduceAnimations ? "easeOut" : [0.16, 1, 0.3, 1],
               type: "tween",
             }}
           >
@@ -265,9 +269,11 @@ const HeroSlider: React.FC = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -30, scale: 0.95 }}
                   transition={{
-                    duration: 1.2,
-                    ease: [0.16, 1, 0.3, 1],
-                    staggerChildren: 0.15,
+                    duration: shouldReduceAnimations ? 0.4 : 1.0,
+                    ease: shouldReduceAnimations
+                      ? "easeOut"
+                      : [0.16, 1, 0.3, 1],
+                    staggerChildren: shouldReduceAnimations ? 0.02 : 0.1,
                   }}
                   className="max-w-4xl mx-auto px-2 sm:px-0"
                 >
@@ -360,9 +366,11 @@ const HeroSlider: React.FC = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -30, scale: 0.95 }}
                   transition={{
-                    duration: 1.2,
-                    ease: [0.16, 1, 0.3, 1],
-                    staggerChildren: 0.15,
+                    duration: shouldReduceAnimations ? 0.4 : 1.0,
+                    ease: shouldReduceAnimations
+                      ? "easeOut"
+                      : [0.16, 1, 0.3, 1],
+                    staggerChildren: shouldReduceAnimations ? 0.02 : 0.1,
                   }}
                   className="max-w-4xl mx-auto px-2 sm:px-0"
                 >
@@ -543,16 +551,20 @@ const HeroSlider: React.FC = () => {
             </span>
           </button>
 
-          {/* Decorative Elements */}
-          <div className="absolute top-4 sm:top-8 right-4 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 bg-white/5 rounded-full blur-xl animate-pulse" />
-          <div
-            className="absolute bottom-12 sm:bottom-16 left-4 sm:left-8 w-8 h-8 sm:w-12 sm:h-12 bg-white/5 rounded-full blur-lg animate-pulse"
-            style={{ animationDelay: "1.5s" }}
-          />
-          <div
-            className="absolute top-1/3 right-1/4 w-6 h-6 sm:w-10 sm:h-10 bg-white/5 rounded-full blur-md animate-pulse"
-            style={{ animationDelay: "3s" }}
-          />
+          {/* Decorative Elements - Hidden on mobile for performance */}
+          {!isMobile && (
+            <>
+              <div className="absolute top-4 sm:top-8 right-4 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 bg-white/5 rounded-full blur-xl animate-pulse" />
+              <div
+                className="absolute bottom-12 sm:bottom-16 left-4 sm:left-8 w-8 h-8 sm:w-12 sm:h-12 bg-white/5 rounded-full blur-lg animate-pulse"
+                style={{ animationDelay: "1.5s" }}
+              />
+              <div
+                className="absolute top-1/3 right-1/4 w-6 h-6 sm:w-10 sm:h-10 bg-white/5 rounded-full blur-md animate-pulse"
+                style={{ animationDelay: "3s" }}
+              />
+            </>
+          )}
         </div>
       </div>
 

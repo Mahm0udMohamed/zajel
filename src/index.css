@@ -158,7 +158,7 @@ img {
   will-change: transform;
 }
 
-/* Custom animations */
+/* Custom animations - Disabled on mobile for performance */
 @keyframes float {
   0%,
   100% {
@@ -171,6 +171,36 @@ img {
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+/* Disable heavy animations on mobile */
+@media (max-width: 768px) {
+  .animate-float,
+  .animate-gradient-x,
+  .animate-pulse-glow,
+  .animate-shimmer,
+  .animate-shimmer-wave,
+  .skeleton-loading,
+  .lazy-fade-in,
+  .image-slide-in,
+  .blur-up-animation,
+  .placeholder-pulse {
+    animation: none !important;
+  }
+
+  /* Disable backdrop blur on mobile for better performance */
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* Simplify gradients on mobile */
+  .bg-gradient-to-br,
+  .bg-gradient-to-r {
+    background: var(--tw-gradient-stops) !important;
+  }
 }
 
 /* Gradient text animation */
@@ -547,6 +577,29 @@ html[dir="rtl"] .snap-center {
 
 .will-change-opacity {
   will-change: opacity;
+}
+
+/* Mobile-specific performance optimizations */
+@media (max-width: 768px) {
+  /* Reduce will-change usage on mobile */
+  .will-change-transform,
+  .will-change-opacity {
+    will-change: auto;
+  }
+
+  /* Optimize image rendering for mobile */
+  img {
+    image-rendering: auto;
+    will-change: auto;
+    backface-visibility: visible;
+    transform: none;
+  }
+
+  /* Disable 3D transforms on mobile */
+  * {
+    transform-style: flat;
+    perspective: none;
+  }
 }
 
 /* Image optimization classes */

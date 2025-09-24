@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import { useTranslation } from "react-i18next";
+import { useMobileDetection } from "../hooks/useMobileDetection";
 
 const HeroSlider = lazy(() => import("../components/home/HeroSlider"));
 const ShopByOccasionSection = lazy(
@@ -26,14 +27,22 @@ const MagicGiftSection = lazy(
 
 const HomePage: React.FC = () => {
   const { t } = useTranslation();
+  const { isMobile } = useMobileDetection();
 
   React.useEffect(() => {
     document.title = t("meta.title");
   }, [t]);
 
+  // Mobile-optimized fallback
+  const MobileFallback = () => (
+    <div className="flex items-center justify-center py-8">
+      <div className="animate-pulse bg-gray-200 rounded-lg h-4 w-32"></div>
+    </div>
+  );
+
   return (
     <div className="bg-background-primary">
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<MobileFallback />}>
         <HeroSlider />
         <ShopByOccasionSection />
         <CategoriesSection />

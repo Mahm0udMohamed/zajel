@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Gift } from "lucide-react";
+import { usePerformanceMode } from "../hooks/useMobileDetection";
 import categories from "../data/categories.json";
 import { allProducts } from "../data";
 import ProductsPageBase from "../components/shared/ProductsPageBase";
@@ -33,6 +34,7 @@ const CategoryPage: React.FC = () => {
   const isRtl = i18n.language === "ar";
   const { slug } = useParams<{ slug: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { shouldReduceAnimations } = usePerformanceMode();
 
   const [filters, setFilters] = useState<FilterState>({
     priceRange: [0, Infinity],
@@ -298,8 +300,9 @@ const CategoryPage: React.FC = () => {
     const notFoundComponent = (
       <div className="min-h-screen flex items-center justify-center bg-background-secondary p-4 sm:p-6 lg:p-10">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: shouldReduceAnimations ? 1 : 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: shouldReduceAnimations ? 0.2 : 0.4 }}
           className="text-center p-8 bg-background-primary rounded-3xl shadow-lg max-w-md mx-4 border border-border-primary"
         >
           <div className="w-24 h-24 bg-background-secondary rounded-full flex items-center justify-center mx-auto mb-6">
