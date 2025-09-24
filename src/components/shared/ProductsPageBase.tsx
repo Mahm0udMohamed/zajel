@@ -21,6 +21,24 @@ import { ProductImage, usePreloadCriticalImages } from "../../features/images";
 import FavoriteButton from "../ui/FavoriteButton";
 import AddToCartButton from "../ui/AddToCartButton";
 
+// Hook to detect mobile screen size
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
+
 export interface Product {
   id: number;
   nameEn: string;
@@ -138,25 +156,18 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
 }) => {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === "ar";
+  const isMobile = useIsMobile();
   const sortDropdownRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [isLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [showSortOptions, setShowSortOptions] = useState(false);
   const [activeFilterTab, setActiveFilterTab] = useState("price");
 
   const imageUrls = useMemo(() => products.map((p) => p.imageUrl), [products]);
   usePreloadCriticalImages(imageUrls);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1024);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
@@ -1143,104 +1154,117 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                     style={{ contain: "layout" }}
                   >
                     <AnimatePresence>
-                      {filteredProducts.map((product, index) => (
-                        <motion.div
-                          key={`product-${product.id}-${index}`}
-                          variants={productCardVariants}
-                          initial="hidden"
-                          animate="visible"
-                          exit="exit"
-                          custom={index}
-                          layout
-                          className="group flex w-full flex-col overflow-hidden rounded-3xl"
-                          style={{ minWidth: 0 }}
-                        >
-                          <Link
-                            to={`/product/${product.id}`}
-                            className="block flex-1"
-                          >
-                            <div className="relative aspect-[4/4.4] sm:aspect-[4/4.7] overflow-hidden rounded-t-3xl rounded-b-3xl">
-                              <ProductImage
-                                src={product.imageUrl}
-                                alt={isRtl ? product.nameAr : product.nameEn}
-                                className="h-full w-full object-cover rounded-t-3xl rounded-b-3xl"
-                                width={400}
-                                height={500}
-                                aspectRatio="portrait"
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                quality={100}
-                                priority={index < 4}
-                                showZoom={false}
-                                placeholderSize={80}
-                                enableBlurUp={true}
-                              />
-                              <div className="absolute start-2 top-2 flex flex-col gap-1">
-                                {product.isBestSeller && (
-                                  <span
-                                    className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-white shadow ${
-                                      config.gradientColors?.bestseller ||
-                                      "bg-gradient-to-r from-violet-500 to-fuchsia-500"
-                                    }`}
-                                  >
-                                    <Flame size={10} />
-                                    {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
-                                  </span>
-                                )}
-                                {product.isSpecialGift && (
-                                  <span
-                                    className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-white shadow ${
-                                      config.gradientColors?.special ||
-                                      "bg-gradient-to-r from-primary-500 to-secondary-500"
-                                    }`}
-                                  >
-                                    <Sparkles size={10} />
-                                    {isRtl ? "مميز" : "Special"}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </Link>
-                          <div className="p-3 flex flex-col h-full">
+                      {filteredProducts.map((product, index) => {
+                        const ProductCard = isMobile ? "div" : motion.div;
+                        const cardProps = isMobile
+                          ? {
+                              key: `product-${product.id}-${index}`,
+                              className:
+                                "group flex w-full flex-col overflow-hidden rounded-3xl",
+                              style: { minWidth: 0 },
+                            }
+                          : {
+                              key: `product-${product.id}-${index}`,
+                              variants: productCardVariants,
+                              initial: "hidden",
+                              animate: "visible",
+                              exit: "exit",
+                              custom: index,
+                              layout: true,
+                              className:
+                                "group flex w-full flex-col overflow-hidden rounded-3xl",
+                              style: { minWidth: 0 },
+                            };
+
+                        return (
+                          <ProductCard {...cardProps}>
                             <Link
                               to={`/product/${product.id}`}
-                              className="block mb-1"
+                              className="block flex-1"
                             >
-                              <h3 className="line-clamp-2 text-base font-bold text-neutral-900 ">
-                                {isRtl ? product.nameAr : product.nameEn}
-                              </h3>
-                            </Link>
-                            <p className="line-clamp-2 text-xs text-neutral-500 mb-3">
-                              {isRtl
-                                ? product.descriptionAr
-                                : product.descriptionEn}
-                            </p>
-                            <div className="flex items-center justify-between mt-auto">
-                              <div
-                                className={`flex items-center gap-1 ${
-                                  isRtl ? "flex-row-reverse" : ""
-                                }`}
-                              >
-                                <RiyalSymbol
-                                  className={`h-4 w-4 ${colorClass}`}
+                              <div className="relative aspect-[4/4.4] sm:aspect-[4/4.7] overflow-hidden rounded-t-3xl rounded-b-3xl">
+                                <ProductImage
+                                  src={product.imageUrl}
+                                  alt={isRtl ? product.nameAr : product.nameEn}
+                                  className="h-full w-full object-cover rounded-t-3xl rounded-b-3xl"
+                                  width={400}
+                                  height={500}
+                                  aspectRatio="portrait"
+                                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                  quality={100}
+                                  priority={index < 4}
+                                  showZoom={false}
+                                  placeholderSize={80}
+                                  enableBlurUp={true}
                                 />
-                                <span className="text-base font-bold text-neutral-900">
-                                  {product.price}
-                                </span>
+                                <div className="absolute start-2 top-2 flex flex-col gap-1">
+                                  {product.isBestSeller && (
+                                    <span
+                                      className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-white shadow ${
+                                        config.gradientColors?.bestseller ||
+                                        "bg-gradient-to-r from-violet-500 to-fuchsia-500"
+                                      }`}
+                                    >
+                                      <Flame size={10} />
+                                      {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
+                                    </span>
+                                  )}
+                                  {product.isSpecialGift && (
+                                    <span
+                                      className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-white shadow ${
+                                        config.gradientColors?.special ||
+                                        "bg-gradient-to-r from-primary-500 to-secondary-500"
+                                      }`}
+                                    >
+                                      <Sparkles size={10} />
+                                      {isRtl ? "مميز" : "Special"}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <FavoriteButton
-                                  product={product}
-                                  className="shadow-md"
-                                />
-                                <AddToCartButton
-                                  product={product}
-                                  className="shadow-md"
-                                />
+                            </Link>
+                            <div className="p-3 flex flex-col h-full">
+                              <Link
+                                to={`/product/${product.id}`}
+                                className="block mb-1"
+                              >
+                                <h3 className="line-clamp-2 text-base font-bold text-neutral-900 ">
+                                  {isRtl ? product.nameAr : product.nameEn}
+                                </h3>
+                              </Link>
+                              <p className="line-clamp-2 text-xs text-neutral-500 mb-3">
+                                {isRtl
+                                  ? product.descriptionAr
+                                  : product.descriptionEn}
+                              </p>
+                              <div className="flex items-center justify-between mt-auto">
+                                <div
+                                  className={`flex items-center gap-1 ${
+                                    isRtl ? "flex-row-reverse" : ""
+                                  }`}
+                                >
+                                  <RiyalSymbol
+                                    className={`h-4 w-4 ${colorClass}`}
+                                  />
+                                  <span className="text-base font-bold text-neutral-900">
+                                    {product.price}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <FavoriteButton
+                                    product={product}
+                                    className="shadow-md"
+                                  />
+                                  <AddToCartButton
+                                    product={product}
+                                    className="shadow-md"
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                          </ProductCard>
+                        );
+                      })}
                     </AnimatePresence>
                   </motion.div>
                 ) : (
@@ -1253,99 +1277,112 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                     style={{ contain: "layout" }}
                   >
                     <AnimatePresence>
-                      {filteredProducts.map((product, index) => (
-                        <motion.div
-                          key={`list-product-${product.id}-${index}`}
-                          variants={productCardVariants}
-                          initial="hidden"
-                          animate="visible"
-                          exit="exit"
-                          custom={index}
-                          layout
-                          className="flex flex-col items-start gap-4 rounded-3xl p-4 sm:flex-row"
-                          style={{ minWidth: 0 }}
-                        >
-                          <Link
-                            to={`/product/${product.id}`}
-                            className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-2xl border border-neutral-100 bg-neutral-50"
-                          >
-                            <ProductImage
-                              src={product.imageUrl}
-                              alt={isRtl ? product.nameAr : product.nameEn}
-                              className="h-full w-full rounded-2xl object-cover"
-                              width={200}
-                              height={200}
-                              aspectRatio="square"
-                              sizes="200px"
-                              quality={100}
-                              priority={index < 2}
-                              showZoom={false}
-                              placeholderSize={80}
-                              enableBlurUp={true}
-                            />
-                          </Link>
-                          <div className="flex w-full flex-1 flex-col justify-between">
-                            <div>
-                              <div className="mb-2">
-                                <Link to={`/product/${product.id}`}>
-                                  <h3 className="text-lg font-bold text-neutral-900  transition-colors duration-200 leading-tight">
-                                    {isRtl ? product.nameAr : product.nameEn}
-                                  </h3>
-                                </Link>
+                      {filteredProducts.map((product, index) => {
+                        const ListProductCard = isMobile ? "div" : motion.div;
+                        const listCardProps = isMobile
+                          ? {
+                              key: `list-product-${product.id}-${index}`,
+                              className:
+                                "flex flex-col items-start gap-4 rounded-3xl p-4 sm:flex-row",
+                              style: { minWidth: 0 },
+                            }
+                          : {
+                              key: `list-product-${product.id}-${index}`,
+                              variants: productCardVariants,
+                              initial: "hidden",
+                              animate: "visible",
+                              exit: "exit",
+                              custom: index,
+                              layout: true,
+                              className:
+                                "flex flex-col items-start gap-4 rounded-3xl p-4 sm:flex-row",
+                              style: { minWidth: 0 },
+                            };
+
+                        return (
+                          <ListProductCard {...listCardProps}>
+                            <Link
+                              to={`/product/${product.id}`}
+                              className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-2xl border border-neutral-100 bg-neutral-50"
+                            >
+                              <ProductImage
+                                src={product.imageUrl}
+                                alt={isRtl ? product.nameAr : product.nameEn}
+                                className="h-full w-full rounded-2xl object-cover"
+                                width={200}
+                                height={200}
+                                aspectRatio="square"
+                                sizes="200px"
+                                quality={100}
+                                priority={index < 2}
+                                showZoom={false}
+                                placeholderSize={80}
+                                enableBlurUp={true}
+                              />
+                            </Link>
+                            <div className="flex w-full flex-1 flex-col justify-between">
+                              <div>
+                                <div className="mb-2">
+                                  <Link to={`/product/${product.id}`}>
+                                    <h3 className="text-lg font-bold text-neutral-900  transition-colors duration-200 leading-tight">
+                                      {isRtl ? product.nameAr : product.nameEn}
+                                    </h3>
+                                  </Link>
+                                </div>
+                                <div className="mb-3 flex flex-wrap gap-2">
+                                  {product.isBestSeller && (
+                                    <span
+                                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
+                                        config.gradientColors?.bestseller ||
+                                        "bg-gradient-to-r from-violet-500 to-fuchsia-500"
+                                      }`}
+                                    >
+                                      <Flame size={12} />
+                                      {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
+                                    </span>
+                                  )}
+                                  {product.isSpecialGift && (
+                                    <span
+                                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
+                                        config.gradientColors?.special ||
+                                        "bg-gradient-to-r from-primary-500 to-secondary-500"
+                                      }`}
+                                    >
+                                      <Sparkles size={12} />
+                                      {isRtl ? "مميز" : "Special"}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="line-clamp-2 text-sm text-neutral-600 leading-relaxed mb-3">
+                                  {isRtl
+                                    ? product.descriptionAr
+                                    : product.descriptionEn}
+                                </p>
                               </div>
-                              <div className="mb-3 flex flex-wrap gap-2">
-                                {product.isBestSeller && (
-                                  <span
-                                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
-                                      config.gradientColors?.bestseller ||
-                                      "bg-gradient-to-r from-violet-500 to-fuchsia-500"
-                                    }`}
-                                  >
-                                    <Flame size={12} />
-                                    {isRtl ? "الأكثر مبيعاً" : "Best Seller"}
+                              <div className="flex items-center justify-between pt-2">
+                                <div className="flex items-center gap-1">
+                                  <RiyalSymbol
+                                    className={`h-4 w-4 ${colorClass}`}
+                                  />
+                                  <span className="text-base font-bold text-neutral-900">
+                                    {product.price}
                                   </span>
-                                )}
-                                {product.isSpecialGift && (
-                                  <span
-                                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
-                                      config.gradientColors?.special ||
-                                      "bg-gradient-to-r from-primary-500 to-secondary-500"
-                                    }`}
-                                  >
-                                    <Sparkles size={12} />
-                                    {isRtl ? "مميز" : "Special"}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="line-clamp-2 text-sm text-neutral-600 leading-relaxed mb-3">
-                                {isRtl
-                                  ? product.descriptionAr
-                                  : product.descriptionEn}
-                              </p>
-                            </div>
-                            <div className="flex items-center justify-between pt-2">
-                              <div className="flex items-center gap-1">
-                                <RiyalSymbol
-                                  className={`h-4 w-4 ${colorClass}`}
-                                />
-                                <span className="text-base font-bold text-neutral-900">
-                                  {product.price}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <FavoriteButton
-                                  product={product}
-                                  className="shadow-md"
-                                />
-                                <AddToCartButton
-                                  product={product}
-                                  className="shadow-md"
-                                />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <FavoriteButton
+                                    product={product}
+                                    className="shadow-md"
+                                  />
+                                  <AddToCartButton
+                                    product={product}
+                                    className="shadow-md"
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                          </ListProductCard>
+                        );
+                      })}
                     </AnimatePresence>
                   </motion.div>
                 )
