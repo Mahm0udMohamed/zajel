@@ -267,31 +267,46 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
   ) => {
     let filtered = products;
 
-    if (searchTerm) {
-      filtered = filtered.filter((product) =>
-        (isRtl ? product.nameAr : product.nameEn)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      );
+    if (searchTerm && searchTerm.trim() !== "") {
+      const searchLower = searchTerm.toLowerCase().trim();
+      filtered = filtered.filter((product) => {
+        const nameEn = product.nameEn?.toLowerCase() || "";
+        const nameAr = product.nameAr?.toLowerCase() || "";
+        const descEn = product.descriptionEn?.toLowerCase() || "";
+        const descAr = product.descriptionAr?.toLowerCase() || "";
+
+        return (
+          nameEn.includes(searchLower) ||
+          nameAr.includes(searchLower) ||
+          descEn.includes(searchLower) ||
+          descAr.includes(searchLower)
+        );
+      });
     }
 
     if (filters.categories && filters.categories.length > 0) {
       filtered = filtered.filter(
         (product) =>
-          product.categoryId && filters.categories!.includes(product.categoryId)
+          product.categoryId &&
+          product.categoryId.trim() !== "" &&
+          filters.categories!.includes(product.categoryId)
       );
     }
 
     if (filters.occasions && filters.occasions.length > 0) {
       filtered = filtered.filter(
         (product) =>
-          product.occasionId && filters.occasions!.includes(product.occasionId)
+          product.occasionId &&
+          product.occasionId.trim() !== "" &&
+          filters.occasions!.includes(product.occasionId)
       );
     }
 
     if (filters.priceRange[0] !== 0 || filters.priceRange[1] !== Infinity) {
       filtered = filtered.filter(
         (product) =>
+          typeof product.price === "number" &&
+          !isNaN(product.price) &&
           product.price >= filters.priceRange[0] &&
           product.price <= filters.priceRange[1]
       );
@@ -302,13 +317,21 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
         filters.features.every((feature) => {
           switch (feature) {
             case "bestseller":
-              return product.isBestSeller;
+              return Boolean(product.isBestSeller);
             case "special":
-              return product.isSpecialGift;
+              return Boolean(product.isSpecialGift);
             case "premium":
-              return product.price > 300;
+              return (
+                typeof product.price === "number" &&
+                !isNaN(product.price) &&
+                product.price > 300
+              );
             case "affordable":
-              return product.price <= 200;
+              return (
+                typeof product.price === "number" &&
+                !isNaN(product.price) &&
+                product.price <= 200
+              );
             default:
               return true;
           }
@@ -318,16 +341,20 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
 
     return filtered.sort((a, b) => {
       switch (filters.sortBy) {
-        case "price-low":
-          return a.price - b.price;
-        case "price-high":
-          return b.price - a.price;
-        case "name":
-          return isRtl
-            ? a.nameAr.localeCompare(b.nameAr)
-            : a.nameEn.localeCompare(b.nameEn);
-        default:
+        case "price-low": {
+          return (a.price || 0) - (b.price || 0);
+        }
+        case "price-high": {
+          return (b.price || 0) - (a.price || 0);
+        }
+        case "name": {
+          const nameA = isRtl ? a.nameAr || "" : a.nameEn || "";
+          const nameB = isRtl ? b.nameAr || "" : b.nameEn || "";
+          return nameA.localeCompare(nameB);
+        }
+        default: {
           return (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0);
+        }
       }
     });
   };
@@ -1118,7 +1145,7 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                     <AnimatePresence>
                       {filteredProducts.map((product, index) => (
                         <motion.div
-                          key={`product-${product.id}`}
+                          key={`product-${product.id}-${index}`}
                           variants={productCardVariants}
                           initial="hidden"
                           animate="visible"
@@ -1228,7 +1255,7 @@ const ProductsPageBase: React.FC<ProductsPageBaseProps> = ({
                     <AnimatePresence>
                       {filteredProducts.map((product, index) => (
                         <motion.div
-                          key={`list-product-${product.id}`}
+                          key={`list-product-${product.id}-${index}`}
                           variants={productCardVariants}
                           initial="hidden"
                           animate="visible"

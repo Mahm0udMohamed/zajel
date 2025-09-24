@@ -37,7 +37,7 @@ const CategoryPage: React.FC = () => {
   const [filters, setFilters] = useState<FilterState>({
     priceRange: [0, Infinity],
     features: [],
-    categories: slug ? [slug] : [],
+    categories: [],
     sortBy: "featured",
   });
 
@@ -50,6 +50,13 @@ const CategoryPage: React.FC = () => {
     }
   }, [searchParams]);
 
+  // تعيين الفلتر الأولي بناءً على الـ slug
+  useEffect(() => {
+    if (slug) {
+      setFilters((prev) => ({ ...prev, categories: [slug] }));
+    }
+  }, [slug]);
+
   const customFiltering = (
     products: Product[],
     filters: FilterState,
@@ -58,28 +65,39 @@ const CategoryPage: React.FC = () => {
   ) => {
     let filtered = products;
 
-    if (searchTerm) {
-      filtered = filtered.filter((product) =>
-        (isRtl ? product.nameAr : product.nameEn)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      );
+    if (searchTerm && searchTerm.trim() !== "") {
+      const searchLower = searchTerm.toLowerCase().trim();
+      filtered = filtered.filter((product) => {
+        const nameEn = product.nameEn?.toLowerCase() || "";
+        const nameAr = product.nameAr?.toLowerCase() || "";
+        const descEn = product.descriptionEn?.toLowerCase() || "";
+        const descAr = product.descriptionAr?.toLowerCase() || "";
+
+        return (
+          nameEn.includes(searchLower) ||
+          nameAr.includes(searchLower) ||
+          descEn.includes(searchLower) ||
+          descAr.includes(searchLower)
+        );
+      });
     }
 
-    const categoriesToFilter = slug
-      ? [slug, ...(filters.categories?.filter((c) => c !== slug) || [])]
-      : filters.categories || [];
+    const categoriesToFilter = filters.categories || [];
 
     if (categoriesToFilter.length > 0) {
       filtered = filtered.filter(
         (product) =>
-          product.categoryId && categoriesToFilter.includes(product.categoryId)
+          product.categoryId &&
+          product.categoryId.trim() !== "" &&
+          categoriesToFilter.includes(product.categoryId)
       );
     }
 
     if (filters.priceRange[0] !== 0 || filters.priceRange[1] !== Infinity) {
       filtered = filtered.filter(
         (product) =>
+          typeof product.price === "number" &&
+          !isNaN(product.price) &&
           product.price >= filters.priceRange[0] &&
           product.price <= filters.priceRange[1]
       );
@@ -90,13 +108,21 @@ const CategoryPage: React.FC = () => {
         filters.features.every((feature) => {
           switch (feature) {
             case "bestseller":
-              return product.isBestSeller;
+              return Boolean(product.isBestSeller);
             case "special":
-              return product.isSpecialGift;
+              return Boolean(product.isSpecialGift);
             case "premium":
-              return product.price > 300;
+              return (
+                typeof product.price === "number" &&
+                !isNaN(product.price) &&
+                product.price > 300
+              );
             case "affordable":
-              return product.price <= 200;
+              return (
+                typeof product.price === "number" &&
+                !isNaN(product.price) &&
+                product.price <= 200
+              );
             default:
               return true;
           }
@@ -106,16 +132,20 @@ const CategoryPage: React.FC = () => {
 
     return filtered.sort((a, b) => {
       switch (filters.sortBy) {
-        case "price-low":
-          return a.price - b.price;
-        case "price-high":
-          return b.price - a.price;
-        case "name":
-          return isRtl
-            ? a.nameAr.localeCompare(b.nameAr)
-            : a.nameEn.localeCompare(b.nameEn);
-        default:
+        case "price-low": {
+          return (a.price || 0) - (b.price || 0);
+        }
+        case "price-high": {
+          return (b.price || 0) - (a.price || 0);
+        }
+        case "name": {
+          const nameA = isRtl ? a.nameAr || "" : a.nameEn || "";
+          const nameB = isRtl ? b.nameAr || "" : b.nameEn || "";
+          return nameA.localeCompare(nameB);
+        }
+        default: {
           return (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0);
+        }
       }
     });
   };
@@ -123,18 +153,17 @@ const CategoryPage: React.FC = () => {
   const clearFiltersHandler = () => ({
     priceRange: [0, Infinity] as [number, number],
     features: [],
-    categories: slug ? [slug] : [],
+    categories: [], // إزالة جميع التصنيفات بما في ذلك الـ slug
     sortBy: "featured",
   });
 
   const hasActiveFiltersHandler = (
     filters: FilterState,
-    searchTerm: string,
-    slug?: string
+    searchTerm: string
   ) => {
     return (
       filters.features.length > 0 ||
-      (filters.categories && filters.categories.length > (slug ? 1 : 0)) ||
+      (filters.categories && filters.categories.length > 0) ||
       filters.priceRange[0] !== 0 ||
       filters.priceRange[1] !== Infinity ||
       searchTerm.length > 0
@@ -143,14 +172,11 @@ const CategoryPage: React.FC = () => {
 
   const activeFiltersCountHandler = (
     filters: FilterState,
-    searchTerm: string,
-    slug?: string
+    searchTerm: string
   ) => {
     return (
       filters.features.length +
-      (filters.categories && filters.categories.length > (slug ? 1 : 0)
-        ? filters.categories.length
-        : 0) +
+      (filters.categories?.length || 0) +
       (filters.priceRange[0] !== 0 || filters.priceRange[1] !== Infinity
         ? 1
         : 0) +
@@ -162,8 +188,7 @@ const CategoryPage: React.FC = () => {
     filters: FilterState,
     searchTerm: string,
     isRtl: boolean,
-    onRemove: (key: string, value?: string) => void,
-    slug?: string
+    onRemove: (key: string, value?: string) => void
   ) => {
     const chips: JSX.Element[] = [];
 
@@ -221,28 +246,26 @@ const CategoryPage: React.FC = () => {
       );
     });
 
-    if (filters.categories && filters.categories.length > (slug ? 1 : 0)) {
-      filters.categories
-        .filter((c) => c !== slug)
-        .forEach((c) => {
-          const meta = categories.find((x) => x.id === c);
-          if (!meta) return;
-          chips.push(
-            <span
-              key={`chip-${c}`}
-              className="inline-flex items-center gap-1 rounded-full bg-violet-500 px-3 py-1 text-xs font-semibold text-white"
+    if (filters.categories && filters.categories.length > 0) {
+      filters.categories.forEach((c) => {
+        const meta = categories.find((x) => x.id === c);
+        if (!meta) return;
+        chips.push(
+          <span
+            key={`chip-${c}`}
+            className="inline-flex items-center gap-1 rounded-full bg-violet-500 px-3 py-1 text-xs font-semibold text-white"
+          >
+            {t(meta.nameKey)}
+            <button
+              onClick={() => onRemove("categories", c)}
+              className="rounded-full p-0.5 hover:bg-white/20"
+              aria-label={isRtl ? "إزالة" : "Remove"}
             >
-              {t(meta.nameKey)}
-              <button
-                onClick={() => onRemove("categories", c)}
-                className="rounded-full p-0.5 hover:bg-white/20"
-                aria-label={isRtl ? "إزالة" : "Remove"}
-              >
-                <span className="text-xs">✕</span>
-              </button>
-            </span>
-          );
-        });
+              <span className="text-xs">✕</span>
+            </button>
+          </span>
+        );
+      });
     }
 
     return chips;

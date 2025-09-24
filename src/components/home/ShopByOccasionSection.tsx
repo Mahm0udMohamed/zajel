@@ -17,7 +17,7 @@ const OccasionCard: React.FC<{ occasion: Occasion }> = ({ occasion }) => {
 
   return (
     <Link
-      to={`/occasions/${occasion.id}`}
+      to={`/occasion/${occasion.id}`}
       className="flex flex-col items-center flex-shrink-0 w-20 sm:w-24 md:w-28 text-center snap-center"
     >
       <div className="w-full aspect-square rounded-full overflow-hidden relative z-10 ">

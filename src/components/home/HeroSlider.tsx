@@ -192,7 +192,7 @@ const HeroSlider: React.FC = () => {
   if (allSlides.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden py-2 sm:py-6">
+    <section className="relative overflow-hidden py-4 sm:py-8">
       {isOccasionActive && currentSlideData?.type === "occasion" && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <Confetti
@@ -207,9 +207,9 @@ const HeroSlider: React.FC = () => {
       )}
 
       <div className="container-custom px-4 sm:px-16">
-        <div className="relative h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] xl:h-[650px] overflow-hidden rounded-2xl sm:rounded-[2rem] border border-white/50 backdrop-blur-sm">
+        <div className="relative h-[280px] sm:h-[380px] md:h-[480px] lg:h-[580px] xl:h-[620px] overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 backdrop-blur-sm shadow-lg">
           {/* Background Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-transparent to-secondary-900/20 z-10 rounded-2xl sm:rounded-[2rem]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-transparent to-secondary-900/20 z-10 rounded-2xl sm:rounded-3xl" />
 
           {/* Slides Container */}
           <motion.div
@@ -221,8 +221,8 @@ const HeroSlider: React.FC = () => {
                 : -currentSlide * 100 + "%",
             }}
             transition={{
-              duration: 1.2,
-              ease: [0.25, 0.46, 0.45, 0.94],
+              duration: 1.8,
+              ease: [0.16, 1, 0.3, 1],
               type: "tween",
             }}
           >
@@ -265,30 +265,38 @@ const HeroSlider: React.FC = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -30, scale: 0.95 }}
                   transition={{
-                    duration: 0.8,
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                    staggerChildren: 0.1,
+                    duration: 1.2,
+                    ease: [0.16, 1, 0.3, 1],
+                    staggerChildren: 0.15,
                   }}
                   className="max-w-4xl mx-auto px-2 sm:px-0"
                 >
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
+                    transition={{
+                      delay: 0.3,
+                      duration: 0.8,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
                     className="mb-3 sm:mb-6"
                   >
-                    <div className="inline-block bg-white/10 backdrop-blur-md rounded-full px-3 py-1 sm:px-6 sm:py-2 mb-2 sm:mb-4 border border-white/20">
-                      <span className="text-xs sm:text-sm font-medium tracking-wide">
+                    <div className="inline-block bg-white/8 backdrop-blur-sm rounded-full px-3 py-1 sm:px-5 sm:py-2 mb-2 sm:mb-3 border border-white/15">
+                      <span className="text-xs sm:text-sm font-medium tracking-wide text-white/90">
                         {isArabic ? "مناسبة خاصة" : "Special Occasion"}
                       </span>
                     </div>
                   </motion.div>
 
                   <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-serif font-bold mb-3 sm:mb-6 leading-tight"
+                    transition={{
+                      delay: 0.4,
+                      duration: 1.0,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-3 sm:mb-4 leading-tight text-white drop-shadow-sm"
                   >
                     {isArabic
                       ? currentSlideData.occasion.nameAr
@@ -298,8 +306,12 @@ const HeroSlider: React.FC = () => {
                   <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-8 max-w-2xl mx-auto opacity-95 leading-relaxed font-light px-2 sm:px-0"
+                    transition={{
+                      delay: 0.5,
+                      duration: 0.8,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 max-w-2xl mx-auto opacity-90 leading-relaxed font-light px-2 sm:px-0 text-white/85"
                   >
                     {isOccasionActive
                       ? isArabic
@@ -311,15 +323,19 @@ const HeroSlider: React.FC = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
+                    transition={{
+                      delay: 0.6,
+                      duration: 0.8,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
                   >
                     <Link to="/products">
-                      <div className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30">
+                      <div className="inline-flex items-center bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 border border-white/20 hover:bg-white hover:scale-105">
                         <span>{t("home.hero.giftNow")}</span>
                         <motion.span
                           className={`${
-                            isArabic ? "mr-1 sm:mr-2" : "ml-1 sm:ml-2"
-                          } text-lg sm:text-xl`}
+                            isArabic ? "mr-1 sm:mr-1.5" : "ml-1 sm:ml-1.5"
+                          } text-sm sm:text-base`}
                           animate={{
                             x: isArabic ? [-2, 0] : [0, 2],
                           }}
@@ -344,26 +360,34 @@ const HeroSlider: React.FC = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -30, scale: 0.95 }}
                   transition={{
-                    duration: 0.8,
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                    staggerChildren: 0.1,
+                    duration: 1.2,
+                    ease: [0.16, 1, 0.3, 1],
+                    staggerChildren: 0.15,
                   }}
                   className="max-w-4xl mx-auto px-2 sm:px-0"
                 >
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1, duration: 0.6 }}
-                    className="bg-white/15 backdrop-blur-md text-white rounded-full px-3 py-1 sm:px-6 sm:py-2 mb-3 sm:mb-6 inline-block text-xs sm:text-sm font-semibold uppercase tracking-wider border border-white/20"
+                    transition={{
+                      delay: 0.2,
+                      duration: 0.8,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="bg-white/8 backdrop-blur-sm text-white rounded-full px-3 py-1 sm:px-5 sm:py-2 mb-2 sm:mb-3 inline-block text-xs sm:text-sm font-medium uppercase tracking-wide border border-white/15"
                   >
                     {isArabic ? "عرض خاص" : "Special Offer"}
                   </motion.div>
 
                   <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2, duration: 0.6 }}
-                    className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-serif font-bold mb-2 sm:mb-4 tracking-tight leading-tight"
+                    transition={{
+                      delay: 0.3,
+                      duration: 1.0,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-3 sm:mb-4 tracking-tight leading-tight text-white drop-shadow-sm"
                   >
                     {isArabic
                       ? currentSlideData.promotion.titleAr
@@ -373,8 +397,12 @@ const HeroSlider: React.FC = () => {
                   <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.6 }}
-                    className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-8 max-w-2xl mx-auto opacity-95 leading-relaxed font-light px-2 sm:px-0"
+                    transition={{
+                      delay: 0.4,
+                      duration: 0.8,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 max-w-2xl mx-auto opacity-90 leading-relaxed font-light px-2 sm:px-0 text-white/85"
                   >
                     {isArabic
                       ? currentSlideData.promotion.subtitleAr
@@ -384,10 +412,14 @@ const HeroSlider: React.FC = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.6 }}
+                    transition={{
+                      delay: 0.5,
+                      duration: 0.8,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
                   >
                     <Link to={currentSlideData.promotion.link || "/products"}>
-                      <div className="inline-flex items-center bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 sm:px-8 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl sm:rounded-2xl transition-all duration-300 border border-white/30">
+                      <div className="inline-flex items-center bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 border border-white/20 hover:bg-white hover:scale-105">
                         <span>
                           {isArabic
                             ? currentSlideData.promotion.buttonTextAr
@@ -395,8 +427,8 @@ const HeroSlider: React.FC = () => {
                         </span>
                         <motion.span
                           className={`${
-                            isArabic ? "mr-1 sm:mr-2" : "ml-1 sm:ml-2"
-                          } text-lg sm:text-xl`}
+                            isArabic ? "mr-1 sm:mr-1.5" : "ml-1 sm:ml-1.5"
+                          } text-sm sm:text-base`}
                           animate={{
                             x: isArabic ? [-2, 0] : [0, 2],
                           }}
@@ -424,36 +456,36 @@ const HeroSlider: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className={`absolute bottom-2 sm:bottom-6 ${
-                  isArabic ? "right-2 sm:right-6" : "left-2 sm:left-6"
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className={`absolute bottom-4 sm:bottom-8 ${
+                  isArabic ? "right-4 sm:right-8" : "left-4 sm:left-8"
                 } z-30`}
               >
-                <div className="bg-white/10 backdrop-blur-md rounded-lg sm:rounded-2xl p-1 sm:p-4 border border-white/20">
-                  <div className="flex items-center gap-1 sm:gap-4 text-white">
+                <div className="bg-white/8 backdrop-blur-sm rounded-lg sm:rounded-xl p-1.5 sm:p-2.5 border border-white/15">
+                  <div className="flex items-center gap-1.5 sm:gap-3 text-white">
                     <div className="text-center">
-                      <div className="text-xs sm:text-2xl font-bold">
+                      <div className="text-[10px] sm:text-lg font-bold">
                         {timeLeft.days}
                       </div>
-                      <div className="text-[8px] sm:text-xs uppercase opacity-80 font-medium">
+                      <div className="text-[6px] sm:text-[8px] uppercase opacity-80 font-medium tracking-wide">
                         {t("home.counter.days")}
                       </div>
                     </div>
-                    <div className="w-px h-3 sm:h-8 bg-white/30"></div>
+                    <div className="w-px h-2 sm:h-4 bg-white/30"></div>
                     <div className="text-center">
-                      <div className="text-xs sm:text-2xl font-bold">
+                      <div className="text-[10px] sm:text-lg font-bold">
                         {timeLeft.hours}
                       </div>
-                      <div className="text-[8px] sm:text-xs uppercase opacity-80 font-medium">
+                      <div className="text-[6px] sm:text-[8px] uppercase opacity-80 font-medium tracking-wide">
                         {t("home.counter.hours")}
                       </div>
                     </div>
-                    <div className="w-px h-3 sm:h-8 bg-white/30"></div>
+                    <div className="w-px h-2 sm:h-4 bg-white/30"></div>
                     <div className="text-center">
-                      <div className="text-xs sm:text-2xl font-bold">
+                      <div className="text-[10px] sm:text-lg font-bold">
                         {timeLeft.minutes}
                       </div>
-                      <div className="text-[8px] sm:text-xs uppercase opacity-80 font-medium">
+                      <div className="text-[6px] sm:text-[8px] uppercase opacity-80 font-medium tracking-wide">
                         {t("home.counter.minutes")}
                       </div>
                     </div>
@@ -463,16 +495,16 @@ const HeroSlider: React.FC = () => {
             )}
 
           {/* Navigation Dots */}
-          <div className="absolute bottom-3 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-30">
-            <div className="flex items-center gap-2 sm:gap-3 bg-white/10 backdrop-blur-md rounded-full px-3 py-1 sm:px-4 sm:py-2 border border-white/20">
+          <div className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-30">
+            <div className="flex items-center gap-2 sm:gap-3 bg-white/8 backdrop-blur-sm rounded-full px-3 py-1 sm:px-4 sm:py-2 border border-white/15">
               {allSlides.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
-                  className={`transition-all duration-500 rounded-full ${
+                  className={`transition-all duration-500 ease-out rounded-full ${
                     currentSlide === index
                       ? "w-6 sm:w-8 h-2 sm:h-3 bg-white"
-                      : "w-2 sm:w-3 h-2 sm:h-3 bg-white/40"
+                      : "w-2 sm:w-3 h-2 sm:h-3 bg-white/40 hover:bg-white/60"
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
@@ -488,11 +520,11 @@ const HeroSlider: React.FC = () => {
               )
             }
             className={`hidden sm:flex absolute top-1/2 transform -translate-y-1/2 ${
-              isArabic ? "right-3 sm:right-6" : "left-3 sm:left-6"
-            } z-30 w-8 h-8 sm:w-12 sm:h-12 bg-white/10 backdrop-blur-md text-white rounded-full flex items-center justify-center transition-all duration-300 border border-white/20`}
+              isArabic ? "right-2 sm:right-4" : "left-2 sm:left-4"
+            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 backdrop-blur-sm text-white rounded-full flex items-center justify-center transition-all duration-300 border border-white/15 hover:bg-white/15 hover:scale-105`}
             aria-label={isArabic ? "الشريحة السابقة" : "Previous slide"}
           >
-            <span className="text-lg sm:text-xl font-light">
+            <span className="text-sm sm:text-base font-light">
               {isArabic ? "→" : "←"}
             </span>
           </button>
@@ -502,30 +534,30 @@ const HeroSlider: React.FC = () => {
               setCurrentSlide((currentSlide + 1) % allSlides.length)
             }
             className={`hidden sm:flex absolute top-1/2 transform -translate-y-1/2 ${
-              isArabic ? "left-3 sm:left-6" : "right-3 sm:right-6"
-            } z-30 w-8 h-8 sm:w-12 sm:h-12 bg-white/10 backdrop-blur-md text-white rounded-full flex items-center justify-center transition-all duration-300 border border-white/20`}
+              isArabic ? "left-2 sm:left-4" : "right-2 sm:right-4"
+            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 backdrop-blur-sm text-white rounded-full flex items-center justify-center transition-all duration-300 border border-white/15 hover:bg-white/15 hover:scale-105`}
             aria-label={isArabic ? "الشريحة التالية" : "Next slide"}
           >
-            <span className="text-lg sm:text-xl font-light">
+            <span className="text-sm sm:text-base font-light">
               {isArabic ? "←" : "→"}
             </span>
           </button>
 
           {/* Decorative Elements */}
-          <div className="absolute top-4 sm:top-8 right-4 sm:right-8 w-12 h-12 sm:w-20 sm:h-20 bg-white/5 rounded-full blur-xl animate-pulse" />
+          <div className="absolute top-4 sm:top-8 right-4 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 bg-white/5 rounded-full blur-xl animate-pulse" />
           <div
-            className="absolute bottom-10 sm:bottom-20 left-4 sm:left-8 w-10 h-10 sm:w-16 sm:h-16 bg-white/5 rounded-full blur-lg animate-pulse"
-            style={{ animationDelay: "1s" }}
+            className="absolute bottom-12 sm:bottom-16 left-4 sm:left-8 w-8 h-8 sm:w-12 sm:h-12 bg-white/5 rounded-full blur-lg animate-pulse"
+            style={{ animationDelay: "1.5s" }}
           />
           <div
-            className="absolute top-1/3 right-1/4 w-8 h-8 sm:w-12 sm:h-12 bg-white/5 rounded-full blur-md animate-pulse"
-            style={{ animationDelay: "2s" }}
+            className="absolute top-1/3 right-1/4 w-6 h-6 sm:w-10 sm:h-10 bg-white/5 rounded-full blur-md animate-pulse"
+            style={{ animationDelay: "3s" }}
           />
         </div>
       </div>
 
       {/* Bottom Accent */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-200 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-200/30 to-transparent" />
     </section>
   );
 };

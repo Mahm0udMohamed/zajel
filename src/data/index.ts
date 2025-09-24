@@ -25,8 +25,8 @@ import newYearData from "./occasions/new-year.json";
 import mothersDayData from "./occasions/mothers-day.json";
 import valentinesDayData from "./occasions/valentines-day.json";
 
-// Combine all products
-export const allProducts = [
+// Combine all products and deduplicate by ID
+const combinedProducts = [
   ...flowersData,
   ...jewelryData,
   ...plantsData,
@@ -51,6 +51,11 @@ export const allProducts = [
   ...mothersDayData,
   ...valentinesDayData,
 ];
+
+// Deduplicate products by ID to prevent duplicate keys in React
+export const allProducts = combinedProducts.filter(
+  (product, index, self) => index === self.findIndex((p) => p.id === product.id)
+);
 
 // Category-specific exports
 export const categoryProducts = {

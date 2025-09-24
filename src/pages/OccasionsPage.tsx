@@ -35,7 +35,7 @@ const OccasionsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [filters, setFilters] = useState<FilterState>({
-    occasions: slug ? [slug] : [],
+    occasions: [],
     priceRange: [0, Infinity],
     features: [],
     sortBy: "featured",
@@ -50,6 +50,13 @@ const OccasionsPage: React.FC = () => {
     }
   }, [searchParams]);
 
+  // تعيين الفلتر الأولي بناءً على الـ slug
+  useEffect(() => {
+    if (slug) {
+      setFilters((prev) => ({ ...prev, occasions: [slug] }));
+    }
+  }, [slug]);
+
   const customFiltering = (
     products: Product[],
     filters: FilterState,
@@ -58,28 +65,39 @@ const OccasionsPage: React.FC = () => {
   ) => {
     let filtered = products;
 
-    if (searchTerm) {
-      filtered = filtered.filter((product) =>
-        (isRtl ? product.nameAr : product.nameEn)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      );
+    if (searchTerm && searchTerm.trim() !== "") {
+      const searchLower = searchTerm.toLowerCase().trim();
+      filtered = filtered.filter((product) => {
+        const nameEn = product.nameEn?.toLowerCase() || "";
+        const nameAr = product.nameAr?.toLowerCase() || "";
+        const descEn = product.descriptionEn?.toLowerCase() || "";
+        const descAr = product.descriptionAr?.toLowerCase() || "";
+
+        return (
+          nameEn.includes(searchLower) ||
+          nameAr.includes(searchLower) ||
+          descEn.includes(searchLower) ||
+          descAr.includes(searchLower)
+        );
+      });
     }
 
-    const occasionsToFilter = slug
-      ? [slug, ...(filters.occasions?.filter((o) => o !== slug) || [])]
-      : filters.occasions || [];
+    const occasionsToFilter = filters.occasions || [];
 
     if (occasionsToFilter.length > 0) {
       filtered = filtered.filter(
         (product) =>
-          product.occasionId && occasionsToFilter.includes(product.occasionId)
+          product.occasionId &&
+          product.occasionId.trim() !== "" &&
+          occasionsToFilter.includes(product.occasionId)
       );
     }
 
     if (filters.priceRange[0] !== 0 || filters.priceRange[1] !== Infinity) {
       filtered = filtered.filter(
         (product) =>
+          typeof product.price === "number" &&
+          !isNaN(product.price) &&
           product.price >= filters.priceRange[0] &&
           product.price <= filters.priceRange[1]
       );
@@ -90,13 +108,21 @@ const OccasionsPage: React.FC = () => {
         filters.features.every((feature) => {
           switch (feature) {
             case "bestseller":
-              return product.isBestSeller;
+              return Boolean(product.isBestSeller);
             case "special":
-              return product.isSpecialGift;
+              return Boolean(product.isSpecialGift);
             case "premium":
-              return product.price > 300;
+              return (
+                typeof product.price === "number" &&
+                !isNaN(product.price) &&
+                product.price > 300
+              );
             case "affordable":
-              return product.price <= 200;
+              return (
+                typeof product.price === "number" &&
+                !isNaN(product.price) &&
+                product.price <= 200
+              );
             default:
               return true;
           }
@@ -106,22 +132,26 @@ const OccasionsPage: React.FC = () => {
 
     return filtered.sort((a, b) => {
       switch (filters.sortBy) {
-        case "price-low":
-          return a.price - b.price;
-        case "price-high":
-          return b.price - a.price;
-        case "name":
-          return isRtl
-            ? a.nameAr.localeCompare(b.nameAr)
-            : a.nameEn.localeCompare(b.nameEn);
-        default:
+        case "price-low": {
+          return (a.price || 0) - (b.price || 0);
+        }
+        case "price-high": {
+          return (b.price || 0) - (a.price || 0);
+        }
+        case "name": {
+          const nameA = isRtl ? a.nameAr || "" : a.nameEn || "";
+          const nameB = isRtl ? b.nameAr || "" : b.nameEn || "";
+          return nameA.localeCompare(nameB);
+        }
+        default: {
           return (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0);
+        }
       }
     });
   };
 
   const clearFiltersHandler = () => ({
-    occasions: slug ? [slug] : [],
+    occasions: [], // إزالة جميع المناسبات بما في ذلك الـ slug
     priceRange: [0, Infinity] as [number, number],
     features: [],
     sortBy: "featured",
@@ -129,12 +159,11 @@ const OccasionsPage: React.FC = () => {
 
   const hasActiveFiltersHandler = (
     filters: FilterState,
-    searchTerm: string,
-    slug?: string
+    searchTerm: string
   ) => {
     return (
       filters.features.length > 0 ||
-      (filters.occasions && filters.occasions.length > (slug ? 1 : 0)) ||
+      (filters.occasions && filters.occasions.length > 0) ||
       filters.priceRange[0] !== 0 ||
       filters.priceRange[1] !== Infinity ||
       searchTerm.length > 0
@@ -143,14 +172,11 @@ const OccasionsPage: React.FC = () => {
 
   const activeFiltersCountHandler = (
     filters: FilterState,
-    searchTerm: string,
-    slug?: string
+    searchTerm: string
   ) => {
     return (
       filters.features.length +
-      (filters.occasions && filters.occasions.length > (slug ? 1 : 0)
-        ? filters.occasions.length
-        : 0) +
+      (filters.occasions?.length || 0) +
       (filters.priceRange[0] !== 0 || filters.priceRange[1] !== Infinity
         ? 1
         : 0) +
@@ -162,8 +188,7 @@ const OccasionsPage: React.FC = () => {
     filters: FilterState,
     searchTerm: string,
     isRtl: boolean,
-    onRemove: (key: string, value?: string) => void,
-    slug?: string
+    onRemove: (key: string, value?: string) => void
   ) => {
     const chips: JSX.Element[] = [];
 
@@ -221,28 +246,26 @@ const OccasionsPage: React.FC = () => {
       );
     });
 
-    if (filters.occasions && filters.occasions.length > (slug ? 1 : 0)) {
-      filters.occasions
-        .filter((o) => o !== slug)
-        .forEach((o) => {
-          const meta = occasions.find((x) => x.id === o);
-          if (!meta) return;
-          chips.push(
-            <span
-              key={`chip-${o}`}
-              className="inline-flex items-center gap-1 rounded-full bg-violet-500 px-3 py-1 text-xs font-semibold text-white"
+    if (filters.occasions && filters.occasions.length > 0) {
+      filters.occasions.forEach((o) => {
+        const meta = occasions.find((x) => x.id === o);
+        if (!meta) return;
+        chips.push(
+          <span
+            key={`chip-${o}`}
+            className="inline-flex items-center gap-1 rounded-full bg-violet-500 px-3 py-1 text-xs font-semibold text-white"
+          >
+            {t(meta.nameKey)}
+            <button
+              onClick={() => onRemove("occasions", o)}
+              className="rounded-full p-0.5 hover:bg-white/20"
+              aria-label={isRtl ? "إزالة" : "Remove"}
             >
-              {t(meta.nameKey)}
-              <button
-                onClick={() => onRemove("occasions", o)}
-                className="rounded-full p-0.5 hover:bg-white/20"
-                aria-label={isRtl ? "إزالة" : "Remove"}
-              >
-                <span className="text-xs">✕</span>
-              </button>
-            </span>
-          );
-        });
+              <span className="text-xs">✕</span>
+            </button>
+          </span>
+        );
+      });
     }
 
     return chips;
@@ -291,7 +314,7 @@ const OccasionsPage: React.FC = () => {
               : "Sorry, the requested occasion is not available. Try returning to the products page."}
           </p>
           <Link
-            to="/occasions/all"
+            to="/occasions"
             className="px-6 py-3 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors text-sm font-bold shadow-md"
           >
             {isRtl ? "العودة إلى الكل" : "Back to All"}
