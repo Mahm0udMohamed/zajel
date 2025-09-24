@@ -11,13 +11,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@faker-js/faker": "^10.0.0",
-    "@fortawesome/fontawesome-svg-core": "^7.0.1",
-    "@fortawesome/free-regular-svg-icons": "^7.0.1",
-    "@fortawesome/free-solid-svg-icons": "^7.0.1",
-    "@fortawesome/react-fontawesome": "^3.0.2",
-    "@types/react-google-recaptcha": "^2.1.9",
-    "clsx": "^2.1.1",
     "framer-motion": "^12.23.12",
     "i18next": "^23.10.0",
     "i18next-browser-languagedetector": "^7.2.0",
@@ -26,12 +19,9 @@
     "react": "^18.3.1",
     "react-confetti": "^6.4.0",
     "react-dom": "^18.3.1",
-    "react-google-recaptcha": "^3.1.0",
     "react-i18next": "^14.1.0",
     "react-icons": "^5.5.0",
-    "react-lazy-load-image-component": "^1.6.3",
     "react-router-dom": "^6.22.3",
-    "swiper": "^11.0.6",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
