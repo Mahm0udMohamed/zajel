@@ -4,18 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import { motion } from "framer-motion";
-import {
-  Home,
-  Bell,
-  Heart,
-  ShoppingBag,
-  Sparkles,
-  Gift,
-  Zap,
-  Crown,
-  Flame,
-  Layers,
-} from "lucide-react";
+import { Home, Bell, Heart, ShoppingBag, Layers } from "lucide-react";
 
 const BottomNavigation: React.FC = () => {
   const { t } = useTranslation();
@@ -30,28 +19,24 @@ const BottomNavigation: React.FC = () => {
         id: "home",
         path: "/",
         icon: Home,
-        activeIcon: Sparkles,
         labelKey: "bottomNav.home",
       },
       {
         id: "categories",
         path: "/categories",
         icon: Layers,
-        activeIcon: Crown,
         labelKey: "bottomNav.categories",
       },
       {
         id: "notifications",
         path: "/notifications",
         icon: Bell,
-        activeIcon: Zap,
         labelKey: "bottomNav.notifications",
       },
       {
         id: "favorites",
         path: "/favorites",
         icon: Heart,
-        activeIcon: Gift,
         labelKey: "bottomNav.favorites",
         badge: favoritesCount,
       },
@@ -59,7 +44,6 @@ const BottomNavigation: React.FC = () => {
         id: "packages",
         path: "/packages",
         icon: ShoppingBag,
-        activeIcon: Flame,
         labelKey: "bottomNav.packages",
       },
     ],
@@ -81,7 +65,6 @@ const BottomNavigation: React.FC = () => {
         {navItems.map((item) => {
           const active = isActive(item.path);
           const Icon = item.icon;
-          const ActiveIcon = item.activeIcon;
 
           return (
             <Link
@@ -107,31 +90,22 @@ const BottomNavigation: React.FC = () => {
                   animate={active ? { rotate: [0, -5, 5, -5, 0] } : {}}
                   transition={{ duration: 0.8, ease: "easeInOut" }}
                 >
-                  {active ? (
-                    <motion.div
-                      initial={{ scale: 0, rotate: -180 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ duration: 0.4, ease: "backOut" }}
-                    >
-                      <ActiveIcon
-                        size={20}
-                        className="text-primary-500"
-                        fill="currentColor"
-                      />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      initial={{ scale: 0, rotate: 180 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ duration: 0.4, ease: "backOut" }}
-                    >
-                      <Icon
-                        size={20}
-                        className="text-neutral-500 group-hover:text-primary-400 transition-colors duration-300"
-                        strokeWidth={1.5}
-                      />
-                    </motion.div>
-                  )}
+                  <motion.div
+                    initial={{ scale: 0, rotate: 180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ duration: 0.4, ease: "backOut" }}
+                  >
+                    <Icon
+                      size={20}
+                      className={`transition-colors duration-300 ${
+                        active
+                          ? "text-primary-500 stroke-primary-500"
+                          : "text-neutral-500 group-hover:text-primary-400 group-hover:stroke-primary-400"
+                      }`}
+                      strokeWidth={active ? 2.5 : 1.5}
+                      fill="none"
+                    />
+                  </motion.div>
                 </motion.div>
 
                 {item.id === "notifications" && (
