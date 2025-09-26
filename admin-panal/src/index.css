@@ -1,0 +1,608 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide scrollbar for better dark mode experience */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* Custom scrollbar for dark mode */
+.dark-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: oklch(0.13 0 0);
+  border-radius: 3px;
+}
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background: #805ad5;
+  border-radius: 3px;
+}
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9333ea;
+}
+
+:root {
+  --font-geist-sans: "Inter", "Cairo", "Tajawal", system-ui, sans-serif;
+  --font-geist-mono: "Inter", monospace;
+}
+
+:root {
+  /* Updated theme colors to match Vercel dark admin aesthetic */
+  --background: oklch(0.11 0 0);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.13 0 0);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.13 0 0);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: #805ad5;
+  --primary-foreground: oklch(0.95 0 0);
+  --secondary: oklch(0.18 0 0);
+  --secondary-foreground: oklch(0.85 0 0);
+  --muted: oklch(0.16 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: #805ad5;
+  --accent-foreground: oklch(0.95 0 0);
+  --destructive: #805ad5;
+  --destructive-foreground: oklch(0.95 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.16 0 0);
+  --ring: #805ad5;
+  --chart-1: #805ad5;
+  --chart-2: #805ad5;
+  --chart-3: #805ad5;
+  --chart-4: #805ad5;
+  --chart-5: #805ad5;
+  --radius: 0.5rem;
+  --sidebar: oklch(0.13 0 0);
+  --sidebar-foreground: oklch(0.95 0 0);
+  --sidebar-primary: #805ad5;
+  --sidebar-primary-foreground: oklch(0.95 0 0);
+  --sidebar-accent: oklch(0.18 0 0);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar-border: oklch(0.2 0 0);
+  --sidebar-ring: #805ad5;
+}
+
+.dark {
+  --background: oklch(0.11 0 0);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.13 0 0);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.13 0 0);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.65 0.2 280);
+  --primary-foreground: oklch(0.95 0 0);
+  --secondary: oklch(0.18 0 0);
+  --secondary-foreground: oklch(0.85 0 0);
+  --muted: oklch(0.16 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.18 0 0);
+  --accent-foreground: oklch(0.95 0 0);
+  --destructive: oklch(0.65 0.2 280);
+  --destructive-foreground: oklch(0.95 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.16 0 0);
+  --ring: oklch(0.65 0.2 280);
+  --chart-1: oklch(0.65 0.2 280);
+  --chart-2: oklch(0.65 0.2 280);
+  --chart-3: oklch(0.65 0.2 280);
+  --chart-4: oklch(0.65 0.2 280);
+  --chart-5: oklch(0.65 0.2 280);
+  --sidebar: oklch(0.13 0 0);
+  --sidebar-foreground: oklch(0.95 0 0);
+  --sidebar-primary: oklch(0.65 0.2 280);
+  --sidebar-primary-foreground: oklch(0.95 0 0);
+  --sidebar-accent: oklch(0.18 0 0);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar-border: oklch(0.2 0 0);
+  --sidebar-ring: oklch(0.65 0.2 280);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* RTL Support - Simple and Direct for Arabic Only */
+* {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Center text override for login page */
+.center-text {
+  text-align: center !important;
+}
+
+/* Animation utilities */
+@layer utilities {
+  .animate-in {
+    animation: animate-in 0.2s ease-out;
+  }
+
+  .animate-out {
+    animation: animate-out 0.2s ease-in;
+  }
+
+  .fade-in-0 {
+    animation: fade-in 0.2s ease-out;
+  }
+
+  .fade-out-0 {
+    animation: fade-out 0.2s ease-in;
+  }
+
+  .zoom-in-95 {
+    animation: zoom-in 0.2s ease-out;
+  }
+
+  .zoom-out-95 {
+    animation: zoom-out 0.2s ease-in;
+  }
+
+  .slide-in-from-left-1\/2 {
+    animation: slide-in-from-left 0.2s ease-out;
+  }
+
+  .slide-in-from-top-\[48\%\] {
+    animation: slide-in-from-top 0.2s ease-out;
+  }
+
+  .slide-out-to-left-1\/2 {
+    animation: slide-out-to-left 0.2s ease-in;
+  }
+
+  .slide-out-to-top-\[48\%\] {
+    animation: slide-out-to-top 0.2s ease-in;
+  }
+}
+
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes animate-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes zoom-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) translateX(-200px)
+      translateY(-200px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) translateX(0) translateY(0);
+  }
+}
+
+@keyframes slide-in-from-top {
+  from {
+    opacity: 0;
+    transform: translateY(-48%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-out-to-left {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) translateX(0) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) translateX(-200px)
+      translateY(-200px);
+  }
+}
+
+@keyframes slide-out-to-top {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-48%);
+  }
+}
+
+/* Custom dialog animations */
+.dialog-content-animation[data-state="open"] {
+  animation: slide-in-from-left-custom 0.2s ease-out !important;
+}
+
+.dialog-content-animation[data-state="closed"] {
+  animation: slide-out-to-left-custom 0.2s ease-in forwards !important;
+  animation-fill-mode: forwards !important;
+}
+
+@keyframes slide-in-from-left-custom {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) translateX(-50%)
+      translateY(-48%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) translateX(0%) translateY(0%)
+      scale(1);
+  }
+}
+
+@keyframes slide-out-to-left-custom {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) translateX(0%) translateY(0%)
+      scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) translateX(-50%)
+      translateY(-48%) scale(0.95);
+    visibility: hidden;
+  }
+}
+
+@keyframes slide-in-from-top-custom {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) translateY(-200px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes slide-out-to-top-custom {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) translateY(-200px) scale(0.95);
+  }
+}
+
+/* Fix for Select dropdown focus border issue */
+[data-radix-select-trigger]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+[data-radix-select-trigger][data-state="open"] {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+[data-radix-select-trigger][data-state="closed"] {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove focus ring from select triggers */
+.select-trigger:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.select-trigger:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Custom focus styles for form inputs only - Purple-600 theme */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #805ad5 !important;
+  box-shadow: 0 0 0 2px rgba(128, 90, 213, 0.2) !important;
+  outline: none !important;
+}
+
+/* Remove focus styles from buttons and non-input elements */
+button:focus,
+[role="button"]:focus,
+a:focus,
+div:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
+
+/* Custom focus styles for shadcn/ui input components only */
+[data-radix-select-trigger]:focus,
+[data-radix-select-trigger][data-state="open"] {
+  border-color: #805ad5 !important;
+  box-shadow: 0 0 0 2px rgba(128, 90, 213, 0.2) !important;
+  outline: none !important;
+}
+
+/* Remove focus styles from dialog and dropdown triggers */
+[data-radix-dialog-trigger]:focus,
+[data-radix-dialog-trigger]:focus-visible,
+[data-radix-dialog-trigger]:active,
+[data-radix-dialog-trigger]:hover,
+[data-radix-dropdown-trigger]:focus,
+[data-radix-dropdown-trigger]:focus-visible,
+[data-radix-dropdown-trigger]:active,
+[data-radix-dropdown-trigger]:hover,
+[data-radix-select-trigger][data-state="closed"]:focus,
+[data-radix-select-trigger][data-state="closed"]:focus-visible,
+[data-radix-select-trigger][data-state="closed"]:active,
+[data-radix-select-trigger][data-state="closed"]:hover {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
+
+/* Remove all borders from shadcn/ui Button components */
+[data-radix-collection-item]:focus,
+[data-radix-collection-item]:focus-visible,
+[data-radix-collection-item]:active,
+[data-radix-collection-item]:hover,
+[data-radix-menu-item]:focus,
+[data-radix-menu-item]:focus-visible,
+[data-radix-menu-item]:active,
+[data-radix-menu-item]:hover {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
+
+/* Custom purple-600 theme colors for Tailwind */
+@layer utilities {
+  .focus-purple {
+    @apply focus:border-purple-600 focus:ring-purple-600/20;
+  }
+
+  .border-purple-focus {
+    border-color: #805ad5;
+  }
+
+  .ring-purple-focus {
+    box-shadow: 0 0 0 2px rgba(128, 90, 213, 0.2);
+  }
+
+  /* Purple-600 theme for all interactive elements */
+  .purple-theme {
+    --primary: #805ad5;
+    --primary-foreground: oklch(0.95 0 0);
+    --ring: #805ad5;
+    --accent: #805ad5;
+    --accent-foreground: oklch(0.95 0 0);
+  }
+}
+
+/* Override all colors to purple-600 theme */
+* {
+  --primary: #805ad5 !important;
+  --ring: #805ad5 !important;
+  --accent: #805ad5 !important;
+}
+
+/* Global button border removal - Most important rule */
+button,
+button:focus,
+button:focus-visible,
+button:active,
+button:hover,
+button:focus-within,
+button:focus-visible:focus,
+button:active:focus,
+button:hover:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+  border-style: inherit !important;
+  border-width: inherit !important;
+}
+
+/* Remove all focus rings and borders from interactive elements */
+*:focus:not(input):not(textarea):not(select) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove all focus, active, and hover borders from buttons and interactive elements */
+button,
+button:focus,
+button:focus-visible,
+button:active,
+button:hover,
+[role="button"],
+[role="button"]:focus,
+[role="button"]:focus-visible,
+[role="button"]:active,
+[role="button"]:hover {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
+
+/* Remove focus outlines from all other non-input elements */
+button:focus,
+button:focus-visible,
+button:active,
+a:focus,
+a:focus-visible,
+a:active,
+div:focus,
+div:focus-visible,
+div:active,
+span:focus,
+span:focus-visible,
+span:active,
+p:focus,
+p:focus-visible,
+p:active,
+h1:focus,
+h1:focus-visible,
+h1:active,
+h2:focus,
+h2:focus-visible,
+h2:active,
+h3:focus,
+h3:focus-visible,
+h3:active,
+h4:focus,
+h4:focus-visible,
+h4:active,
+h5:focus,
+h5:focus-visible,
+h5:active,
+h6:focus,
+h6:focus-visible,
+h6:active,
+li:focus,
+li:focus-visible,
+li:active,
+ul:focus,
+ul:focus-visible,
+ul:active,
+ol:focus,
+ol:focus-visible,
+ol:active,
+table:focus,
+table:focus-visible,
+table:active,
+tr:focus,
+tr:focus-visible,
+tr:active,
+td:focus,
+td:focus-visible,
+td:active,
+th:focus,
+th:focus-visible,
+th:active,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+[role="button"]:active,
+[role="link"]:focus,
+[role="link"]:focus-visible,
+[role="link"]:active,
+[role="menuitem"]:focus,
+[role="menuitem"]:focus-visible,
+[role="menuitem"]:active,
+[role="tab"]:focus,
+[role="tab"]:focus-visible,
+[role="tab"]:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
