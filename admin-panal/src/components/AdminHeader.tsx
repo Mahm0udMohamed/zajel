@@ -1,8 +1,18 @@
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Search, User, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useAdminAuth } from "../hooks/useAdminAuth";
 
 export function AdminHeader() {
+  const { admin, logout } = useAdminAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
   return (
     <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
       <div className="flex items-center gap-4 flex-1">
@@ -23,9 +33,22 @@ export function AdminHeader() {
           </span>
         </Button>
 
-        <Button variant="ghost" size="icon">
-          <User className="w-5 h-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            مرحباً، {admin?.name || "مدير"}
+          </span>
+          <Button variant="ghost" size="icon">
+            <User className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleLogout}
+            title="تسجيل الخروج"
+          >
+            <LogOut className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
     </header>
   );

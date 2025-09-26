@@ -57,49 +57,71 @@ router.post("/refresh-token", refreshAccessToken);
 router.post("/logout", logout);
 
 // مسارات التحقق من الهاتف (مع التحقق من إعدادات Twilio)
-router.post("/send-phone-verification", authMiddleware, (req, res, next) => {
-  if (!isTwilioConfigured()) {
-    return res.status(503).json({ 
-      message: "Phone verification service is currently unavailable. Please contact support." 
-    });
-  }
-  next();
-}, sendPhoneVerification);
+router.post(
+  "/send-phone-verification",
+  authMiddleware,
+  (req, res, next) => {
+    if (!isTwilioConfigured()) {
+      return res.status(503).json({
+        message:
+          "Phone verification service is currently unavailable. Please contact support.",
+      });
+    }
+    next();
+  },
+  sendPhoneVerification
+);
 
-router.post("/verify-phone", authMiddleware, (req, res, next) => {
-  if (!isTwilioConfigured()) {
-    return res.status(503).json({ 
-      message: "Phone verification service is currently unavailable. Please contact support." 
-    });
-  }
-  next();
-}, verifyPhoneNumber);
+router.post(
+  "/verify-phone",
+  authMiddleware,
+  (req, res, next) => {
+    if (!isTwilioConfigured()) {
+      return res.status(503).json({
+        message:
+          "Phone verification service is currently unavailable. Please contact support.",
+      });
+    }
+    next();
+  },
+  verifyPhoneNumber
+);
 
-router.post("/login-phone", (req, res, next) => {
-  if (!isTwilioConfigured()) {
-    return res.status(503).json({ 
-      message: "Phone login service is currently unavailable. Please use email login instead." 
-    });
-  }
-  next();
-}, loginWithPhone);
+router.post(
+  "/login-phone",
+  (req, res, next) => {
+    if (!isTwilioConfigured()) {
+      return res.status(503).json({
+        message:
+          "Phone login service is currently unavailable. Please use email login instead.",
+      });
+    }
+    next();
+  },
+  loginWithPhone
+);
 
-router.post("/verify-phone-login", (req, res, next) => {
-  if (!isTwilioConfigured()) {
-    return res.status(503).json({ 
-      message: "Phone verification service is currently unavailable. Please contact support." 
-    });
-  }
-  next();
-}, verifyPhoneLogin);
+router.post(
+  "/verify-phone-login",
+  (req, res, next) => {
+    if (!isTwilioConfigured()) {
+      return res.status(503).json({
+        message:
+          "Phone verification service is currently unavailable. Please contact support.",
+      });
+    }
+    next();
+  },
+  verifyPhoneLogin
+);
 
 // نقطة نهاية للتحقق من حالة خدمة الهاتف
 router.get("/phone-service-status", (req, res) => {
   res.json({
     available: isTwilioConfigured(),
-    message: isTwilioConfigured() 
-      ? "Phone verification service is available" 
-      : "Phone verification service is not configured"
+    message: isTwilioConfigured()
+      ? "Phone verification service is available"
+      : "Phone verification service is not configured",
   });
 });
 

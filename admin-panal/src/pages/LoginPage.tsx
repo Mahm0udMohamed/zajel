@@ -1,10 +1,6 @@
 import { LoginForm } from "../components/LoginForm";
 
-interface LoginPageProps {
-  onLogin?: () => void;
-}
-
-export default function LoginPage({ onLogin }: LoginPageProps) {
+export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -16,7 +12,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             قم بتسجيل الدخول للوصول إلى النظام
           </p>
         </div>
-        <LoginForm onLogin={onLogin} />
+        <LoginForm />
       </div>
     </div>
   );

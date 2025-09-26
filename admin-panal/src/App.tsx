@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,76 +12,91 @@ import GiftsPage from "./pages/GiftsPage";
 import ContentPage from "./pages/ContentPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import DashboardLayout from "./layouts/DashboardLayout";
+import { AdminAuthProvider } from "./contexts/AdminAuthContext.tsx";
+import { useAdminAuth } from "./hooks/useAdminAuth";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+function AppRoutes() {
+  const { isAuthenticated } = useAdminAuth();
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
-  // const handleLogout = () => {
-  //   setIsLoggedIn(false);
-  // };
-
-  if (!isLoggedIn) {
-    return <LoginPage onLogin={handleLogin} />;
+  if (!isAuthenticated) {
+    return <LoginPage />;
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/dashboard"
-          element={
+    <Routes>
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
             <DashboardLayout>
               <DashboardPage />
             </DashboardLayout>
-          }
-        />
-        <Route
-          path="/dashboard/products"
-          element={
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/products"
+        element={
+          <ProtectedRoute>
             <DashboardLayout>
               <ProductsPage />
             </DashboardLayout>
-          }
-        />
-        <Route
-          path="/dashboard/orders"
-          element={
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/orders"
+        element={
+          <ProtectedRoute>
             <DashboardLayout>
               <OrdersPage />
             </DashboardLayout>
-          }
-        />
-        <Route
-          path="/dashboard/gifts"
-          element={
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/gifts"
+        element={
+          <ProtectedRoute>
             <DashboardLayout>
               <GiftsPage />
             </DashboardLayout>
-          }
-        />
-        <Route
-          path="/dashboard/content"
-          element={
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/content"
+        element={
+          <ProtectedRoute>
             <DashboardLayout>
               <ContentPage />
             </DashboardLayout>
-          }
-        />
-        <Route
-          path="/dashboard/analytics"
-          element={
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/analytics"
+        element={
+          <ProtectedRoute>
             <DashboardLayout>
               <AnalyticsPage />
             </DashboardLayout>
-          }
-        />
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </Router>
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
+  );
+}
+
+function App() {
+  return (
+    <AdminAuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AdminAuthProvider>
   );
 }
 
