@@ -199,13 +199,13 @@ export default function OccasionsTab({
   return (
     <Card>
       <CardHeader className="space-y-0 pb-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-              <Calendar className="w-5 h-5 text-purple-500" />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex-1">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-semibold">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
               المناسبات
             </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground mt-1">
+            <CardDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
               إدارة المناسبات الخاصة بالمنتجات
             </CardDescription>
           </div>
