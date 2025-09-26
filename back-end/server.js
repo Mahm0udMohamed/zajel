@@ -17,6 +17,7 @@ import cartRoutes from "./routes/cartRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import passport from "./config/passport.js";
 import { printServiceStatus } from "./utils/serviceChecker.js";
+import Admin from "./models/Admin.js";
 
 dotenv.config();
 
@@ -35,6 +36,55 @@ app.use((req, res, next) => {
 
 app.set("trust proxy", 1);
 connectDB();
+
+// 🔧 إنشاء الأدمن تلقائياً عند بدء السيرفر
+const createAdminIfNotExists = async () => {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    const adminName = process.env.ADMIN_NAME || "مدير النظام";
+
+    if (!adminEmail || !adminPassword) {
+      console.warn(
+        "⚠️  تحذير: لم يتم تعيين ADMIN_EMAIL أو ADMIN_PASSWORD في ملف .env"
+      );
+      console.warn(
+        "💡 لن يتم إنشاء مدير تلقائياً. يرجى تعيين هذه المتغيرات في ملف .env"
+      );
+      return;
+    }
+
+    // التحقق من وجود المدير
+    const existingAdmin = await Admin.findOne({ email: adminEmail });
+
+    if (existingAdmin) {
+      console.log("✅ المدير موجود بالفعل:", adminEmail);
+      return;
+    }
+
+    // إنشاء المدير الجديد
+    const admin = new Admin({
+      email: adminEmail,
+      password: adminPassword,
+      name: adminName,
+      isActive: true,
+    });
+
+    await admin.save();
+
+    console.log("🎉 تم إنشاء المدير تلقائياً:");
+    console.log("📧 البريد الإلكتروني:", adminEmail);
+    console.log("👤 الاسم:", adminName);
+    console.log("🔐 كلمة المرور:", "*".repeat(adminPassword.length));
+    console.log("🚀 يمكنك الآن تسجيل الدخول إلى لوحة التحكم");
+  } catch (error) {
+    console.error("❌ خطأ في إنشاء المدير تلقائياً:", error.message);
+  }
+};
+
+// تشغيل إنشاء الأدمن بعد الاتصال بقاعدة البيانات
+setTimeout(createAdminIfNotExists, 2000); // انتظار 2 ثانية للتأكد من الاتصال بقاعدة البيانات
+
 app.use(cookieParser());
 
 const allowedOrigins = [
@@ -46,6 +96,8 @@ const allowedOrigins = [
   "https://localhost:3002",
   "https://localhost:5173",
   "https://appzajel1.netlify.app",
+  "https://localhost:5174",
+  "https://localhost:5173",
 ];
 
 const corsOptions = {

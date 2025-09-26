@@ -7,9 +7,7 @@
     "build": "babel . --out-dir dist --ignore node_modules",
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "nodemon server.js",
-    "dev:https": "NODE_ENV=development nodemon server.js",
-    "create-admin": "node scripts/createAdmin.js",
-    "reset-admin": "node scripts/resetAdmin.js"
+    "dev:https": "NODE_ENV=development nodemon server.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
