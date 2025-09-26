@@ -62,6 +62,8 @@ export default function HeroOccasionsTab({
     celebratoryMessageEn: "",
     isActive: true,
   });
+  const [originalOccasion, setOriginalOccasion] =
+    useState<HeroOccasionFormData | null>(null);
 
   const { toast } = useToast();
 
@@ -101,6 +103,7 @@ export default function HeroOccasionsTab({
     setIsAddOpen(false);
     setIsEditOpen(false);
     setEditingId(null);
+    setOriginalOccasion(null);
   };
 
   const handleDeleteClick = (id: string) => {
@@ -119,6 +122,23 @@ export default function HeroOccasionsTab({
     }
   };
 
+  const hasChanges = () => {
+    if (!originalOccasion) return false;
+
+    return (
+      newOccasion.nameAr !== originalOccasion.nameAr ||
+      newOccasion.nameEn !== originalOccasion.nameEn ||
+      newOccasion.date !== originalOccasion.date ||
+      newOccasion.celebratoryMessageAr !==
+        originalOccasion.celebratoryMessageAr ||
+      newOccasion.celebratoryMessageEn !==
+        originalOccasion.celebratoryMessageEn ||
+      newOccasion.isActive !== originalOccasion.isActive ||
+      JSON.stringify(newOccasion.images) !==
+        JSON.stringify(originalOccasion.images)
+    );
+  };
+
   const hasData = () => {
     return (
       newOccasion.nameAr.trim() !== "" ||
@@ -131,13 +151,17 @@ export default function HeroOccasionsTab({
   };
 
   const handlePointerDownOutside = (e: Event) => {
-    if (hasData()) {
+    if (isEditOpen && hasChanges()) {
+      e.preventDefault();
+    } else if (isAddOpen && hasData()) {
       e.preventDefault();
     }
   };
 
   const handleEscapeKeyDown = (e: KeyboardEvent) => {
-    if (hasData()) {
+    if (isEditOpen && hasChanges()) {
+      e.preventDefault();
+    } else if (isAddOpen && hasData()) {
       e.preventDefault();
     }
   };
@@ -180,7 +204,7 @@ export default function HeroOccasionsTab({
 
   const handleEdit = (occasion: HeroOccasion) => {
     setEditingId(occasion.id);
-    setNewOccasion({
+    const occasionData = {
       nameAr: occasion.nameAr,
       nameEn: occasion.nameEn,
       date: occasion.date,
@@ -188,7 +212,9 @@ export default function HeroOccasionsTab({
       celebratoryMessageAr: occasion.celebratoryMessageAr,
       celebratoryMessageEn: occasion.celebratoryMessageEn,
       isActive: occasion.isActive,
-    });
+    };
+    setNewOccasion(occasionData);
+    setOriginalOccasion(occasionData);
     setIsEditOpen(true);
   };
 
@@ -207,6 +233,7 @@ export default function HeroOccasionsTab({
     onUpdate(editingId, updatedOccasion);
     setEditingId(null);
     setIsEditOpen(false);
+    setOriginalOccasion(null);
     toast({
       title: "تم بنجاح",
       description: "تم تحديث المناسبة بنجاح",

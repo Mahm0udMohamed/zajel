@@ -56,6 +56,8 @@ export default function CategoriesTab({
     isActive: true,
     sortOrder: 1,
   });
+  const [originalCategory, setOriginalCategory] =
+    useState<CategoryFormData | null>(null);
 
   const { toast } = useToast();
 
@@ -80,13 +82,15 @@ export default function CategoriesTab({
 
   const handleEdit = (category: Category) => {
     setEditingId(category.id);
-    setNewCategory({
+    const categoryData = {
       nameAr: category.nameAr,
       nameEn: category.nameEn,
       imageUrl: category.imageUrl,
       isActive: category.isActive,
       sortOrder: category.sortOrder,
-    });
+    };
+    setNewCategory(categoryData);
+    setOriginalCategory(categoryData);
     setIsEditOpen(true);
   };
 
@@ -106,6 +110,7 @@ export default function CategoriesTab({
     resetForm();
     setIsEditOpen(false);
     setEditingId(null);
+    setOriginalCategory(null);
     toast({
       title: "تم بنجاح",
       description: "تم تحديث الفئة بنجاح",
@@ -151,6 +156,19 @@ export default function CategoriesTab({
     setIsAddOpen(false);
     setIsEditOpen(false);
     setEditingId(null);
+    setOriginalCategory(null);
+  };
+
+  const hasChanges = () => {
+    if (!originalCategory) return false;
+
+    return (
+      newCategory.nameAr !== originalCategory.nameAr ||
+      newCategory.nameEn !== originalCategory.nameEn ||
+      newCategory.imageUrl !== originalCategory.imageUrl ||
+      newCategory.isActive !== originalCategory.isActive ||
+      newCategory.sortOrder !== originalCategory.sortOrder
+    );
   };
 
   const hasData = () => {
@@ -163,13 +181,17 @@ export default function CategoriesTab({
   };
 
   const handlePointerDownOutside = (e: Event) => {
-    if (hasData()) {
+    if (isEditOpen && hasChanges()) {
+      e.preventDefault();
+    } else if (isAddOpen && hasData()) {
       e.preventDefault();
     }
   };
 
   const handleEscapeKeyDown = (e: KeyboardEvent) => {
-    if (hasData()) {
+    if (isEditOpen && hasChanges()) {
+      e.preventDefault();
+    } else if (isAddOpen && hasData()) {
       e.preventDefault();
     }
   };

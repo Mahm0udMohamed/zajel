@@ -86,6 +86,8 @@ export default function HeroPromotionsTab({
     startDate: "",
     endDate: "",
   });
+  const [originalPromotion, setOriginalPromotion] =
+    useState<HeroPromotionFormData | null>(null);
 
   const { toast } = useToast();
 
@@ -126,6 +128,7 @@ export default function HeroPromotionsTab({
     setIsAddOpen(false);
     setIsEditOpen(false);
     setEditingId(null);
+    setOriginalPromotion(null);
   };
 
   const handleDeleteClick = (id: string) => {
@@ -144,6 +147,26 @@ export default function HeroPromotionsTab({
     }
   };
 
+  const hasChanges = () => {
+    if (!originalPromotion) return false;
+
+    return (
+      newPromotion.image !== originalPromotion.image ||
+      newPromotion.titleAr !== originalPromotion.titleAr ||
+      newPromotion.titleEn !== originalPromotion.titleEn ||
+      newPromotion.subtitleAr !== originalPromotion.subtitleAr ||
+      newPromotion.subtitleEn !== originalPromotion.subtitleEn ||
+      newPromotion.buttonTextAr !== originalPromotion.buttonTextAr ||
+      newPromotion.buttonTextEn !== originalPromotion.buttonTextEn ||
+      newPromotion.link !== originalPromotion.link ||
+      newPromotion.gradient !== originalPromotion.gradient ||
+      newPromotion.isActive !== originalPromotion.isActive ||
+      newPromotion.priority !== originalPromotion.priority ||
+      newPromotion.startDate !== originalPromotion.startDate ||
+      newPromotion.endDate !== originalPromotion.endDate
+    );
+  };
+
   const hasData = () => {
     return (
       newPromotion.image.trim() !== "" ||
@@ -160,13 +183,17 @@ export default function HeroPromotionsTab({
   };
 
   const handlePointerDownOutside = (e: Event) => {
-    if (hasData()) {
+    if (isEditOpen && hasChanges()) {
+      e.preventDefault();
+    } else if (isAddOpen && hasData()) {
       e.preventDefault();
     }
   };
 
   const handleEscapeKeyDown = (e: KeyboardEvent) => {
-    if (hasData()) {
+    if (isEditOpen && hasChanges()) {
+      e.preventDefault();
+    } else if (isAddOpen && hasData()) {
       e.preventDefault();
     }
   };
@@ -213,7 +240,7 @@ export default function HeroPromotionsTab({
 
   const handleEdit = (promotion: HeroPromotion) => {
     setEditingId(promotion.id);
-    setNewPromotion({
+    const promotionData = {
       image: promotion.image,
       titleAr: promotion.titleAr,
       titleEn: promotion.titleEn,
@@ -227,7 +254,9 @@ export default function HeroPromotionsTab({
       priority: promotion.priority,
       startDate: promotion.startDate,
       endDate: promotion.endDate,
-    });
+    };
+    setNewPromotion(promotionData);
+    setOriginalPromotion(promotionData);
     setIsEditOpen(true);
   };
 
@@ -244,6 +273,7 @@ export default function HeroPromotionsTab({
     onUpdate(editingId, updatedPromotion);
     setEditingId(null);
     setIsEditOpen(false);
+    setOriginalPromotion(null);
     toast({
       title: "تم بنجاح",
       description: "تم تحديث العرض بنجاح",

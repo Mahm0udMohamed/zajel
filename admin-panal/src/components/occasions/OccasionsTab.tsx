@@ -43,7 +43,6 @@ export default function OccasionsTab({
   onUpdate,
   onDelete,
   onToggleActive,
-  onReorder,
 }: OccasionsTabProps) {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -57,6 +56,8 @@ export default function OccasionsTab({
     isActive: true,
     sortOrder: 1,
   });
+  const [originalOccasion, setOriginalOccasion] =
+    useState<OccasionFormData | null>(null);
 
   const { toast } = useToast();
 
@@ -81,13 +82,15 @@ export default function OccasionsTab({
 
   const handleEdit = (occasion: Occasion) => {
     setEditingId(occasion.id);
-    setNewOccasion({
+    const occasionData = {
       nameAr: occasion.nameAr,
       nameEn: occasion.nameEn,
       imageUrl: occasion.imageUrl,
       isActive: occasion.isActive,
       sortOrder: occasion.sortOrder,
-    });
+    };
+    setNewOccasion(occasionData);
+    setOriginalOccasion(occasionData);
     setIsEditOpen(true);
   };
 
@@ -107,6 +110,7 @@ export default function OccasionsTab({
     resetForm();
     setIsEditOpen(false);
     setEditingId(null);
+    setOriginalOccasion(null);
     toast({
       title: "تم بنجاح",
       description: "تم تحديث المناسبة بنجاح",
@@ -152,6 +156,19 @@ export default function OccasionsTab({
     setIsAddOpen(false);
     setIsEditOpen(false);
     setEditingId(null);
+    setOriginalOccasion(null);
+  };
+
+  const hasChanges = () => {
+    if (!originalOccasion) return false;
+
+    return (
+      newOccasion.nameAr !== originalOccasion.nameAr ||
+      newOccasion.nameEn !== originalOccasion.nameEn ||
+      newOccasion.imageUrl !== originalOccasion.imageUrl ||
+      newOccasion.isActive !== originalOccasion.isActive ||
+      newOccasion.sortOrder !== originalOccasion.sortOrder
+    );
   };
 
   const hasData = () => {
@@ -164,13 +181,17 @@ export default function OccasionsTab({
   };
 
   const handlePointerDownOutside = (e: Event) => {
-    if (hasData()) {
+    if (isEditOpen && hasChanges()) {
+      e.preventDefault();
+    } else if (isAddOpen && hasData()) {
       e.preventDefault();
     }
   };
 
   const handleEscapeKeyDown = (e: KeyboardEvent) => {
-    if (hasData()) {
+    if (isEditOpen && hasChanges()) {
+      e.preventDefault();
+    } else if (isAddOpen && hasData()) {
       e.preventDefault();
     }
   };
