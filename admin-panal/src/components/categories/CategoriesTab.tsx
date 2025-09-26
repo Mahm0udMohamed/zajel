@@ -364,11 +364,11 @@ export default function CategoriesTab({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>الصورة</TableHead>
-              <TableHead>الاسم</TableHead>
-              <TableHead>الترتيب</TableHead>
-              <TableHead>الحالة</TableHead>
-              <TableHead>الإجراءات</TableHead>
+              <TableHead className="w-20 min-w-[80px]">الصورة</TableHead>
+              <TableHead className="w-40 min-w-[160px]">الاسم</TableHead>
+              <TableHead className="w-20 min-w-[80px]">الترتيب</TableHead>
+              <TableHead className="w-24 min-w-[96px]">الحالة</TableHead>
+              <TableHead className="w-32 min-w-[128px]">الإجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -400,28 +400,34 @@ export default function CategoriesTab({
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEdit(category)}
+                        className="h-8 px-2 text-xs"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline mr-1">تعديل</span>
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => onToggleActive(category.id)}
+                        className="h-8 px-2 text-xs"
                       >
-                        {category.isActive ? "إخفاء" : "إظهار"}
+                        <span className="text-xs">
+                          {category.isActive ? "إخفاء" : "إظهار"}
+                        </span>
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteClick(category.id)}
-                        className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20"
+                        className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20 h-8 px-2 text-xs"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline mr-1">حذف</span>
                       </Button>
                     </div>
                   </TableCell>

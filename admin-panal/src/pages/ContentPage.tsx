@@ -251,22 +251,46 @@ export default function ContentPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-foreground">إدارة المحتوى</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+          إدارة المحتوى
+        </h1>
       </div>
 
       <Tabs defaultValue="hero" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3">
-          <TabsTrigger value="hero">الهيرو</TabsTrigger>
-          <TabsTrigger value="categories">الفئات</TabsTrigger>
-          <TabsTrigger value="occasions">المناسبات</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-1 h-auto">
+          <TabsTrigger value="hero" className="text-sm sm:text-base py-2 px-3">
+            الهيرو
+          </TabsTrigger>
+          <TabsTrigger
+            value="categories"
+            className="text-sm sm:text-base py-2 px-3"
+          >
+            الفئات
+          </TabsTrigger>
+          <TabsTrigger
+            value="occasions"
+            className="text-sm sm:text-base py-2 px-3"
+          >
+            المناسبات
+          </TabsTrigger>
         </TabsList>
 
         {/* Hero Tab */}
         <TabsContent value="hero" className="space-y-4">
           <Tabs defaultValue="hero-occasions" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
-              <TabsTrigger value="hero-occasions">مناسبات الهيرو</TabsTrigger>
-              <TabsTrigger value="hero-promotions">عروض الهيرو</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 gap-1 h-auto">
+              <TabsTrigger
+                value="hero-occasions"
+                className="text-xs sm:text-sm py-2 px-2"
+              >
+                مناسبات الهيرو
+              </TabsTrigger>
+              <TabsTrigger
+                value="hero-promotions"
+                className="text-xs sm:text-sm py-2 px-2"
+              >
+                عروض الهيرو
+              </TabsTrigger>
             </TabsList>
 
             {/* Hero Occasions Sub-Tab */}

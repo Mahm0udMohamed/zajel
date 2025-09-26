@@ -527,11 +527,11 @@ export default function HeroOccasionsTab({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>الاسم</TableHead>
-              <TableHead>التاريخ</TableHead>
-              <TableHead>الصور</TableHead>
-              <TableHead>الحالة</TableHead>
-              <TableHead>الإجراءات</TableHead>
+              <TableHead className="w-40 min-w-[160px]">الاسم</TableHead>
+              <TableHead className="w-32 min-w-[128px]">التاريخ</TableHead>
+              <TableHead className="w-24 min-w-[96px]">الصور</TableHead>
+              <TableHead className="w-24 min-w-[96px]">الحالة</TableHead>
+              <TableHead className="w-32 min-w-[128px]">الإجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -567,11 +567,11 @@ export default function HeroOccasionsTab({
                           key={index}
                           src={image || "/placeholder.svg"}
                           alt={`صورة ${index + 1}`}
-                          className="w-8 h-8 object-cover rounded"
+                          className="w-8 h-8 object-cover rounded flex-shrink-0"
                         />
                       ))}
                       {occasion.images.length > 3 && (
-                        <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs">
+                        <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs flex-shrink-0">
                           +{occasion.images.length - 3}
                         </div>
                       )}
@@ -581,30 +581,36 @@ export default function HeroOccasionsTab({
                     <div className="flex items-center gap-2">
                       <Badge
                         variant={occasion.isActive ? "default" : "secondary"}
+                        className="flex-shrink-0"
                       >
                         {occasion.isActive ? "نشط" : "غير نشط"}
                       </Badge>
                       <Switch
                         checked={occasion.isActive}
                         onCheckedChange={() => onToggleActive(occasion.id)}
+                        className="flex-shrink-0"
                       />
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEdit(occasion)}
+                        className="h-8 px-2 text-xs"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline mr-1">تعديل</span>
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteClick(occasion.id)}
+                        className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20 h-8 px-2 text-xs"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline mr-1">حذف</span>
                       </Button>
                     </div>
                   </TableCell>

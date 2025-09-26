@@ -284,13 +284,6 @@ export default function HeroPromotionsTab({
     return new Date(dateString).toLocaleDateString("ar-SA");
   };
 
-  const isActive = (startDate: string, endDate: string) => {
-    const now = new Date();
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    return now >= start && now <= end;
-  };
-
   const getGradientLabel = (value: string) => {
     const option = GRADIENT_OPTIONS.find((opt) => opt.value === value);
     return option ? option.label : value;
@@ -680,13 +673,13 @@ export default function HeroPromotionsTab({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>الصورة</TableHead>
-              <TableHead>العنوان</TableHead>
-              <TableHead>التدرج</TableHead>
-              <TableHead>الفترة</TableHead>
-              <TableHead>الأولوية</TableHead>
-              <TableHead>الحالة</TableHead>
-              <TableHead>الإجراءات</TableHead>
+              <TableHead className="w-20 min-w-[80px]">الصورة</TableHead>
+              <TableHead className="w-40 min-w-[160px]">العنوان</TableHead>
+              <TableHead className="w-24 min-w-[96px]">التدرج</TableHead>
+              <TableHead className="w-32 min-w-[128px]">الفترة</TableHead>
+              <TableHead className="w-20 min-w-[80px]">الأولوية</TableHead>
+              <TableHead className="w-24 min-w-[96px]">الحالة</TableHead>
+              <TableHead className="w-32 min-w-[128px]">الإجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -695,16 +688,20 @@ export default function HeroPromotionsTab({
               .map((promotion) => (
                 <TableRow key={promotion.id}>
                   <TableCell>
-                    <img
-                      src={promotion.image || "/placeholder.svg"}
-                      alt={promotion.titleAr}
-                      className="w-16 h-10 object-cover rounded"
-                    />
+                    <div className="flex justify-center">
+                      <img
+                        src={promotion.image || "/placeholder.svg"}
+                        alt={promotion.titleAr}
+                        className="w-16 h-10 object-cover rounded flex-shrink-0"
+                      />
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <div>
-                      <div className="font-medium">{promotion.titleAr}</div>
-                      <div className="text-sm text-muted-foreground">
+                    <div className="min-w-0">
+                      <div className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+                        {promotion.titleAr}
+                      </div>
+                      <div className="text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
                         {promotion.titleEn}
                       </div>
                     </div>
@@ -712,53 +709,72 @@ export default function HeroPromotionsTab({
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <div
-                        className={`w-4 h-4 rounded bg-gradient-to-r ${promotion.gradient}`}
+                        className={`w-4 h-4 rounded bg-gradient-to-r ${promotion.gradient} flex-shrink-0`}
                       />
-                      <span className="text-sm">
+                      <span className="text-sm flex-shrink-0">
                         {getGradientLabel(promotion.gradient)}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-sm">
-                      <div>من: {formatDate(promotion.startDate)}</div>
-                      <div>إلى: {formatDate(promotion.endDate)}</div>
-                      {isActive(promotion.startDate, promotion.endDate) && (
-                        <Badge variant="default" className="text-xs mt-1">
-                          نشط الآن
-                        </Badge>
-                      )}
+                    <div className="text-xs">
+                      <div
+                        className={`flex items-center gap-1 ${
+                          promotion.isActive
+                            ? "text-green-400"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        <span className="flex-shrink-0">من:</span>
+                        <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0">
+                          {formatDate(promotion.startDate)}
+                        </span>
+                        <span className="flex-shrink-0">إلى:</span>
+                        <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0">
+                          {formatDate(promotion.endDate)}
+                        </span>
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell>{promotion.priority}</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
+                    <div className="text-center text-sm font-medium">
+                      {promotion.priority}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
                       <Badge
                         variant={promotion.isActive ? "default" : "secondary"}
+                        className="flex-shrink-0 text-xs"
                       >
                         {promotion.isActive ? "نشط" : "غير نشط"}
                       </Badge>
                       <Switch
                         checked={promotion.isActive}
                         onCheckedChange={() => onToggleActive(promotion.id)}
+                        className="flex-shrink-0 scale-75"
                       />
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEdit(promotion)}
+                        className="h-8 px-2 text-xs"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline mr-1">تعديل</span>
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteClick(promotion.id)}
+                        className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20 h-8 px-2 text-xs"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline mr-1">حذف</span>
                       </Button>
                     </div>
                   </TableCell>
