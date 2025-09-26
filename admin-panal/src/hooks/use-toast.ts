@@ -3,7 +3,7 @@ import * as React from "react";
 import type { ToastActionElement, ToastProps } from "../components/ui/toast";
 
 const TOAST_LIMIT = 3;
-const TOAST_REMOVE_DELAY = 5000;
+const TOAST_REMOVE_DELAY = 3000;
 
 type ToasterToast = ToastProps & {
   id: string;
@@ -50,10 +50,19 @@ const addToRemoveQueue = (toastId: string) => {
 
   const timeout = setTimeout(() => {
     toastTimeouts.delete(toastId);
+    // إغلاق الـ toast بسلاسة أولاً
     dispatch({
-      type: "REMOVE_TOAST",
+      type: "DISMISS_TOAST",
       toastId: toastId,
     });
+
+    // إزالة الـ toast بعد انتهاء الرسوم المتحركة
+    setTimeout(() => {
+      dispatch({
+        type: "REMOVE_TOAST",
+        toastId: toastId,
+      });
+    }, 300); // 300ms للرسوم المتحركة
   }, TOAST_REMOVE_DELAY);
 
   toastTimeouts.set(toastId, timeout);
@@ -173,6 +182,9 @@ function toast({ ...props }: Toast) {
       },
     },
   });
+
+  // إضافة الـ toast إلى قائمة الإزالة التلقائية
+  addToRemoveQueue(id);
 
   return {
     id: id,
