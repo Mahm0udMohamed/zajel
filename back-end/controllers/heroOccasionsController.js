@@ -153,7 +153,6 @@ const uploadImagesToCloudinary = async (images) => {
           resource_type: "image",
           quality: 100,
           fetch_format: "auto",
-          flags: "lossless",
         });
         uploadedImages.push(result.secure_url);
       } catch (error) {
@@ -186,7 +185,6 @@ export const uploadSingleImage = async (req, res) => {
         folder: "hero-occasions",
         quality: 100,
         fetch_format: "auto",
-        flags: "lossless",
       },
       (error, result) => {
         if (error) {
