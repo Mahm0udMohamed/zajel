@@ -8,7 +8,7 @@ const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 10000,
-      autoIndex: process.env.NODE_ENV,
+      autoIndex: process.env.NODE_ENV !== "production", // تفعيل الفهرسة في التطوير فقط
       family: 4,
       tls: true, //  تفعيل TLS لـ Atlas
       retryWrites: true,

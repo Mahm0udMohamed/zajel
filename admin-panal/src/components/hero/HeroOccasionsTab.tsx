@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -29,25 +29,22 @@ import {
 } from "../ui/table";
 import { Badge } from "../ui/badge";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
-import { Plus, Edit, Trash2, Calendar, Image, Upload } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Calendar,
+  Image,
+  Upload,
+  RefreshCw,
+} from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
+import { apiService } from "../../services/api";
 import type { HeroOccasion, HeroOccasionFormData } from "../../types/hero";
 
-interface HeroOccasionsTabProps {
-  occasions: HeroOccasion[];
-  onAdd: (occasion: HeroOccasion) => void;
-  onUpdate: (id: string, occasion: HeroOccasion) => void;
-  onDelete: (id: string) => void;
-  onToggleActive: (id: string) => void;
-}
-
-export default function HeroOccasionsTab({
-  occasions,
-  onAdd,
-  onUpdate,
-  onDelete,
-  onToggleActive,
-}: HeroOccasionsTabProps) {
+export default function HeroOccasionsTab() {
+  const [occasions, setOccasions] = useState<HeroOccasion[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -60,6 +57,7 @@ export default function HeroOccasionsTab({
     images: [""],
     celebratoryMessageAr: "",
     celebratoryMessageEn: "",
+    priority: 5,
     isActive: true,
   });
   const [originalOccasion, setOriginalOccasion] =
@@ -67,22 +65,95 @@ export default function HeroOccasionsTab({
 
   const { toast } = useToast();
 
+  // تحميل البيانات من الباك إند
+  const loadOccasions = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getHeroOccasions();
+
+      // التحقق من أن الاستجابة تحتوي على البيانات
+      if (response && Array.isArray(response)) {
+        setOccasions(response as HeroOccasion[]);
+      } else if (
+        response &&
+        typeof response === "object" &&
+        "data" in response
+      ) {
+        const responseWithData = response as { data: unknown };
+        if (Array.isArray(responseWithData.data)) {
+          setOccasions(responseWithData.data as HeroOccasion[]);
+        } else {
+          console.warn("Unexpected response format:", response);
+          setOccasions([]);
+        }
+      } else {
+        console.warn("Unexpected response format:", response);
+        setOccasions([]);
+      }
+    } catch (error) {
+      console.error("Error loading occasions:", error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تحميل المناسبات",
+        variant: "destructive",
+      });
+      setOccasions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // تحميل البيانات عند بدء المكون
+  useEffect(() => {
+    loadOccasions();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleImageUpload = (
     event: React.ChangeEvent<HTMLInputElement>,
     imageIndex: number
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Here you would typically upload to your backend/cloud storage
-      // For now, we'll create a local URL for preview
-      const imageUrl = URL.createObjectURL(file);
-      const updatedImages = [...newOccasion.images];
-      updatedImages[imageIndex] = imageUrl;
-      setNewOccasion({ ...newOccasion, images: updatedImages });
-      toast({
-        title: "تم رفع الصورة",
-        description: "تم رفع الصورة بنجاح",
-      });
+      // التحقق من نوع الملف
+      if (!file.type.startsWith("image/")) {
+        toast({
+          title: "خطأ",
+          description: "يرجى اختيار ملف صورة صحيح",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // التحقق من حجم الملف (5MB كحد أقصى)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "خطأ",
+          description: "حجم الصورة يجب أن يكون أقل من 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // تحويل الصورة إلى base64
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64String = e.target?.result as string;
+        const updatedImages = [...newOccasion.images];
+        updatedImages[imageIndex] = base64String;
+        setNewOccasion({ ...newOccasion, images: updatedImages });
+        toast({
+          title: "تم رفع الصورة",
+          description: "تم رفع الصورة بنجاح",
+        });
+      };
+      reader.onerror = () => {
+        toast({
+          title: "خطأ",
+          description: "فشل في قراءة الصورة",
+          variant: "destructive",
+        });
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -94,6 +165,7 @@ export default function HeroOccasionsTab({
       images: [""],
       celebratoryMessageAr: "",
       celebratoryMessageEn: "",
+      priority: 5,
       isActive: true,
     });
   };
@@ -107,18 +179,43 @@ export default function HeroOccasionsTab({
   };
 
   const handleDeleteClick = (id: string) => {
+    if (!id) {
+      toast({
+        title: "خطأ",
+        description: "معرف المناسبة غير صحيح",
+        variant: "destructive",
+      });
+      return;
+    }
     setDeletingId(id);
     setIsDeleteOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
-    if (deletingId) {
-      onDelete(deletingId);
+  const handleDeleteConfirm = async () => {
+    if (!deletingId) {
+      toast({
+        title: "خطأ",
+        description: "معرف المناسبة غير صحيح",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await apiService.deleteHeroOccasion(deletingId);
+      await loadOccasions();
       toast({
         title: "تم الحذف",
         description: "تم حذف المناسبة بنجاح",
       });
       setDeletingId(null);
+    } catch (error) {
+      console.error("Error deleting occasion:", error);
+      toast({
+        title: "خطأ",
+        description: "فشل في حذف المناسبة",
+        variant: "destructive",
+      });
     }
   };
 
@@ -166,51 +263,133 @@ export default function HeroOccasionsTab({
     }
   };
 
-  const handleAdd = () => {
-    if (!newOccasion.nameAr || !newOccasion.nameEn || !newOccasion.date) {
+  const validateOccasionData = (data: HeroOccasionFormData) => {
+    const errors: string[] = [];
+
+    if (!data.nameAr?.trim()) {
+      errors.push("الاسم العربي مطلوب");
+    }
+
+    if (!data.nameEn?.trim()) {
+      errors.push("الاسم الإنجليزي مطلوب");
+    }
+
+    if (!data.date) {
+      errors.push("تاريخ المناسبة مطلوب");
+    } else {
+      const date = new Date(data.date);
+      if (isNaN(date.getTime())) {
+        errors.push("تاريخ المناسبة غير صحيح");
+      }
+    }
+
+    const validImages = data.images.filter((img) => img.trim() !== "");
+    if (validImages.length === 0) {
+      errors.push("يجب إضافة صورة واحدة على الأقل");
+    }
+
+    // التحقق من صحة روابط الصور
+    for (const image of validImages) {
+      if (image.startsWith("data:image")) {
+        // صورة base64 - تحقق من التنسيق
+        if (!image.match(/^data:image\/(jpeg|jpg|png|gif|webp);base64,/)) {
+          errors.push(
+            "تنسيق الصورة غير مدعوم. يرجى استخدام JPG, PNG, GIF, أو WebP"
+          );
+          break;
+        }
+      } else if (image.startsWith("http")) {
+        // رابط HTTP - تحقق من صحة الرابط
+        try {
+          new URL(image);
+        } catch {
+          errors.push("جميع الصور يجب أن تكون روابط صحيحة");
+          break;
+        }
+      } else {
+        errors.push("تنسيق الصورة غير صحيح");
+        break;
+      }
+    }
+
+    if (!data.celebratoryMessageAr?.trim()) {
+      errors.push("الرسالة التهنئة العربية مطلوبة");
+    }
+
+    if (!data.celebratoryMessageEn?.trim()) {
+      errors.push("الرسالة التهنئة الإنجليزية مطلوبة");
+    }
+
+    if (data.priority < 1 || data.priority > 10) {
+      errors.push("الأولوية يجب أن تكون بين 1 و 10");
+    }
+
+    return errors;
+  };
+
+  const handleAdd = async () => {
+    const validationErrors = validateOccasionData(newOccasion);
+
+    if (validationErrors.length > 0) {
       toast({
-        title: "خطأ",
-        description: "يرجى ملء جميع الحقول المطلوبة",
+        title: "خطأ في التحقق",
+        description: validationErrors.join("، "),
         variant: "destructive",
       });
       return;
     }
 
-    const occasion: HeroOccasion = {
-      id: Date.now().toString(),
-      nameKey: `occasion.${newOccasion.nameEn
+    try {
+      // إنشاء معرف فريد للمناسبة
+      const id = newOccasion.nameEn
         .toLowerCase()
-        .replace(/\s+/g, "")}`,
-      ...newOccasion,
-      createdAt: new Date().toISOString(),
-    };
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "");
 
-    onAdd(occasion);
-    setNewOccasion({
-      nameAr: "",
-      nameEn: "",
-      date: "",
-      images: [""],
-      celebratoryMessageAr: "",
-      celebratoryMessageEn: "",
-      isActive: true,
-    });
-    setIsAddOpen(false);
-    toast({
-      title: "تم بنجاح",
-      description: "تم إضافة المناسبة بنجاح",
-    });
+      const occasionData = {
+        id,
+        ...newOccasion,
+        date: new Date(newOccasion.date).toISOString(),
+        images: newOccasion.images.filter((img) => img.trim() !== ""),
+      };
+
+      await apiService.createHeroOccasion(occasionData);
+      await loadOccasions();
+
+      resetForm();
+      setIsAddOpen(false);
+      toast({
+        title: "تم بنجاح",
+        description: "تم إضافة المناسبة بنجاح",
+      });
+    } catch (error) {
+      console.error("Error creating occasion:", error);
+      toast({
+        title: "خطأ",
+        description: "فشل في إضافة المناسبة",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleEdit = (occasion: HeroOccasion) => {
-    setEditingId(occasion.id);
+    const occasionId = occasion.id || `occasion-${Date.now()}`;
+    setEditingId(occasionId);
+
+    // تحويل التاريخ إلى تنسيق datetime-local
+    const date = new Date(occasion.date);
+    const formattedDate = isNaN(date.getTime())
+      ? ""
+      : date.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+
     const occasionData = {
       nameAr: occasion.nameAr,
       nameEn: occasion.nameEn,
-      date: occasion.date,
+      date: formattedDate,
       images: [...occasion.images],
       celebratoryMessageAr: occasion.celebratoryMessageAr,
       celebratoryMessageEn: occasion.celebratoryMessageEn,
+      priority: occasion.priority,
       isActive: occasion.isActive,
     };
     setNewOccasion(occasionData);
@@ -218,26 +397,52 @@ export default function HeroOccasionsTab({
     setIsEditOpen(true);
   };
 
-  const handleUpdate = () => {
-    if (!editingId) return;
+  const handleUpdate = async () => {
+    if (!editingId) {
+      toast({
+        title: "خطأ",
+        description: "معرف المناسبة غير صحيح",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    const updatedOccasion: HeroOccasion = {
-      id: editingId,
-      nameKey: `occasion.${newOccasion.nameEn
-        .toLowerCase()
-        .replace(/\s+/g, "")}`,
-      ...newOccasion,
-      updatedAt: new Date().toISOString(),
-    };
+    const validationErrors = validateOccasionData(newOccasion);
 
-    onUpdate(editingId, updatedOccasion);
-    setEditingId(null);
-    setIsEditOpen(false);
-    setOriginalOccasion(null);
-    toast({
-      title: "تم بنجاح",
-      description: "تم تحديث المناسبة بنجاح",
-    });
+    if (validationErrors.length > 0) {
+      toast({
+        title: "خطأ في التحقق",
+        description: validationErrors.join("، "),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const occasionData = {
+        ...newOccasion,
+        date: new Date(newOccasion.date).toISOString(),
+        images: newOccasion.images.filter((img) => img.trim() !== ""),
+      };
+
+      await apiService.updateHeroOccasion(editingId, occasionData);
+      await loadOccasions();
+
+      setEditingId(null);
+      setIsEditOpen(false);
+      setOriginalOccasion(null);
+      toast({
+        title: "تم بنجاح",
+        description: "تم تحديث المناسبة بنجاح",
+      });
+    } catch (error) {
+      console.error("Error updating occasion:", error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تحديث المناسبة",
+        variant: "destructive",
+      });
+    }
   };
 
   const addImageField = () => {
@@ -266,11 +471,47 @@ export default function HeroOccasionsTab({
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ar-SA");
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return "تاريخ غير صحيح";
+      }
+      return date.toLocaleDateString("ar-SA");
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "تاريخ غير صحيح";
+    }
   };
 
   const isUpcoming = (dateString: string) => {
     return new Date(dateString) > new Date();
+  };
+
+  const handleToggleActive = async (id: string) => {
+    if (!id) {
+      toast({
+        title: "خطأ",
+        description: "معرف المناسبة غير صحيح",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await apiService.toggleHeroOccasionStatus(id);
+      await loadOccasions();
+      toast({
+        title: "تم بنجاح",
+        description: "تم تحديث حالة المناسبة",
+      });
+    } catch (error) {
+      console.error("Error toggling occasion status:", error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تحديث حالة المناسبة",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -286,6 +527,16 @@ export default function HeroOccasionsTab({
               إدارة المناسبات الخاصة التي تظهر في شريحة الهيرو الرئيسية
             </CardDescription>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadOccasions}
+            disabled={loading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            إعادة تحميل
+          </Button>
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -369,6 +620,29 @@ export default function HeroOccasionsTab({
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="priority"
+                      className="text-white font-medium"
+                    >
+                      الأولوية (1-10)
+                    </Label>
+                    <Input
+                      id="priority"
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={newOccasion.priority}
+                      onChange={(e) =>
+                        setNewOccasion({
+                          ...newOccasion,
+                          priority: parseInt(e.target.value) || 5,
+                        })
+                      }
+                      className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                    />
+                  </div>
+
                   <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
                     <Label className="text-white font-medium">
                       رسائل التهنئة
@@ -423,7 +697,10 @@ export default function HeroOccasionsTab({
                       صور المناسبة
                     </Label>
                     {newOccasion.images.map((image, index) => (
-                      <div key={index} className="space-y-2">
+                      <div
+                        key={`add-image-${index}-${image}`}
+                        className="space-y-2"
+                      >
                         <div className="flex gap-2">
                           <Input
                             value={image}
@@ -469,6 +746,9 @@ export default function HeroOccasionsTab({
                               src={image}
                               alt={`معاينة الصورة ${index + 1}`}
                               className="w-20 h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.src = "/placeholder.svg";
+                              }}
                             />
                           </div>
                         )}
@@ -524,100 +804,138 @@ export default function HeroOccasionsTab({
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-40 min-w-[160px]">الاسم</TableHead>
-              <TableHead className="w-32 min-w-[128px]">التاريخ</TableHead>
-              <TableHead className="w-24 min-w-[96px]">الصور</TableHead>
-              <TableHead className="w-24 min-w-[96px]">الحالة</TableHead>
-              <TableHead className="w-32 min-w-[128px]">الإجراءات</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {occasions
-              .sort(
-                (a, b) =>
-                  new Date(a.date).getTime() - new Date(b.date).getTime()
-              )
-              .map((occasion) => (
-                <TableRow key={occasion.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{occasion.nameAr}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {occasion.nameEn}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span>{formatDate(occasion.date)}</span>
-                      {isUpcoming(occasion.date) && (
-                        <Badge variant="secondary" className="text-xs">
-                          قادمة
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      {occasion.images.slice(0, 3).map((image, index) => (
-                        <img
-                          key={index}
-                          src={image || "/placeholder.svg"}
-                          alt={`صورة ${index + 1}`}
-                          className="w-8 h-8 object-cover rounded flex-shrink-0"
-                        />
-                      ))}
-                      {occasion.images.length > 3 && (
-                        <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs flex-shrink-0">
-                          +{occasion.images.length - 3}
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        variant={occasion.isActive ? "default" : "secondary"}
-                        className="flex-shrink-0"
-                      >
-                        {occasion.isActive ? "نشط" : "غير نشط"}
-                      </Badge>
-                      <Switch
-                        checked={occasion.isActive}
-                        onCheckedChange={() => onToggleActive(occasion.id)}
-                        className="flex-shrink-0"
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(occasion)}
-                        className="h-8 px-2 text-xs"
-                      >
-                        <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline mr-1">تعديل</span>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteClick(occasion.id)}
-                        className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20 h-8 px-2 text-xs"
-                      >
-                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline mr-1">حذف</span>
-                      </Button>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="flex items-center gap-2">
+              <RefreshCw className="w-4 h-4 animate-spin" />
+              <span>جاري التحميل...</span>
+            </div>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-40 min-w-[160px]">الاسم</TableHead>
+                <TableHead className="w-32 min-w-[128px]">التاريخ</TableHead>
+                <TableHead className="w-24 min-w-[96px]">الصور</TableHead>
+                <TableHead className="w-24 min-w-[96px]">الحالة</TableHead>
+                <TableHead className="w-32 min-w-[128px]">الإجراءات</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {occasions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8">
+                    <div className="flex flex-col items-center gap-2">
+                      <Calendar className="w-8 h-8 text-muted-foreground" />
+                      <span className="text-muted-foreground">
+                        لا توجد مناسبات
+                      </span>
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+              ) : (
+                occasions
+                  .sort(
+                    (a, b) =>
+                      new Date(a.date).getTime() - new Date(b.date).getTime()
+                  )
+                  .map((occasion, index) => {
+                    // التأكد من وجود ID
+                    const occasionId =
+                      occasion.id || `occasion-${index}-${Date.now()}`;
+                    return (
+                      <TableRow key={occasionId}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{occasion.nameAr}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {occasion.nameEn}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span>{formatDate(occasion.date)}</span>
+                            {isUpcoming(occasion.date) && (
+                              <Badge variant="secondary" className="text-xs">
+                                قادمة
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            {occasion.images
+                              .slice(0, 3)
+                              .map((image, imageIndex) => (
+                                <img
+                                  key={`${occasion.id}-image-${imageIndex}`}
+                                  src={image || "/placeholder.svg"}
+                                  alt={`صورة ${imageIndex + 1}`}
+                                  className="w-8 h-8 object-cover rounded flex-shrink-0"
+                                  onError={(e) => {
+                                    e.currentTarget.src = "/placeholder.svg";
+                                  }}
+                                />
+                              ))}
+                            {occasion.images.length > 3 && (
+                              <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs flex-shrink-0">
+                                +{occasion.images.length - 3}
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant={
+                                occasion.isActive ? "default" : "secondary"
+                              }
+                              className="flex-shrink-0"
+                            >
+                              {occasion.isActive ? "نشط" : "غير نشط"}
+                            </Badge>
+                            <Switch
+                              checked={occasion.isActive}
+                              onCheckedChange={() =>
+                                handleToggleActive(occasionId)
+                              }
+                              className="flex-shrink-0"
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(occasion)}
+                              className="h-8 px-2 text-xs"
+                            >
+                              <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline mr-1">
+                                تعديل
+                              </span>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteClick(occasionId)}
+                              className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20 h-8 px-2 text-xs"
+                            >
+                              <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline mr-1">حذف</span>
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+              )}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
 
       {/* Edit Dialog */}
@@ -698,6 +1016,29 @@ export default function HeroOccasionsTab({
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label
+                  htmlFor="edit-priority"
+                  className="text-white font-medium"
+                >
+                  الأولوية (1-10)
+                </Label>
+                <Input
+                  id="edit-priority"
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={newOccasion.priority}
+                  onChange={(e) =>
+                    setNewOccasion({
+                      ...newOccasion,
+                      priority: parseInt(e.target.value) || 5,
+                    })
+                  }
+                  className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                />
+              </div>
+
               <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
                 <Label className="text-white font-medium">رسائل التهنئة</Label>
                 <div className="grid grid-cols-2 gap-4">
@@ -750,7 +1091,10 @@ export default function HeroOccasionsTab({
                   صور المناسبة
                 </Label>
                 {newOccasion.images.map((image, index) => (
-                  <div key={index} className="space-y-2">
+                  <div
+                    key={`edit-image-${index}-${image}`}
+                    className="space-y-2"
+                  >
                     <div className="flex gap-2">
                       <Input
                         value={image}
@@ -796,6 +1140,9 @@ export default function HeroOccasionsTab({
                           src={image}
                           alt={`معاينة الصورة ${index + 1}`}
                           className="w-20 h-20 object-cover rounded border"
+                          onError={(e) => {
+                            e.currentTarget.src = "/placeholder.svg";
+                          }}
                         />
                       </div>
                     )}

@@ -9,32 +9,11 @@ import HeroOccasionsTab from "../components/hero/HeroOccasionsTab";
 import HeroPromotionsTab from "../components/hero/HeroPromotionsTab";
 import CategoriesTab from "../components/categories/CategoriesTab";
 import OccasionsTab from "../components/occasions/OccasionsTab";
-import type { HeroOccasion, HeroPromotion } from "../types/hero";
+import type { HeroPromotion } from "../types/hero";
 import type { Category, CategoryFormData } from "../types/categories";
 import type { Occasion, OccasionFormData } from "../types/occasions";
 
 export default function ContentPage() {
-  // Hero Occasions State
-  const [heroOccasions, setHeroOccasions] = useState<HeroOccasion[]>([
-    {
-      id: "1",
-      nameKey: "occasion.eidFitr",
-      nameAr: "عيد الفطر",
-      nameEn: "Eid Fitr",
-      date: "2025-04-05T00:00:00",
-      images: [
-        "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
-        "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
-        "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png",
-      ],
-      celebratoryMessageAr: "عيد فطر مبارك! تقبل الله منا ومنكم",
-      celebratoryMessageEn:
-        "Eid Fitr Mubarak! May Allah accept from us and you",
-      isActive: true,
-      createdAt: new Date().toISOString(),
-    },
-  ]);
-
   // Hero Promotions State
   const [heroPromotions, setHeroPromotions] = useState<HeroPromotion[]>([
     {
@@ -123,32 +102,6 @@ export default function ContentPage() {
       createdAt: new Date().toISOString(),
     },
   ]);
-
-  // Hero Occasions Handlers
-  const handleAddHeroOccasion = (occasion: HeroOccasion) => {
-    setHeroOccasions([...heroOccasions, occasion]);
-  };
-
-  const handleUpdateHeroOccasion = (
-    id: string,
-    updatedOccasion: HeroOccasion
-  ) => {
-    setHeroOccasions(
-      heroOccasions.map((occ) => (occ.id === id ? updatedOccasion : occ))
-    );
-  };
-
-  const handleDeleteHeroOccasion = (id: string) => {
-    setHeroOccasions(heroOccasions.filter((occ) => occ.id !== id));
-  };
-
-  const handleToggleHeroOccasionActive = (id: string) => {
-    setHeroOccasions(
-      heroOccasions.map((occ) =>
-        occ.id === id ? { ...occ, isActive: !occ.isActive } : occ
-      )
-    );
-  };
 
   // Hero Promotions Handlers
   const handleAddPromotion = (promotion: HeroPromotion) => {
@@ -295,13 +248,7 @@ export default function ContentPage() {
 
             {/* Hero Occasions Sub-Tab */}
             <TabsContent value="hero-occasions" className="space-y-4">
-              <HeroOccasionsTab
-                occasions={heroOccasions}
-                onAdd={handleAddHeroOccasion}
-                onUpdate={handleUpdateHeroOccasion}
-                onDelete={handleDeleteHeroOccasion}
-                onToggleActive={handleToggleHeroOccasionActive}
-              />
+              <HeroOccasionsTab />
             </TabsContent>
 
             {/* Hero Promotions Sub-Tab */}

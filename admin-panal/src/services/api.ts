@@ -90,6 +90,13 @@ class ApiService {
 
     try {
       const response = await fetch(url, config);
+
+      // التحقق من نوع المحتوى
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("استجابة غير صحيحة من الخادم");
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
@@ -210,6 +217,73 @@ class ApiService {
   // الحصول على التوكن الحالي
   getAccessToken(): string | null {
     return this.accessToken;
+  }
+
+  // Hero Occasions API
+  async getHeroOccasions(): Promise<unknown[]> {
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      "/hero-occasions"
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async getHeroOccasionById(id: string): Promise<unknown> {
+    const response = await this.makeRequest<{ data: unknown }>(
+      `/hero-occasions/${id}`
+    );
+    return response.data;
+  }
+
+  async createHeroOccasion(occasionData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      "/hero-occasions",
+      {
+        method: "POST",
+        body: JSON.stringify(occasionData),
+      }
+    );
+    return response.data;
+  }
+
+  async updateHeroOccasion(
+    id: string,
+    occasionData: unknown
+  ): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/hero-occasions/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(occasionData),
+      }
+    );
+    return response.data;
+  }
+
+  async deleteHeroOccasion(id: string): Promise<void> {
+    await this.makeAuthenticatedRequest(`/hero-occasions/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  async toggleHeroOccasionStatus(id: string): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/hero-occasions/${id}/toggle`,
+      {
+        method: "PATCH",
+      }
+    );
+    return response.data;
+  }
+
+  async importHeroOccasions(occasions: unknown[]): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown[] }>(
+      "/hero-occasions/import",
+      {
+        method: "POST",
+        body: JSON.stringify({ occasions }),
+      }
+    );
+    return response.data;
   }
 }
 

@@ -1,14 +1,24 @@
 // Hero Occasion Interface
 export interface HeroOccasion {
   id: string;
-  nameKey: string;
   nameAr: string;
   nameEn: string;
   date: string; // ISO date string
   images: string[]; // Array of image URLs
   celebratoryMessageAr: string;
   celebratoryMessageEn: string;
+  priority: number;
   isActive: boolean;
+  createdBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  updatedBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
   createdAt?: string;
   updatedAt?: string;
 }
@@ -42,6 +52,7 @@ export interface HeroOccasionFormData {
   images: string[];
   celebratoryMessageAr: string;
   celebratoryMessageEn: string;
+  priority: number;
   isActive: boolean;
 }
 
