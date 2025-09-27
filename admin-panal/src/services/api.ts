@@ -103,7 +103,11 @@ class ApiService {
         // إذا كان هناك تفاصيل أخطاء validation، اعرضها
         if (data.errors && Array.isArray(data.errors)) {
           const errorMessages = data.errors
-            .map((err: any) => err.msg || err.message || err)
+            .map((err: { msg?: string; message?: string } | string) =>
+              typeof err === "string"
+                ? err
+                : err.msg || err.message || "Unknown error"
+            )
             .join("، ");
           throw new Error(errorMessages || data.message || "حدث خطأ في الخادم");
         }
@@ -228,10 +232,8 @@ class ApiService {
 
   // Hero Occasions API
   async getHeroOccasions(): Promise<unknown[]> {
-    const response = await this.makeRequest<{ data: unknown[] }>(
-      "/hero-occasions"
-    );
-    return Array.isArray(response.data) ? response.data : [];
+    const response = await this.makeRequest<unknown[]>("/hero-occasions");
+    return response.data || [];
   }
 
   async getHeroOccasionById(id: string): Promise<unknown> {

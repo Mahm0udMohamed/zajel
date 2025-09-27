@@ -16,22 +16,26 @@ const finalRedisUrl = redisUrl || "redis://localhost:6379";
 const redisClient = new Redis(finalRedisUrl, {
   tls: finalRedisUrl.startsWith("rediss://") ? {} : undefined,
   connectTimeout: 10000, // Increased to 10 seconds
-  lazyConnect: true,
+  lazyConnect: false, // Changed to false for immediate connection
   retryStrategy: (times) => {
-    if (times > 3) {
-      console.warn("Redis connection failed after 3 retries, disabling Redis");
+    if (times > 5) {
+      // Increased retries
+      console.warn("Redis connection failed after 5 retries, disabling Redis");
       return null;
     }
-    const delay = Math.min(times * 1000, 3000);
+    const delay = Math.min(times * 1000, 5000); // Increased max delay
+    console.log(`Redis retry attempt ${times} in ${delay}ms`);
     return delay;
   },
   reconnectOnError: (err) => {
     console.warn("Redis reconnect on error:", err.message);
-    return false;
+    return true; // Changed to true to allow reconnection
   },
-  maxRetriesPerRequest: 3, // Increased retries
-  enableOfflineQueue: true, // Changed to true to allow queuing
-  commandTimeout: 5000, // Add command timeout
+  maxRetriesPerRequest: 3,
+  enableOfflineQueue: false, // Changed to false to prevent queuing issues
+  commandTimeout: 10000, // Increased timeout
+  keepAlive: 30000, // Add keep alive
+  family: 4, // Force IPv4
 });
 
 //  Log Redis events for improved monitoring
@@ -55,6 +59,40 @@ redisClient.on("end", () => {
 redisClient.isReady = () => {
   return redisClient.status === "ready";
 };
+
+// Add connection test method
+redisClient.testConnection = async () => {
+  try {
+    await redisClient.ping();
+    return true;
+  } catch (error) {
+    console.warn("Redis ping failed:", error.message);
+    return false;
+  }
+};
+
+// Initialize connection
+const initializeRedis = async () => {
+  try {
+    // Check if already connected
+    if (redisClient.status === "ready" || redisClient.status === "connecting") {
+      console.log("✅ Redis client already initialized");
+      return;
+    }
+
+    await redisClient.connect();
+    console.log("✅ Redis client initialized successfully");
+  } catch (error) {
+    if (error.message.includes("already connecting/connected")) {
+      console.log("✅ Redis client already connected");
+    } else {
+      console.warn("❌ Failed to initialize Redis client:", error.message);
+    }
+  }
+};
+
+// Initialize on startup
+initializeRedis();
 
 //  Export the client
 export default redisClient;

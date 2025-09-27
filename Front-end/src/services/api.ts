@@ -149,14 +149,12 @@ export const heroOccasionsApi = {
 // Types
 export interface HeroOccasion {
   _id: string;
-  id: string;
   nameAr: string;
   nameEn: string;
   date: string;
   images: string[];
   celebratoryMessageAr: string;
   celebratoryMessageEn: string;
-  priority: number;
   isActive: boolean;
   createdBy?: {
     _id: string;

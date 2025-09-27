@@ -11,6 +11,9 @@ import {
   searchOccasions,
   importOccasions,
   uploadSingleImage,
+  getCacheStats,
+  clearCache,
+  diagnoseRedis,
 } from "../controllers/heroOccasionsController.js";
 import { authenticateAdmin } from "../middlewares/adminAuthMiddleware.js";
 import { body, param, query } from "express-validator";
@@ -244,5 +247,16 @@ router.post(
   ],
   importOccasions
 );
+
+// ===== مسارات إدارة الكاش (تحتاج مصادقة أدمن) =====
+
+// GET /api/hero-occasions/cache/stats - الحصول على إحصائيات الكاش
+router.get("/cache/stats", authenticateAdmin, getCacheStats);
+
+// GET /api/hero-occasions/cache/diagnose - تشخيص Redis
+router.get("/cache/diagnose", authenticateAdmin, diagnoseRedis);
+
+// DELETE /api/hero-occasions/cache/clear - مسح الكاش يدوياً
+router.delete("/cache/clear", authenticateAdmin, clearCache);
 
 export default router;

@@ -73,21 +73,9 @@ export default function HeroOccasionsTab() {
       setLoading(true);
       const response = await apiService.getHeroOccasions();
 
-      // التحقق من أن الاستجابة تحتوي على البيانات
-      if (response && Array.isArray(response)) {
+      // معالجة مبسطة للاستجابة
+      if (Array.isArray(response)) {
         setOccasions(response as HeroOccasion[]);
-      } else if (
-        response &&
-        typeof response === "object" &&
-        "data" in response
-      ) {
-        const responseWithData = response as { data: unknown };
-        if (Array.isArray(responseWithData.data)) {
-          setOccasions(responseWithData.data as HeroOccasion[]);
-        } else {
-          console.warn("Unexpected response format:", response);
-          setOccasions([]);
-        }
       } else {
         console.warn("Unexpected response format:", response);
         setOccasions([]);

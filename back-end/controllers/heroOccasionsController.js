@@ -2,6 +2,140 @@ import HeroOccasion from "../models/HeroOccasion.js";
 import { validationResult } from "express-validator";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
+import redis from "../config/redisClient.js";
+
+// Cache Keys Constants
+const CACHE_KEYS = {
+  ACTIVE_OCCASIONS: "hero-occasions:active",
+  UPCOMING_OCCASIONS: "hero-occasions:upcoming",
+  ALL_OCCASIONS: "hero-occasions:all",
+  OCCASION_BY_ID: "hero-occasions:id:",
+  SEARCH_RESULTS: "hero-occasions:search:",
+};
+
+// Cache TTL (Time To Live) in seconds
+// TTL كـ "safety net" فقط - التحديث الفوري يتم عبر Cache Invalidation
+const CACHE_TTL = {
+  ACTIVE: 2 * 60 * 60, // ساعتان (safety net)
+  UPCOMING: 4 * 60 * 60, // 4 ساعات (safety net)
+  ALL: 6 * 60 * 60, // 6 ساعات (safety net)
+  SINGLE: 12 * 60 * 60, // 12 ساعة (safety net)
+  SEARCH: 30 * 60, // 30 دقيقة (safety net)
+};
+
+// دالة لمسح الكاش عند التحديث
+const invalidateOccasionsCache = async () => {
+  try {
+    if (!redis.isReady()) {
+      console.warn("Redis not ready, skipping cache invalidation");
+      return;
+    }
+
+    const keys = await redis.keys("hero-occasions:*");
+    if (keys.length > 0) {
+      await redis.del(...keys);
+      console.log(
+        `✅ Invalidated ${keys.length} cache keys for hero occasions`
+      );
+    }
+  } catch (redisError) {
+    console.warn(
+      "❌ Failed to invalidate hero occasions cache:",
+      redisError.message
+    );
+  }
+};
+
+// دالة للحصول على إحصائيات الكاش
+export const getCacheStats = async (req, res) => {
+  try {
+    if (!redis.isReady()) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          redisConnected: false,
+          message: "Redis not connected",
+        },
+      });
+    }
+
+    const keys = await redis.keys("hero-occasions:*");
+    const stats = {
+      redisConnected: true,
+      totalKeys: keys.length,
+      keysByType: {
+        active: keys.filter((key) => key.includes(":active:")).length,
+        upcoming: keys.filter((key) => key.includes(":upcoming:")).length,
+        all: keys.filter((key) => key.includes(":all:")).length,
+        search: keys.filter((key) => key.includes(":search:")).length,
+        single: keys.filter((key) => key.includes(":id:")).length,
+      },
+      allKeys: keys,
+    };
+
+    res.status(200).json({
+      success: true,
+      data: stats,
+    });
+  } catch (error) {
+    console.error("Error getting cache stats:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to get cache statistics",
+      error: error.message,
+    });
+  }
+};
+
+// دالة لمسح الكاش يدوياً
+export const clearCache = async (req, res) => {
+  try {
+    await invalidateOccasionsCache();
+    res.status(200).json({
+      success: true,
+      message: "تم مسح الكاش بنجاح",
+    });
+  } catch (error) {
+    console.error("Error clearing cache:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to clear cache",
+      error: error.message,
+    });
+  }
+};
+
+// دالة لتشخيص Redis
+export const diagnoseRedis = async (req, res) => {
+  try {
+    const diagnosis = {
+      redisUrl: process.env.REDIS_URL || "redis://localhost:6379",
+      status: redis.status,
+      isReady: redis.isReady(),
+      connectionTest: false,
+      error: null,
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      diagnosis.connectionTest = await redis.testConnection();
+    } catch (error) {
+      diagnosis.error = error.message;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: diagnosis,
+    });
+  } catch (error) {
+    console.error("Error diagnosing Redis:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to diagnose Redis",
+      error: error.message,
+    });
+  }
+};
 
 // دالة لرفع الصور إلى Cloudinary
 const uploadImagesToCloudinary = async (images) => {
@@ -98,6 +232,37 @@ export const getAllOccasions = async (req, res) => {
       sortOrder = "asc",
     } = req.query;
 
+    // إنشاء cache key فريد بناءً على المعاملات
+    const cacheKey = `${CACHE_KEYS.ALL_OCCASIONS}:${page}:${limit}:${isActive}:${search}:${language}:${sortBy}:${sortOrder}`;
+
+    // محاولة الحصول من الكاش
+    try {
+      if (redis.isReady()) {
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+          console.log(
+            `✅ Cache HIT for all occasions (page: ${page}, limit: ${limit})`
+          );
+          return res.status(200).json({
+            success: true,
+            ...JSON.parse(cached),
+            cached: true,
+            cacheKey: cacheKey,
+          });
+        }
+      }
+    } catch (redisError) {
+      console.warn(
+        "❌ Redis not available for all occasions, fetching from database:",
+        redisError.message
+      );
+    }
+
+    // الحصول من قاعدة البيانات
+    console.log(
+      `🔄 Cache MISS for all occasions (page: ${page}, limit: ${limit}), fetching from database`
+    );
+
     // بناء فلتر البحث
     let filter = {};
 
@@ -129,7 +294,7 @@ export const getAllOccasions = async (req, res) => {
     // حساب العدد الإجمالي
     const total = await HeroOccasion.countDocuments(filter);
 
-    res.status(200).json({
+    const responseData = {
       success: true,
       data: occasions,
       pagination: {
@@ -138,7 +303,27 @@ export const getAllOccasions = async (req, res) => {
         totalItems: total,
         itemsPerPage: parseInt(limit),
       },
-    });
+      cached: false,
+      cacheKey: cacheKey,
+    };
+
+    // حفظ في الكاش
+    try {
+      if (redis.isReady()) {
+        await redis.setex(
+          cacheKey,
+          CACHE_TTL.ALL,
+          JSON.stringify(responseData)
+        );
+        console.log(
+          `✅ Cached all occasions (page: ${page}, limit: ${limit}) for ${CACHE_TTL.ALL} seconds`
+        );
+      }
+    } catch (redisError) {
+      console.warn("❌ Failed to cache all occasions:", redisError.message);
+    }
+
+    res.status(200).json(responseData);
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات:", error);
     res.status(500).json({
@@ -183,16 +368,60 @@ export const getOccasionById = async (req, res) => {
 export const getActiveOccasions = async (req, res) => {
   try {
     const { limit = 10 } = req.query;
+    const cacheKey = `${CACHE_KEYS.ACTIVE_OCCASIONS}:${limit}`;
 
+    // محاولة الحصول من الكاش
+    try {
+      if (redis.isReady()) {
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+          console.log(`✅ Cache HIT for active occasions (limit: ${limit})`);
+          return res.status(200).json({
+            success: true,
+            data: JSON.parse(cached),
+            cached: true,
+            cacheKey: cacheKey,
+          });
+        }
+      }
+    } catch (redisError) {
+      console.warn(
+        "❌ Redis not available for active occasions, fetching from database:",
+        redisError.message
+      );
+    }
+
+    // الحصول من قاعدة البيانات
+    console.log(
+      `🔄 Cache MISS for active occasions (limit: ${limit}), fetching from database`
+    );
     let filter = { isActive: true };
 
     const occasions = await HeroOccasion.find(filter)
       .sort({ date: 1 })
       .limit(parseInt(limit));
 
+    // حفظ في الكاش
+    try {
+      if (redis.isReady()) {
+        await redis.setex(
+          cacheKey,
+          CACHE_TTL.ACTIVE,
+          JSON.stringify(occasions)
+        );
+        console.log(
+          `✅ Cached active occasions (limit: ${limit}) for ${CACHE_TTL.ACTIVE} seconds`
+        );
+      }
+    } catch (redisError) {
+      console.warn("❌ Failed to cache active occasions:", redisError.message);
+    }
+
     res.status(200).json({
       success: true,
       data: occasions,
+      cached: false,
+      cacheKey: cacheKey,
     });
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات النشطة:", error);
@@ -208,6 +437,41 @@ export const getActiveOccasions = async (req, res) => {
 export const getUpcomingOccasions = async (req, res) => {
   try {
     const { limit = 5 } = req.query;
+    const cacheKey = `${CACHE_KEYS.UPCOMING_OCCASIONS}:${limit}`;
+
+    // محاولة الحصول من الكاش
+    try {
+      if (redis.isReady()) {
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+          console.log(`✅ Cache HIT for upcoming occasions (limit: ${limit})`);
+          return res.status(200).json({
+            success: true,
+            data: JSON.parse(cached),
+            cached: true,
+            cacheKey: cacheKey,
+          });
+        } else {
+          console.log(
+            `🔄 Cache MISS for upcoming occasions (limit: ${limit}) - Key not found in cache`
+          );
+        }
+      } else {
+        console.log(
+          `🔄 Cache MISS for upcoming occasions (limit: ${limit}) - Redis not ready (status: ${redis.status})`
+        );
+      }
+    } catch (redisError) {
+      console.warn(
+        "❌ Redis error for upcoming occasions, fetching from database:",
+        redisError.message
+      );
+    }
+
+    // الحصول من قاعدة البيانات
+    console.log(
+      `🔄 Cache MISS for upcoming occasions (limit: ${limit}), fetching from database`
+    );
     const today = new Date();
 
     const occasions = await HeroOccasion.find({
@@ -217,9 +481,30 @@ export const getUpcomingOccasions = async (req, res) => {
       .sort({ date: 1 })
       .limit(parseInt(limit));
 
+    // حفظ في الكاش
+    try {
+      if (redis.isReady()) {
+        await redis.setex(
+          cacheKey,
+          CACHE_TTL.UPCOMING,
+          JSON.stringify(occasions)
+        );
+        console.log(
+          `✅ Cached upcoming occasions (limit: ${limit}) for ${CACHE_TTL.UPCOMING} seconds`
+        );
+      }
+    } catch (redisError) {
+      console.warn(
+        "❌ Failed to cache upcoming occasions:",
+        redisError.message
+      );
+    }
+
     res.status(200).json({
       success: true,
       data: occasions,
+      cached: false,
+      cacheKey: cacheKey,
     });
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات القادمة:", error);
@@ -273,6 +558,9 @@ export const createOccasion = async (req, res) => {
 
     // إرجاع المناسبة مع بيانات منشئها
     await newOccasion.populate("createdBy", "name email");
+
+    // مسح الكاش بعد إنشاء مناسبة جديدة
+    await invalidateOccasionsCache();
 
     res.status(201).json({
       success: true,
@@ -346,6 +634,9 @@ export const updateOccasion = async (req, res) => {
       });
     }
 
+    // مسح الكاش بعد تحديث المناسبة
+    await invalidateOccasionsCache();
+
     res.status(200).json({
       success: true,
       message: "تم تحديث المناسبة بنجاح",
@@ -392,6 +683,9 @@ export const deleteOccasion = async (req, res) => {
       });
     }
 
+    // مسح الكاش بعد حذف المناسبة
+    await invalidateOccasionsCache();
+
     res.status(200).json({
       success: true,
       message: "تم حذف المناسبة بنجاح",
@@ -422,6 +716,9 @@ export const toggleOccasionStatus = async (req, res) => {
     occasion.isActive = !occasion.isActive;
     occasion.updatedBy = req.adminId;
     await occasion.save();
+
+    // مسح الكاش بعد تبديل حالة المناسبة
+    await invalidateOccasionsCache();
 
     res.status(200).json({
       success: true,
@@ -508,6 +805,9 @@ export const importOccasions = async (req, res) => {
         );
       }
     }
+
+    // مسح الكاش بعد استيراد المناسبات
+    await invalidateOccasionsCache();
 
     res.status(200).json({
       success: true,

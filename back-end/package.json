@@ -8,7 +8,8 @@
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "nodemon server.js",
     "dev:https": "NODE_ENV=development nodemon server.js",
-    "import:hero-occasions": "node scripts/importHeroOccasions.js"
+    "import:hero-occasions": "node scripts/importHeroOccasions.js",
+    "test:redis": "node scripts/testRedis.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",

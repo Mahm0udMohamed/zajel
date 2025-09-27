@@ -1,6 +1,6 @@
 // Hero Occasion Interface
 export interface HeroOccasion {
-  _id?: string;
+  _id: string;
   nameAr: string;
   nameEn: string;
   date: string; // ISO date string
@@ -18,8 +18,8 @@ export interface HeroOccasion {
     name: string;
     email: string;
   };
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Hero Promotion Interface
