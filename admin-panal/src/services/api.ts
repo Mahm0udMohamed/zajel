@@ -232,7 +232,9 @@ class ApiService {
 
   // Hero Occasions API
   async getHeroOccasions(): Promise<unknown[]> {
-    const response = await this.makeRequest<unknown[]>("/hero-occasions");
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      "/hero-occasions"
+    );
     return response.data || [];
   }
 

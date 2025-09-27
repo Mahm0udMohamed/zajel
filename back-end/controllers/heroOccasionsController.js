@@ -46,6 +46,34 @@ const invalidateOccasionsCache = async () => {
   }
 };
 
+// دالة لمسح الكاش الفاسد
+const clearInvalidCache = async () => {
+  try {
+    if (!redis.isReady()) {
+      console.warn("Redis not ready, skipping cache cleanup");
+      return;
+    }
+
+    const keys = await redis.keys("hero-occasions:*");
+    let clearedCount = 0;
+
+    for (const key of keys) {
+      const value = await redis.get(key);
+      if (value === "{}" || value === "[]" || value === "null") {
+        await redis.del(key);
+        clearedCount++;
+        console.log(`🗑️ Cleared invalid cache key: ${key}`);
+      }
+    }
+
+    if (clearedCount > 0) {
+      console.log(`✅ Cleared ${clearedCount} invalid cache keys`);
+    }
+  } catch (redisError) {
+    console.warn("❌ Failed to clear invalid cache:", redisError.message);
+  }
+};
+
 // دالة للحصول على إحصائيات الكاش
 export const getCacheStats = async (req, res) => {
   try {
@@ -220,6 +248,20 @@ export const uploadSingleImage = async (req, res) => {
 // الحصول على جميع المناسبات
 export const getAllOccasions = async (req, res) => {
   try {
+    // مسح الكاش الفاسد في بداية كل استعلام
+    try {
+      await clearInvalidCache();
+    } catch (error) {
+      console.warn("⚠️ Failed to clear invalid cache:", error.message);
+      // مسح جميع الكاش عند فشل مسح الكاش الفاسد
+      try {
+        await invalidateOccasionsCache();
+        console.log("🗑️ Cleared all cache due to cleanup error");
+      } catch (cacheError) {
+        console.warn("⚠️ Failed to clear all cache:", cacheError.message);
+      }
+    }
+
     const {
       page = 1,
       limit = 10,
@@ -238,15 +280,40 @@ export const getAllOccasions = async (req, res) => {
       if (redis.isReady()) {
         const cached = await redis.get(cacheKey);
         if (cached) {
-          console.log(
-            `✅ Cache HIT for all occasions (page: ${page}, limit: ${limit})`
-          );
-          return res.status(200).json({
-            success: true,
-            ...JSON.parse(cached),
-            cached: true,
-            cacheKey: cacheKey,
-          });
+          const parsedCache = JSON.parse(cached);
+          // التحقق من أن الكاش يحتوي على بيانات صحيحة
+          if (parsedCache.data && Array.isArray(parsedCache.data)) {
+            console.log(
+              `✅ Cache HIT for all occasions (page: ${page}, limit: ${limit})`
+            );
+            return res.status(200).json({
+              success: true,
+              ...parsedCache,
+              cached: true,
+              cacheKey: cacheKey,
+            });
+          } else {
+            // مسح الكاش الفاسد
+            console.log(`🗑️ Clearing invalid cache for key: ${cacheKey}`);
+            try {
+              await redis.del(cacheKey);
+            } catch (delError) {
+              console.warn(
+                "⚠️ Failed to delete invalid cache key:",
+                delError.message
+              );
+              // مسح جميع الكاش عند فشل حذف مفتاح واحد
+              try {
+                await invalidateOccasionsCache();
+                console.log("🗑️ Cleared all cache due to delete error");
+              } catch (cacheError) {
+                console.warn(
+                  "⚠️ Failed to clear all cache:",
+                  cacheError.message
+                );
+              }
+            }
+          }
         }
       }
     } catch (redisError) {
@@ -254,6 +321,16 @@ export const getAllOccasions = async (req, res) => {
         "❌ Redis not available for all occasions, fetching from database:",
         redisError.message
       );
+      // مسح الكاش عند حدوث خطأ في Redis
+      try {
+        await invalidateOccasionsCache();
+        console.log("🗑️ Cleared cache due to Redis read error");
+      } catch (cacheError) {
+        console.warn(
+          "⚠️ Failed to clear cache after Redis read error:",
+          cacheError.message
+        );
+      }
     }
 
     // الحصول من قاعدة البيانات
@@ -308,22 +385,62 @@ export const getAllOccasions = async (req, res) => {
     // حفظ في الكاش
     try {
       if (redis.isReady()) {
-        await redis.setex(
-          cacheKey,
-          CACHE_TTL.ALL,
-          JSON.stringify(responseData)
-        );
-        console.log(
-          `✅ Cached all occasions (page: ${page}, limit: ${limit}) for ${CACHE_TTL.ALL} seconds`
-        );
+        // التحقق من أن البيانات ليست فارغة قبل الحفظ
+        if (responseData.data && responseData.data.length > 0) {
+          try {
+            await redis.setex(
+              cacheKey,
+              CACHE_TTL.ALL,
+              JSON.stringify(responseData)
+            );
+            console.log(
+              `✅ Cached all occasions (page: ${page}, limit: ${limit}) for ${CACHE_TTL.ALL} seconds`
+            );
+          } catch (setError) {
+            console.warn("⚠️ Failed to cache data:", setError.message);
+            // مسح الكاش عند فشل الحفظ
+            try {
+              await invalidateOccasionsCache();
+              console.log("🗑️ Cleared cache due to save error");
+            } catch (cacheError) {
+              console.warn(
+                "⚠️ Failed to clear cache after save error:",
+                cacheError.message
+              );
+            }
+          }
+        } else {
+          console.log(
+            `⚠️ Skipping cache for empty data (page: ${page}, limit: ${limit})`
+          );
+        }
       }
     } catch (redisError) {
       console.warn("❌ Failed to cache all occasions:", redisError.message);
+      // مسح الكاش عند حدوث خطأ في Redis
+      try {
+        await invalidateOccasionsCache();
+        console.log("🗑️ Cleared cache due to Redis error");
+      } catch (cacheError) {
+        console.warn(
+          "⚠️ Failed to clear cache after Redis error:",
+          cacheError.message
+        );
+      }
     }
 
     res.status(200).json(responseData);
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات:", error);
+
+    // مسح الكاش عند حدوث خطأ في قاعدة البيانات
+    try {
+      await invalidateOccasionsCache();
+      console.log("🗑️ Cleared cache due to database error");
+    } catch (cacheError) {
+      console.warn("⚠️ Failed to clear cache after error:", cacheError.message);
+    }
+
     res.status(500).json({
       success: false,
       message: "حدث خطأ في الخادم",

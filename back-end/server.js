@@ -86,6 +86,54 @@ const createAdminIfNotExists = async () => {
 // تشغيل إنشاء الأدمن بعد الاتصال بقاعدة البيانات
 setTimeout(createAdminIfNotExists, 2000); // انتظار 2 ثانية للتأكد من الاتصال بقاعدة البيانات
 
+// مسح الكاش الفاسد عند بدء السيرفر
+const clearInvalidCache = async () => {
+  try {
+    const redis = await import("./config/redisClient.js");
+    if (redis.default.isReady()) {
+      const keys = await redis.default.keys("hero-occasions:*");
+      for (const key of keys) {
+        const value = await redis.default.get(key);
+        if (value === "{}" || value === "[]") {
+          await redis.default.del(key);
+          console.log(`🗑️ Cleared invalid cache key: ${key}`);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn("⚠️ Failed to clear invalid cache:", error.message);
+  }
+};
+
+setTimeout(clearInvalidCache, 3000); // انتظار 3 ثوان للتأكد من اتصال Redis
+
+// مسح الكاش الفاسد كل ساعة
+setInterval(async () => {
+  try {
+    const redis = await import("./config/redisClient.js");
+    if (redis.default.isReady()) {
+      const keys = await redis.default.keys("hero-occasions:*");
+      let clearedCount = 0;
+
+      for (const key of keys) {
+        const value = await redis.default.get(key);
+        if (value === "{}" || value === "[]" || value === "null") {
+          await redis.default.del(key);
+          clearedCount++;
+        }
+      }
+
+      if (clearedCount > 0) {
+        console.log(
+          `🕐 Hourly cache cleanup: cleared ${clearedCount} invalid keys`
+        );
+      }
+    }
+  } catch (error) {
+    console.warn("⚠️ Hourly cache cleanup failed:", error.message);
+  }
+}, 60 * 60 * 1000); // كل ساعة
+
 app.use(cookieParser());
 
 const allowedOrigins = [
@@ -190,4 +238,39 @@ const server = https.createServer(sslOptions, app);
 server.listen(PORT, () => {
   console.log(`🚀 HTTPS Server running on https://localhost:${PORT}`);
   printServiceStatus();
+});
+
+// مسح الكاش عند إعادة تشغيل السيرفر
+process.on("SIGINT", async () => {
+  console.log("🔄 Server restarting, clearing cache...");
+  try {
+    const redis = await import("./config/redisClient.js");
+    if (redis.default.isReady()) {
+      const keys = await redis.default.keys("hero-occasions:*");
+      if (keys.length > 0) {
+        await redis.default.del(...keys);
+        console.log(`✅ Cleared ${keys.length} cache keys on restart`);
+      }
+    }
+  } catch (error) {
+    console.warn("⚠️ Failed to clear cache on restart:", error.message);
+  }
+  process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+  console.log("🔄 Server stopping, clearing cache...");
+  try {
+    const redis = await import("./config/redisClient.js");
+    if (redis.default.isReady()) {
+      const keys = await redis.default.keys("hero-occasions:*");
+      if (keys.length > 0) {
+        await redis.default.del(...keys);
+        console.log(`✅ Cleared ${keys.length} cache keys on stop`);
+      }
+    }
+  } catch (error) {
+    console.warn("⚠️ Failed to clear cache on stop:", error.message);
+  }
+  process.exit(0);
 });

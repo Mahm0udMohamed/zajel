@@ -50,6 +50,10 @@ redisClient.on("reconnecting", (time) => {
 });
 redisClient.on("error", (err) => {
   console.warn("Redis connection error:", err.message);
+  // مسح الكاش المحلي عند حدوث خطأ
+  if (err.message.includes("Stream isn't writeable")) {
+    console.log("🔄 Redis connection lost, will retry...");
+  }
 });
 redisClient.on("end", () => {
   console.log("Redis connection ended");
