@@ -1,199 +1,88 @@
+// controllers/heroOccasionsController.js - النسخة المحدثة مع Cache Service الموحد
 import HeroOccasion from "../models/HeroOccasion.js";
 import { validationResult } from "express-validator";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
-import redis from "../config/redisClient.js";
+import cacheManager from "../services/cacheManager.js";
+import { cacheable, cacheInvalidate } from "../decorators/cacheDecorators.js";
 
-// Cache Keys Constants
-const CACHE_KEYS = {
-  ACTIVE_OCCASIONS: "hero-occasions:active",
-  UPCOMING_OCCASIONS: "hero-occasions:upcoming",
-  ALL_OCCASIONS: "hero-occasions:all",
-  OCCASION_BY_ID: "hero-occasions:id:",
-  SEARCH_RESULTS: "hero-occasions:search:",
-};
+// تسجيل namespace للـ Hero Occasions
+cacheManager.registerNamespace("hero-occasions", {
+  ttl: 3600, // ساعة واحدة افتراضياً
+  compression: true,
+  invalidationStrategy: "immediate",
+  keyPrefix: "hero-occasions",
+});
 
-// Cache TTL (Time To Live) in seconds
-// TTL كـ "safety net" فقط - التحديث الفوري يتم عبر Cache Invalidation
+// تسجيل controller
+cacheManager.registerController("heroOccasionsController", {
+  namespace: "hero-occasions",
+  ttl: 1800, // 30 دقيقة
+  compression: true,
+  invalidationStrategy: "immediate",
+  keyPatterns: {
+    active: "active:{limit}",
+    upcoming: "upcoming:{limit}",
+    all: "all:{page}:{limit}:{isActive}:{search}:{language}:{sortBy}:{sortOrder}",
+    single: "single:{id}",
+    search: "search:{query}:{language}:{limit}",
+  },
+});
+
+// Cache TTL Constants
 const CACHE_TTL = {
-  ACTIVE: 2 * 60 * 60, // ساعتان (safety net)
-  UPCOMING: 4 * 60 * 60, // 4 ساعات (safety net)
-  ALL: 6 * 60 * 60, // 6 ساعات (safety net)
-  SINGLE: 12 * 60 * 60, // 12 ساعة (safety net)
-  SEARCH: 30 * 60, // 30 دقيقة (safety net)
-};
-
-// دالة لمسح الكاش عند التحديث
-const invalidateOccasionsCache = async () => {
-  try {
-    if (!redis.isReady()) {
-      console.warn("Redis not ready, skipping cache invalidation");
-      return;
-    }
-
-    const keys = await redis.keys("hero-occasions:*");
-    if (keys.length > 0) {
-      await redis.del(...keys);
-      console.log(
-        `✅ Invalidated ${keys.length} cache keys for hero occasions`
-      );
-    }
-  } catch (redisError) {
-    console.warn(
-      "❌ Failed to invalidate hero occasions cache:",
-      redisError.message
-    );
-  }
-};
-
-// دالة لمسح الكاش الفاسد
-const clearInvalidCache = async () => {
-  try {
-    if (!redis.isReady()) {
-      console.warn("Redis not ready, skipping cache cleanup");
-      return;
-    }
-
-    const keys = await redis.keys("hero-occasions:*");
-    let clearedCount = 0;
-
-    for (const key of keys) {
-      const value = await redis.get(key);
-      if (value === "{}" || value === "[]" || value === "null") {
-        await redis.del(key);
-        clearedCount++;
-        console.log(`🗑️ Cleared invalid cache key: ${key}`);
-      }
-    }
-
-    if (clearedCount > 0) {
-      console.log(`✅ Cleared ${clearedCount} invalid cache keys`);
-    }
-  } catch (redisError) {
-    console.warn("❌ Failed to clear invalid cache:", redisError.message);
-  }
-};
-
-// دالة للحصول على إحصائيات الكاش
-export const getCacheStats = async (req, res) => {
-  try {
-    if (!redis.isReady()) {
-      return res.status(200).json({
-        success: true,
-        data: {
-          redisConnected: false,
-          message: "Redis not connected",
-        },
-      });
-    }
-
-    const keys = await redis.keys("hero-occasions:*");
-    const stats = {
-      redisConnected: true,
-      totalKeys: keys.length,
-      keysByType: {
-        active: keys.filter((key) => key.includes(":active:")).length,
-        upcoming: keys.filter((key) => key.includes(":upcoming:")).length,
-        all: keys.filter((key) => key.includes(":all:")).length,
-        search: keys.filter((key) => key.includes(":search:")).length,
-        single: keys.filter((key) => key.includes(":id:")).length,
-      },
-      allKeys: keys,
-    };
-
-    res.status(200).json({
-      success: true,
-      data: stats,
-    });
-  } catch (error) {
-    console.error("Error getting cache stats:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to get cache statistics",
-      error: error.message,
-    });
-  }
-};
-
-// دالة لمسح الكاش يدوياً
-export const clearCache = async (req, res) => {
-  try {
-    await invalidateOccasionsCache();
-    res.status(200).json({
-      success: true,
-      message: "تم مسح الكاش بنجاح",
-    });
-  } catch (error) {
-    console.error("Error clearing cache:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to clear cache",
-      error: error.message,
-    });
-  }
-};
-
-// دالة لتشخيص Redis
-export const diagnoseRedis = async (req, res) => {
-  try {
-    const diagnosis = {
-      redisUrl: process.env.REDIS_URL || "redis://localhost:6379",
-      status: redis.status,
-      isReady: redis.isReady(),
-      connectionTest: false,
-      error: null,
-      timestamp: new Date().toISOString(),
-    };
-
-    try {
-      diagnosis.connectionTest = await redis.testConnection();
-    } catch (error) {
-      diagnosis.error = error.message;
-    }
-
-    res.status(200).json({
-      success: true,
-      data: diagnosis,
-    });
-  } catch (error) {
-    console.error("Error diagnosing Redis:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to diagnose Redis",
-      error: error.message,
-    });
-  }
+  ACTIVE: 2 * 60 * 60, // ساعتان
+  UPCOMING: 4 * 60 * 60, // 4 ساعات
+  ALL: 6 * 60 * 60, // 6 ساعات
+  SINGLE: 12 * 60 * 60, // 12 ساعة
+  SEARCH: 30 * 60, // 30 دقيقة
 };
 
 // دالة لرفع الصور إلى Cloudinary
 const uploadImagesToCloudinary = async (images) => {
-  const uploadedImages = [];
+  const httpImages = [];
+  const base64Images = [];
+  const invalidImages = [];
 
-  for (const image of images) {
+  images.forEach((image, index) => {
     if (image.startsWith("http")) {
-      // إذا كان الرابط موجود بالفعل، استخدمه كما هو
-      uploadedImages.push(image);
+      httpImages.push({ image, index });
     } else if (image.startsWith("data:image")) {
-      // إذا كان base64، ارفعه إلى Cloudinary
-      try {
+      base64Images.push({ image, index });
+    } else {
+      console.warn("Invalid image URL:", image);
+      invalidImages.push({ image, index });
+    }
+  });
+
+  const uploadedImages = new Array(images.length);
+  httpImages.forEach(({ image, index }) => {
+    uploadedImages[index] = image;
+  });
+
+  if (base64Images.length > 0) {
+    try {
+      const uploadPromises = base64Images.map(async ({ image, index }) => {
         const result = await cloudinary.uploader.upload(image, {
           folder: "hero-occasions",
           resource_type: "image",
           quality: 100,
           fetch_format: "auto",
         });
-        uploadedImages.push(result.secure_url);
-      } catch (error) {
-        console.error("Error uploading image to Cloudinary:", error);
-        throw new Error("فشل في رفع الصورة");
-      }
-    } else {
-      // إذا كان رابط غير صحيح، تجاهله
-      console.warn("Invalid image URL:", image);
+        return { url: result.secure_url, index };
+      });
+
+      const results = await Promise.all(uploadPromises);
+      results.forEach(({ url, index }) => {
+        uploadedImages[index] = url;
+      });
+    } catch (error) {
+      console.error("Error uploading images to Cloudinary:", error);
+      throw new Error("فشل في رفع الصور");
     }
   }
 
-  return uploadedImages;
+  return uploadedImages.filter((image) => image !== undefined);
 };
 
 // دالة لرفع صورة واحدة إلى Cloudinary
@@ -206,7 +95,6 @@ export const uploadSingleImage = async (req, res) => {
       });
     }
 
-    // رفع الصورة إلى Cloudinary
     const result = await cloudinary.uploader.upload_stream(
       {
         resource_type: "image",
@@ -233,7 +121,6 @@ export const uploadSingleImage = async (req, res) => {
       }
     );
 
-    // إرسال البيانات إلى Cloudinary
     result.end(req.file.buffer);
   } catch (error) {
     console.error("Error in uploadSingleImage:", error);
@@ -245,23 +132,84 @@ export const uploadSingleImage = async (req, res) => {
   }
 };
 
+// ===== Cache Management APIs =====
+
+// إحصائيات الكاش
+export const getCacheStats = async (req, res) => {
+  try {
+    const stats = await cacheManager.getAllStats();
+
+    res.status(200).json({
+      success: true,
+      data: stats,
+    });
+  } catch (error) {
+    console.error("Error getting cache stats:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to get cache statistics",
+      error: error.message,
+    });
+  }
+};
+
+// مسح الكاش يدوياً
+export const clearCache = async (req, res) => {
+  try {
+    const { namespace, pattern } = req.query;
+
+    let result;
+    if (namespace) {
+      result = await cacheManager.clearNamespace(namespace, pattern || "*");
+    } else {
+      // مسح جميع namespaces
+      result = await cacheManager.clearNamespace("hero-occasions");
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `تم مسح ${result} مفتاح من الكاش`,
+      deletedKeys: result,
+    });
+  } catch (error) {
+    console.error("Error clearing cache:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to clear cache",
+      error: error.message,
+    });
+  }
+};
+
+// تشخيص Redis
+export const diagnoseRedis = async (req, res) => {
+  try {
+    const testResult = await cacheManager.cacheService.testConnection();
+    const stats = cacheManager.cacheService.getStats();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        ...testResult,
+        stats,
+        timestamp: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error("Error diagnosing Redis:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to diagnose Redis",
+      error: error.message,
+    });
+  }
+};
+
+// ===== CRUD Operations with Cache =====
+
 // الحصول على جميع المناسبات
 export const getAllOccasions = async (req, res) => {
   try {
-    // مسح الكاش الفاسد في بداية كل استعلام
-    try {
-      await clearInvalidCache();
-    } catch (error) {
-      console.warn("⚠️ Failed to clear invalid cache:", error.message);
-      // مسح جميع الكاش عند فشل مسح الكاش الفاسد
-      try {
-        await invalidateOccasionsCache();
-        console.log("🗑️ Cleared all cache due to cleanup error");
-      } catch (cacheError) {
-        console.warn("⚠️ Failed to clear all cache:", cacheError.message);
-      }
-    }
-
     const {
       page = 1,
       limit = 10,
@@ -272,71 +220,29 @@ export const getAllOccasions = async (req, res) => {
       sortOrder = "asc",
     } = req.query;
 
-    // إنشاء cache key فريد بناءً على المعاملات
-    const cacheKey = `${CACHE_KEYS.ALL_OCCASIONS}:${page}:${limit}:${isActive}:${search}:${language}:${sortBy}:${sortOrder}`;
-
     // محاولة الحصول من الكاش
-    try {
-      if (redis.isReady()) {
-        const cached = await redis.get(cacheKey);
-        if (cached) {
-          const parsedCache = JSON.parse(cached);
-          // التحقق من أن الكاش يحتوي على بيانات صحيحة
-          if (parsedCache.data && Array.isArray(parsedCache.data)) {
-            console.log(
-              `✅ Cache HIT for all occasions (page: ${page}, limit: ${limit})`
-            );
-            return res.status(200).json({
-              success: true,
-              ...parsedCache,
-              cached: true,
-              cacheKey: cacheKey,
-            });
-          } else {
-            // مسح الكاش الفاسد
-            console.log(`🗑️ Clearing invalid cache for key: ${cacheKey}`);
-            try {
-              await redis.del(cacheKey);
-            } catch (delError) {
-              console.warn(
-                "⚠️ Failed to delete invalid cache key:",
-                delError.message
-              );
-              // مسح جميع الكاش عند فشل حذف مفتاح واحد
-              try {
-                await invalidateOccasionsCache();
-                console.log("🗑️ Cleared all cache due to delete error");
-              } catch (cacheError) {
-                console.warn(
-                  "⚠️ Failed to clear all cache:",
-                  cacheError.message
-                );
-              }
-            }
-          }
-        }
-      }
-    } catch (redisError) {
-      console.warn(
-        "❌ Redis not available for all occasions, fetching from database:",
-        redisError.message
-      );
-      // مسح الكاش عند حدوث خطأ في Redis
-      try {
-        await invalidateOccasionsCache();
-        console.log("🗑️ Cleared cache due to Redis read error");
-      } catch (cacheError) {
-        console.warn(
-          "⚠️ Failed to clear cache after Redis read error:",
-          cacheError.message
-        );
-      }
+    const cacheKey = `all:${page}:${limit}:${isActive}:${search}:${language}:${sortBy}:${sortOrder}`;
+    const cached = await cacheManager.get("hero-occasions", "all", {
+      page,
+      limit,
+      isActive,
+      search,
+      language,
+      sortBy,
+      sortOrder,
+    });
+
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        ...cached,
+        cached: true,
+        cacheKey: cacheKey,
+      });
     }
 
-    // الحصول من قاعدة البيانات
-    console.log(
-      `🔄 Cache MISS for all occasions (page: ${page}, limit: ${limit}), fetching from database`
-    );
+    // Cache MISS - الحصول من قاعدة البيانات
+    console.log(`🔄 Cache MISS for all occasions, fetching from database`);
 
     // بناء فلتر البحث
     let filter = {};
@@ -364,7 +270,7 @@ export const getAllOccasions = async (req, res) => {
       .limit(parseInt(limit))
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
-      .lean(); // استخدام lean() لتحسين الأداء
+      .lean();
 
     // حساب العدد الإجمالي
     const total = await HeroOccasion.countDocuments(filter);
@@ -383,64 +289,27 @@ export const getAllOccasions = async (req, res) => {
     };
 
     // حفظ في الكاش
-    try {
-      if (redis.isReady()) {
-        // التحقق من أن البيانات ليست فارغة قبل الحفظ
-        if (responseData.data && responseData.data.length > 0) {
-          try {
-            await redis.setex(
-              cacheKey,
-              CACHE_TTL.ALL,
-              JSON.stringify(responseData)
-            );
-            console.log(
-              `✅ Cached all occasions (page: ${page}, limit: ${limit}) for ${CACHE_TTL.ALL} seconds`
-            );
-          } catch (setError) {
-            console.warn("⚠️ Failed to cache data:", setError.message);
-            // مسح الكاش عند فشل الحفظ
-            try {
-              await invalidateOccasionsCache();
-              console.log("🗑️ Cleared cache due to save error");
-            } catch (cacheError) {
-              console.warn(
-                "⚠️ Failed to clear cache after save error:",
-                cacheError.message
-              );
-            }
-          }
-        } else {
-          console.log(
-            `⚠️ Skipping cache for empty data (page: ${page}, limit: ${limit})`
-          );
-        }
-      }
-    } catch (redisError) {
-      console.warn("❌ Failed to cache all occasions:", redisError.message);
-      // مسح الكاش عند حدوث خطأ في Redis
-      try {
-        await invalidateOccasionsCache();
-        console.log("🗑️ Cleared cache due to Redis error");
-      } catch (cacheError) {
-        console.warn(
-          "⚠️ Failed to clear cache after Redis error:",
-          cacheError.message
-        );
-      }
+    if (responseData.data && responseData.data.length > 0) {
+      await cacheManager.set(
+        "hero-occasions",
+        "all",
+        responseData,
+        {
+          page,
+          limit,
+          isActive,
+          search,
+          language,
+          sortBy,
+          sortOrder,
+        },
+        { ttl: CACHE_TTL.ALL }
+      );
     }
 
     res.status(200).json(responseData);
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات:", error);
-
-    // مسح الكاش عند حدوث خطأ في قاعدة البيانات
-    try {
-      await invalidateOccasionsCache();
-      console.log("🗑️ Cleared cache due to database error");
-    } catch (cacheError) {
-      console.warn("⚠️ Failed to clear cache after error:", cacheError.message);
-    }
-
     res.status(500).json({
       success: false,
       message: "حدث خطأ في الخادم",
@@ -454,6 +323,21 @@ export const getOccasionById = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // محاولة الحصول من الكاش
+    const cached = await cacheManager.get("hero-occasions", "single", { id });
+
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        data: cached,
+        cached: true,
+        cacheKey: `single:${id}`,
+      });
+    }
+
+    // Cache MISS - الحصول من قاعدة البيانات
+    console.log(`🔄 Cache MISS for occasion by ID: ${id}`);
+
     const occasion = await HeroOccasion.findById(id)
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email");
@@ -465,9 +349,22 @@ export const getOccasionById = async (req, res) => {
       });
     }
 
+    // حفظ في الكاش
+    await cacheManager.set(
+      "hero-occasions",
+      "single",
+      occasion,
+      { id },
+      {
+        ttl: CACHE_TTL.SINGLE,
+      }
+    );
+
     res.status(200).json({
       success: true,
       data: occasion,
+      cached: false,
+      cacheKey: `single:${id}`,
     });
   } catch (error) {
     console.error("خطأ في الحصول على المناسبة:", error);
@@ -483,60 +380,44 @@ export const getOccasionById = async (req, res) => {
 export const getActiveOccasions = async (req, res) => {
   try {
     const { limit = 10 } = req.query;
-    const cacheKey = `${CACHE_KEYS.ACTIVE_OCCASIONS}:${limit}`;
 
     // محاولة الحصول من الكاش
-    try {
-      if (redis.isReady()) {
-        const cached = await redis.get(cacheKey);
-        if (cached) {
-          console.log(`✅ Cache HIT for active occasions (limit: ${limit})`);
-          return res.status(200).json({
-            success: true,
-            data: JSON.parse(cached),
-            cached: true,
-            cacheKey: cacheKey,
-          });
-        }
-      }
-    } catch (redisError) {
-      console.warn(
-        "❌ Redis not available for active occasions, fetching from database:",
-        redisError.message
-      );
+    const cached = await cacheManager.get("hero-occasions", "active", {
+      limit,
+    });
+
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        data: cached,
+        cached: true,
+        cacheKey: `active:${limit}`,
+      });
     }
 
-    // الحصول من قاعدة البيانات
-    console.log(
-      `🔄 Cache MISS for active occasions (limit: ${limit}), fetching from database`
-    );
-    let filter = { isActive: true };
+    // Cache MISS - الحصول من قاعدة البيانات
+    console.log(`🔄 Cache MISS for active occasions, fetching from database`);
 
-    const occasions = await HeroOccasion.find(filter)
+    const occasions = await HeroOccasion.find({ isActive: true })
       .sort({ date: 1 })
       .limit(parseInt(limit));
 
     // حفظ في الكاش
-    try {
-      if (redis.isReady()) {
-        await redis.setex(
-          cacheKey,
-          CACHE_TTL.ACTIVE,
-          JSON.stringify(occasions)
-        );
-        console.log(
-          `✅ Cached active occasions (limit: ${limit}) for ${CACHE_TTL.ACTIVE} seconds`
-        );
+    await cacheManager.set(
+      "hero-occasions",
+      "active",
+      occasions,
+      { limit },
+      {
+        ttl: CACHE_TTL.ACTIVE,
       }
-    } catch (redisError) {
-      console.warn("❌ Failed to cache active occasions:", redisError.message);
-    }
+    );
 
     res.status(200).json({
       success: true,
       data: occasions,
       cached: false,
-      cacheKey: cacheKey,
+      cacheKey: `active:${limit}`,
     });
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات النشطة:", error);
@@ -552,43 +433,25 @@ export const getActiveOccasions = async (req, res) => {
 export const getUpcomingOccasions = async (req, res) => {
   try {
     const { limit = 5 } = req.query;
-    const cacheKey = `${CACHE_KEYS.UPCOMING_OCCASIONS}:${limit}`;
 
     // محاولة الحصول من الكاش
-    try {
-      if (redis.isReady()) {
-        const cached = await redis.get(cacheKey);
-        if (cached) {
-          console.log(`✅ Cache HIT for upcoming occasions (limit: ${limit})`);
-          return res.status(200).json({
-            success: true,
-            data: JSON.parse(cached),
-            cached: true,
-            cacheKey: cacheKey,
-          });
-        } else {
-          console.log(
-            `🔄 Cache MISS for upcoming occasions (limit: ${limit}) - Key not found in cache`
-          );
-        }
-      } else {
-        console.log(
-          `🔄 Cache MISS for upcoming occasions (limit: ${limit}) - Redis not ready (status: ${redis.status})`
-        );
-      }
-    } catch (redisError) {
-      console.warn(
-        "❌ Redis error for upcoming occasions, fetching from database:",
-        redisError.message
-      );
+    const cached = await cacheManager.get("hero-occasions", "upcoming", {
+      limit,
+    });
+
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        data: cached,
+        cached: true,
+        cacheKey: `upcoming:${limit}`,
+      });
     }
 
-    // الحصول من قاعدة البيانات
-    console.log(
-      `🔄 Cache MISS for upcoming occasions (limit: ${limit}), fetching from database`
-    );
-    const today = new Date();
+    // Cache MISS - الحصول من قاعدة البيانات
+    console.log(`🔄 Cache MISS for upcoming occasions, fetching from database`);
 
+    const today = new Date();
     const occasions = await HeroOccasion.find({
       isActive: true,
       date: { $gte: today },
@@ -597,29 +460,21 @@ export const getUpcomingOccasions = async (req, res) => {
       .limit(parseInt(limit));
 
     // حفظ في الكاش
-    try {
-      if (redis.isReady()) {
-        await redis.setex(
-          cacheKey,
-          CACHE_TTL.UPCOMING,
-          JSON.stringify(occasions)
-        );
-        console.log(
-          `✅ Cached upcoming occasions (limit: ${limit}) for ${CACHE_TTL.UPCOMING} seconds`
-        );
+    await cacheManager.set(
+      "hero-occasions",
+      "upcoming",
+      occasions,
+      { limit },
+      {
+        ttl: CACHE_TTL.UPCOMING,
       }
-    } catch (redisError) {
-      console.warn(
-        "❌ Failed to cache upcoming occasions:",
-        redisError.message
-      );
-    }
+    );
 
     res.status(200).json({
       success: true,
       data: occasions,
       cached: false,
-      cacheKey: cacheKey,
+      cacheKey: `upcoming:${limit}`,
     });
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات القادمة:", error);
@@ -631,10 +486,76 @@ export const getUpcomingOccasions = async (req, res) => {
   }
 };
 
+// البحث في المناسبات
+export const searchOccasions = async (req, res) => {
+  try {
+    const { q, language = "ar", limit = 10 } = req.query;
+
+    if (!q || q.trim().length < 2) {
+      return res.status(400).json({
+        success: false,
+        message: "يجب إدخال كلمة بحث مكونة من حرفين على الأقل",
+      });
+    }
+
+    const searchQuery = q.trim();
+
+    // محاولة الحصول من الكاش
+    const cached = await cacheManager.get("hero-occasions", "search", {
+      query: searchQuery,
+      language,
+      limit,
+    });
+
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        data: cached,
+        cached: true,
+        cacheKey: `search:${searchQuery}:${language}:${limit}`,
+      });
+    }
+
+    // Cache MISS - الحصول من قاعدة البيانات
+    console.log(`🔄 Cache MISS for search, fetching from database`);
+
+    const occasions = await HeroOccasion.searchOccasions(searchQuery, language);
+    const limitedOccasions = occasions.slice(0, parseInt(limit));
+
+    // حفظ في الكاش
+    await cacheManager.set(
+      "hero-occasions",
+      "search",
+      limitedOccasions,
+      {
+        query: searchQuery,
+        language,
+        limit,
+      },
+      { ttl: CACHE_TTL.SEARCH }
+    );
+
+    res.status(200).json({
+      success: true,
+      data: limitedOccasions,
+      cached: false,
+      cacheKey: `search:${searchQuery}:${language}:${limit}`,
+    });
+  } catch (error) {
+    console.error("خطأ في البحث:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ في الخادم",
+      error: error.message,
+    });
+  }
+};
+
+// ===== Write Operations with Cache Invalidation =====
+
 // إنشاء مناسبة جديدة
 export const createOccasion = async (req, res) => {
   try {
-    // التحقق من صحة البيانات
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -661,8 +582,8 @@ export const createOccasion = async (req, res) => {
     const newOccasion = new HeroOccasion({
       nameAr,
       nameEn,
-      date: new Date(date), // تحويل التاريخ إلى كائن Date
-      images: uploadedImages, // استخدام الصور المرفوعة
+      date: new Date(date),
+      images: uploadedImages,
       celebratoryMessageAr,
       celebratoryMessageEn,
       isActive,
@@ -670,12 +591,10 @@ export const createOccasion = async (req, res) => {
     });
 
     await newOccasion.save();
-
-    // إرجاع المناسبة مع بيانات منشئها
     await newOccasion.populate("createdBy", "name email");
 
     // مسح الكاش بعد إنشاء مناسبة جديدة
-    await invalidateOccasionsCache();
+    await cacheManager.invalidate("hero-occasions", "immediate");
 
     res.status(201).json({
       success: true,
@@ -685,7 +604,6 @@ export const createOccasion = async (req, res) => {
   } catch (error) {
     console.error("خطأ في إنشاء المناسبة:", error);
 
-    // معالجة أخطاء محددة
     if (error.name === "ValidationError") {
       return res.status(400).json({
         success: false,
@@ -712,7 +630,6 @@ export const createOccasion = async (req, res) => {
 // تحديث مناسبة موجودة
 export const updateOccasion = async (req, res) => {
   try {
-    // التحقق من صحة البيانات
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -725,12 +642,10 @@ export const updateOccasion = async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body, updatedBy: req.adminId };
 
-    // إذا تم تحديث التاريخ، تحويله إلى كائن Date
     if (updateData.date) {
       updateData.date = new Date(updateData.date);
     }
 
-    // رفع الصور إلى Cloudinary إذا تم تحديثها
     if (updateData.images) {
       updateData.images = await uploadImagesToCloudinary(updateData.images);
     }
@@ -750,7 +665,7 @@ export const updateOccasion = async (req, res) => {
     }
 
     // مسح الكاش بعد تحديث المناسبة
-    await invalidateOccasionsCache();
+    await cacheManager.invalidate("hero-occasions", "immediate");
 
     res.status(200).json({
       success: true,
@@ -760,7 +675,6 @@ export const updateOccasion = async (req, res) => {
   } catch (error) {
     console.error("خطأ في تحديث المناسبة:", error);
 
-    // معالجة أخطاء محددة
     if (error.name === "ValidationError") {
       return res.status(400).json({
         success: false,
@@ -799,7 +713,7 @@ export const deleteOccasion = async (req, res) => {
     }
 
     // مسح الكاش بعد حذف المناسبة
-    await invalidateOccasionsCache();
+    await cacheManager.invalidate("hero-occasions", "immediate");
 
     res.status(200).json({
       success: true,
@@ -815,7 +729,7 @@ export const deleteOccasion = async (req, res) => {
   }
 };
 
-// تبديل حالة المناسبة (نشط/غير نشط)
+// تبديل حالة المناسبة
 export const toggleOccasionStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -833,7 +747,7 @@ export const toggleOccasionStatus = async (req, res) => {
     await occasion.save();
 
     // مسح الكاش بعد تبديل حالة المناسبة
-    await invalidateOccasionsCache();
+    await cacheManager.invalidate("hero-occasions", "immediate");
 
     res.status(200).json({
       success: true,
@@ -852,35 +766,7 @@ export const toggleOccasionStatus = async (req, res) => {
   }
 };
 
-// البحث في المناسبات
-export const searchOccasions = async (req, res) => {
-  try {
-    const { q, language = "ar", limit = 10 } = req.query;
-
-    if (!q || q.trim().length < 2) {
-      return res.status(400).json({
-        success: false,
-        message: "يجب إدخال كلمة بحث مكونة من حرفين على الأقل",
-      });
-    }
-
-    const occasions = await HeroOccasion.searchOccasions(q.trim(), language);
-
-    res.status(200).json({
-      success: true,
-      data: occasions.slice(0, parseInt(limit)),
-    });
-  } catch (error) {
-    console.error("خطأ في البحث:", error);
-    res.status(500).json({
-      success: false,
-      message: "حدث خطأ في الخادم",
-      error: error.message,
-    });
-  }
-};
-
-// استيراد البيانات من ملف JSON (للمرحلة الانتقالية)
+// استيراد البيانات من ملف JSON
 export const importOccasions = async (req, res) => {
   try {
     const { occasions } = req.body;
@@ -897,7 +783,6 @@ export const importOccasions = async (req, res) => {
 
     for (const occasionData of occasions) {
       try {
-        // التحقق من وجود المناسبة
         const existingOccasion = await HeroOccasion.findOne({
           id: occasionData.id,
         });
@@ -922,7 +807,7 @@ export const importOccasions = async (req, res) => {
     }
 
     // مسح الكاش بعد استيراد المناسبات
-    await invalidateOccasionsCache();
+    await cacheManager.invalidate("hero-occasions", "immediate");
 
     res.status(200).json({
       success: true,
