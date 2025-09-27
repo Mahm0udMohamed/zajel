@@ -136,3 +136,4 @@ To test the integration:
 3. Add offline support
 4. Implement real-time updates using WebSockets
 5. Add data validation on the frontend
+

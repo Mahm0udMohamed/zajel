@@ -175,40 +175,51 @@ export const useHeroOccasions = (
   };
 };
 
-// Hook specifically for the hero slider
+// Hook specifically for the hero slider - gets only the nearest upcoming occasion
 export const useHeroSliderOccasions = () => {
-  const { occasions, loading, error, refetch } = useHeroOccasions({
-    autoFetch: true,
-    isActive: true,
-    limit: 50, // Get more occasions for the slider
-  });
+  const [nearestOccasion, setNearestOccasion] = useState<HeroOccasion | null>(
+    null
+  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Find the nearest upcoming occasion
-  const nearestOccasion = occasions.reduce((nearest, occasion) => {
-    const occasionDate = new Date(occasion.date).getTime();
-    const now = Date.now();
-    const oneDayInMs = 24 * 60 * 60 * 1000;
+  const fetchNearestOccasion = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    // Skip past occasions (more than 1 day old)
-    if (occasionDate < now - oneDayInMs) return nearest;
+      // Get only the nearest upcoming occasion (limit: 1)
+      const response = await heroOccasionsApi.getUpcoming(1);
 
-    if (!nearest || occasionDate < new Date(nearest.date).getTime()) {
-      return occasion;
+      if (response.success && response.data.length > 0) {
+        setNearestOccasion(response.data[0]);
+      } else {
+        setNearestOccasion(null);
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof ApiError
+          ? err.message
+          : err instanceof Error
+          ? err.message
+          : "An unknown error occurred";
+
+      setError(errorMessage);
+      console.error("Error fetching nearest hero occasion:", err);
+      setNearestOccasion(null);
+    } finally {
+      setLoading(false);
     }
-    return nearest;
-  }, null as HeroOccasion | null);
+  }, []);
 
-  // Get active occasions sorted by priority
-  const activeOccasions = occasions
-    .filter((occasion) => occasion.isActive)
-    .sort((a, b) => a.priority - b.priority);
+  useEffect(() => {
+    fetchNearestOccasion();
+  }, [fetchNearestOccasion]);
 
   return {
-    occasions,
-    activeOccasions,
     nearestOccasion,
     loading,
     error,
-    refetch,
+    refetch: fetchNearestOccasion,
   };
 };

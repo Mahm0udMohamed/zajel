@@ -17,8 +17,9 @@ const uploadImagesToCloudinary = async (images) => {
         const result = await cloudinary.uploader.upload(image, {
           folder: "hero-occasions",
           resource_type: "image",
-          quality: "auto",
+          quality: 100,
           fetch_format: "auto",
+          flags: "lossless",
         });
         uploadedImages.push(result.secure_url);
       } catch (error) {
@@ -49,8 +50,9 @@ export const uploadSingleImage = async (req, res) => {
       {
         resource_type: "image",
         folder: "hero-occasions",
-        quality: "auto",
+        quality: 100,
         fetch_format: "auto",
+        flags: "lossless",
       },
       (error, result) => {
         if (error) {
