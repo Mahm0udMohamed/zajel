@@ -36,7 +36,7 @@ import {
   Calendar,
   Image,
   Upload,
-  RefreshCw,
+  Loader2,
 } from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
 import { apiService } from "../../services/api";
@@ -211,6 +211,18 @@ export default function HeroOccasionsTab() {
     setOriginalOccasion(null);
   };
 
+  const handleAddClick = () => {
+    resetForm(); // مسح البيانات قبل فتح نافذة الإضافة
+    setIsAddOpen(true);
+  };
+
+  const handleEditClose = () => {
+    resetForm(); // مسح البيانات عند إغلاق نافذة التعديل
+    setIsEditOpen(false);
+    setEditingId(null);
+    setOriginalOccasion(null);
+  };
+
   const handleDeleteClick = (id: string) => {
     if (!id) {
       toast({
@@ -234,9 +246,28 @@ export default function HeroOccasionsTab() {
       return;
     }
 
+    // حفظ البيانات الأصلية للتراجع في حالة الخطأ
+    const originalOccasions = [...occasions];
+    const occasionToDelete = occasions.find((occ) => occ._id === deletingId);
+
+    if (!occasionToDelete) {
+      toast({
+        title: "خطأ",
+        description: "المناسبة غير موجودة",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      // إزالة المناسبة محلياً فوراً لتحسين تجربة المستخدم
+      setOccasions((prevOccasions) =>
+        prevOccasions.filter((occ) => occ._id !== deletingId)
+      );
+
+      // إرسال طلب الحذف إلى الباك إند
       await apiService.deleteHeroOccasion(deletingId);
-      await loadOccasions();
+
       toast({
         title: "تم الحذف",
         description: "تم حذف المناسبة بنجاح",
@@ -244,6 +275,10 @@ export default function HeroOccasionsTab() {
       setDeletingId(null);
     } catch (error) {
       console.error("Error deleting occasion:", error);
+
+      // إعادة البيانات الأصلية في حالة الخطأ
+      setOccasions(originalOccasions);
+
       toast({
         title: "خطأ",
         description: "فشل في حذف المناسبة",
@@ -278,6 +313,16 @@ export default function HeroOccasionsTab() {
       newOccasion.celebratoryMessageEn.trim() !== "" ||
       newOccasion.images.some((img) => img.trim() !== "")
     );
+  };
+
+  const isFormValid = () => {
+    // التحقق من أن جميع البيانات المطلوبة مملوءة
+    const hasNameAr = newOccasion.nameAr.trim() !== "";
+    const hasNameEn = newOccasion.nameEn.trim() !== "";
+    const hasDate = newOccasion.date !== "";
+    const hasValidImages = newOccasion.images.some((img) => img.trim() !== "");
+
+    return hasNameAr && hasNameEn && hasDate && hasValidImages;
   };
 
   const handlePointerDownOutside = (e: Event) => {
@@ -394,8 +439,30 @@ export default function HeroOccasionsTab() {
 
       console.log("Sending occasion data:", occasionData);
 
-      await apiService.createHeroOccasion(occasionData);
-      await loadOccasions();
+      // إرسال البيانات إلى الباك إند والحصول على المناسبة الجديدة
+      const createdOccasion = await apiService.createHeroOccasion(occasionData);
+
+      // إضافة المناسبة الجديدة محلياً فوراً لتحسين تجربة المستخدم
+      if (
+        createdOccasion &&
+        typeof createdOccasion === "object" &&
+        "_id" in createdOccasion
+      ) {
+        const newOccasion: HeroOccasion = {
+          _id: createdOccasion._id as string,
+          nameAr: occasionData.nameAr,
+          nameEn: occasionData.nameEn,
+          date: occasionData.date,
+          images: occasionData.images,
+          celebratoryMessageAr: occasionData.celebratoryMessageAr,
+          celebratoryMessageEn: occasionData.celebratoryMessageEn,
+          isActive: occasionData.isActive,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        setOccasions((prevOccasions) => [...prevOccasions, newOccasion]);
+      }
 
       resetForm();
       setIsAddOpen(false);
@@ -460,6 +527,19 @@ export default function HeroOccasionsTab() {
       return;
     }
 
+    // حفظ البيانات الأصلية للتراجع في حالة الخطأ
+    const originalOccasions = [...occasions];
+    const occasionIndex = occasions.findIndex((occ) => occ._id === editingId);
+
+    if (occasionIndex === -1) {
+      toast({
+        title: "خطأ",
+        description: "المناسبة غير موجودة",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       // فلترة الصور الصحيحة فقط
       const validImages = newOccasion.images.filter((img) => img.trim() !== "");
@@ -486,8 +566,22 @@ export default function HeroOccasionsTab() {
 
       console.log("Updating occasion data:", occasionData);
 
+      // تحديث البيانات محلياً فوراً لتحسين تجربة المستخدم
+      const updatedOccasion = {
+        ...occasions[occasionIndex],
+        ...occasionData,
+        _id: editingId,
+        updatedAt: new Date().toISOString(),
+      };
+
+      setOccasions((prevOccasions) =>
+        prevOccasions.map((occ) =>
+          occ._id === editingId ? updatedOccasion : occ
+        )
+      );
+
+      // إرسال التحديث إلى الباك إند
       await apiService.updateHeroOccasion(editingId, occasionData);
-      await loadOccasions();
 
       setEditingId(null);
       setIsEditOpen(false);
@@ -498,6 +592,10 @@ export default function HeroOccasionsTab() {
       });
     } catch (error) {
       console.error("Error updating occasion:", error);
+
+      // إعادة البيانات الأصلية في حالة الخطأ
+      setOccasions(originalOccasions);
+
       const errorMessage =
         error instanceof Error ? error.message : "خطأ غير معروف";
       toast({
@@ -539,7 +637,13 @@ export default function HeroOccasionsTab() {
       if (isNaN(date.getTime())) {
         return "تاريخ غير صحيح";
       }
-      return date.toLocaleDateString("ar-SA");
+      // استخدام التقويم الميلادي مع التنسيق الرقمي
+      return date.toLocaleDateString("ar-EG", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        calendar: "gregory", // التأكد من استخدام التقويم الميلادي
+      });
     } catch (error) {
       console.error("Error formatting date:", error);
       return "تاريخ غير صحيح";
@@ -560,15 +664,41 @@ export default function HeroOccasionsTab() {
       return;
     }
 
+    // حفظ الحالة الأصلية للتراجع في حالة الخطأ
+    const originalOccasions = [...occasions];
+    const occasionIndex = occasions.findIndex((occ) => occ._id === id);
+
+    if (occasionIndex === -1) {
+      toast({
+        title: "خطأ",
+        description: "المناسبة غير موجودة",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const originalStatus = occasions[occasionIndex].isActive;
+    const newStatus = !originalStatus;
+
+    // تحديث الحالة محلياً فوراً لتحسين تجربة المستخدم
+    setOccasions((prevOccasions) =>
+      prevOccasions.map((occ) =>
+        occ._id === id ? { ...occ, isActive: newStatus } : occ
+      )
+    );
+
     try {
       await apiService.toggleHeroOccasionStatus(id);
-      await loadOccasions();
       toast({
         title: "تم بنجاح",
-        description: "تم تحديث حالة المناسبة",
+        description: `تم ${newStatus ? "تفعيل" : "إلغاء تفعيل"} المناسبة`,
       });
     } catch (error) {
       console.error("Error toggling occasion status:", error);
+
+      // إعادة الحالة الأصلية في حالة الخطأ
+      setOccasions(originalOccasions);
+
       toast({
         title: "خطأ",
         description: "فشل في تحديث حالة المناسبة",
@@ -590,19 +720,17 @@ export default function HeroOccasionsTab() {
               إدارة المناسبات الخاصة التي تظهر في شريحة الهيرو الرئيسية
             </CardDescription>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadOccasions}
-            disabled={loading}
-            className="flex items-center gap-2"
+          <Dialog
+            open={isAddOpen}
+            onOpenChange={(open) => {
+              if (!open) {
+                resetForm();
+                setIsAddOpen(false);
+              }
+            }}
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-            إعادة تحميل
-          </Button>
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button onClick={handleAddClick}>
                 <Plus className="w-4 h-4 mr-2" />
                 إضافة مناسبة
               </Button>
@@ -783,7 +911,7 @@ export default function HeroOccasionsTab() {
                         {uploadingImages.has(index) ? (
                           <div className="mt-2 flex items-center justify-center w-20 h-20 bg-gray-800 rounded border">
                             <div className="flex flex-col items-center gap-2">
-                              <RefreshCw className="w-4 h-4 animate-spin text-blue-400" />
+                              <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
                               <span className="text-xs text-gray-400">
                                 جاري الرفع...
                               </span>
@@ -843,7 +971,8 @@ export default function HeroOccasionsTab() {
                 </Button>
                 <Button
                   onClick={handleAdd}
-                  className="bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/30"
+                  disabled={!isFormValid()}
+                  className="bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/30 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   إضافة المناسبة
                 </Button>
@@ -856,7 +985,7 @@ export default function HeroOccasionsTab() {
         {loading ? (
           <div className="flex items-center justify-center py-8">
             <div className="flex items-center gap-2">
-              <RefreshCw className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
               <span>جاري التحميل...</span>
             </div>
           </div>
@@ -988,7 +1117,14 @@ export default function HeroOccasionsTab() {
       </CardContent>
 
       {/* Edit Dialog */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+      <Dialog
+        open={isEditOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleEditClose();
+          }
+        }}
+      >
         <DialogContent
           className="max-w-2xl max-h-[85vh] flex flex-col"
           onPointerDownOutside={handlePointerDownOutside}
@@ -1163,7 +1299,7 @@ export default function HeroOccasionsTab() {
                     {uploadingImages.has(index) ? (
                       <div className="mt-2 flex items-center justify-center w-20 h-20 bg-gray-800 rounded border">
                         <div className="flex flex-col items-center gap-2">
-                          <RefreshCw className="w-4 h-4 animate-spin text-blue-400" />
+                          <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
                           <span className="text-xs text-gray-400">
                             جاري الرفع...
                           </span>
@@ -1223,7 +1359,8 @@ export default function HeroOccasionsTab() {
             </Button>
             <Button
               onClick={handleUpdate}
-              className="bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/30"
+              disabled={!isFormValid()}
+              className="bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/30 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
               حفظ التغييرات
             </Button>
