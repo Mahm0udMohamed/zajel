@@ -12,21 +12,10 @@ import Confetti from "react-confetti";
 import { EnhancedImage } from "../../features/images";
 import { usePreloadCriticalImages } from "../../features/images";
 import { usePerformanceMode } from "../../hooks/useMobileDetection";
-import heroOccasions from "../../data/heroOccasions.json";
+import { useHeroSliderOccasions } from "../../hooks/useHeroOccasions";
 import promotionalSlides from "../../data/promotionalSlides.json";
 
-interface Occasion {
-  nameKey: string;
-  id: string;
-  nameAr: string;
-  nameEn: string;
-  date: string;
-  images: string[];
-  celebratoryMessageAr: string;
-  celebratoryMessageEn: string;
-  priority: number;
-  isActive: boolean;
-}
+// Remove the unused Occasion interface since we're using HeroOccasion from the API service
 
 interface PromotionalSlide {
   id: string;
@@ -56,11 +45,12 @@ const HeroSlider: React.FC = () => {
   const { isMobile, shouldReduceAnimations } = usePerformanceMode();
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  const activeOccasions = useMemo(() => {
-    return (heroOccasions as Occasion[])
-      .filter((occasion) => occasion.isActive)
-      .sort((a, b) => a.priority - b.priority);
-  }, []);
+  // Use the custom hook to fetch hero occasions from backend
+  const {
+    nearestOccasion,
+    loading: occasionsLoading,
+    error: occasionsError,
+  } = useHeroSliderOccasions();
 
   const activePromotions = useMemo(() => {
     const now = new Date().getTime();
@@ -74,20 +64,24 @@ const HeroSlider: React.FC = () => {
       .sort((a, b) => a.priority - b.priority);
   }, []);
 
-  const nearestOccasion = useMemo(() => {
-    return activeOccasions.reduce((nearest, occasion) => {
-      const occasionDate = new Date(occasion.date).getTime();
-      const now = Date.now();
-      const oneDayInMs = 24 * 60 * 60 * 1000;
-      if (occasionDate < now - oneDayInMs) return nearest;
-      if (!nearest || occasionDate < new Date(nearest.date).getTime()) {
-        return occasion;
-      }
-      return nearest;
-    }, null as Occasion | null);
-  }, [activeOccasions]);
-
   const allSlides = useMemo(() => {
+    // Show loading state if occasions are still loading
+    if (occasionsLoading) {
+      return [];
+    }
+
+    // Show error state if there's an error
+    if (occasionsError) {
+      console.error("Error loading hero occasions:", occasionsError);
+      // Fallback to promotional slides only
+      return activePromotions.map((slide) => ({
+        id: slide.id,
+        type: "promotion" as const,
+        image: slide.image,
+        promotion: slide,
+      }));
+    }
+
     const occasionSlides = nearestOccasion
       ? nearestOccasion.images.map((image, index) => ({
           id: `occasion-${index}`,
@@ -109,7 +103,7 @@ const HeroSlider: React.FC = () => {
     }
 
     return promoSlides;
-  }, [nearestOccasion, activePromotions]);
+  }, [nearestOccasion, activePromotions, occasionsLoading, occasionsError]);
 
   // Preload hero images for instant display
   const heroImages = React.useMemo(() => {
@@ -191,6 +185,21 @@ const HeroSlider: React.FC = () => {
 
   const currentSlideData = allSlides[currentSlide] || allSlides[0];
 
+  // Show loading state
+  if (occasionsLoading) {
+    return (
+      <section className="relative overflow-hidden py-4 sm:py-8">
+        <div className="container-custom px-4 sm:px-16">
+          <div className="relative h-[280px] sm:h-[380px] md:h-[480px] lg:h-[580px] xl:h-[620px] overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 backdrop-blur-sm shadow-lg">
+            <div className="flex items-center justify-center h-full">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (allSlides.length === 0) return null;
 
   return (
@@ -239,7 +248,9 @@ const HeroSlider: React.FC = () => {
                   src={slide.image}
                   alt={
                     slide.type === "occasion"
-                      ? t(slide.occasion?.nameKey || "")
+                      ? (isArabic
+                          ? slide.occasion?.nameAr
+                          : slide.occasion?.nameEn) || ""
                       : (isArabic
                           ? slide.promotion?.titleAr
                           : slide.promotion?.titleEn) || ""
@@ -247,12 +258,14 @@ const HeroSlider: React.FC = () => {
                   className="w-full h-full object-cover"
                   priority={index === 0}
                   quality={100}
-                  sizes="100vw"
-                  aspectRatio="auto"
+                  width={1920}
+                  height={1080}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                  aspectRatio="landscape"
                   showPlaceholder={true}
                   placeholderSize={60}
-                  enableBlurUp={true}
-                  fallbackSrc="https://images.pexels.com/photos/1974508/pexels-photo-1974508.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  enableBlurUp={false}
+                  fallbackSrc="https://images.pexels.com/photos/1974508/pexels-photo-1974508.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop&crop=center"
                 />
               </div>
             ))}
