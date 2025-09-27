@@ -1,33 +1,64 @@
-// controllers/heroOccasionsController.js - النسخة المحدثة مع Cache Service الموحد
+// controllers/heroOccasionsController.js - النسخة المحدثة مع Cache Layer/Service الموحد
 import HeroOccasion from "../models/HeroOccasion.js";
 import { validationResult } from "express-validator";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
-import cacheManager from "../services/cacheManager.js";
-import { cacheable, cacheInvalidate } from "../decorators/cacheDecorators.js";
+import {
+  cacheLayer,
+  cacheMiddleware,
+  cacheDecorators,
+} from "../services/cache/index.js";
 
-// تسجيل namespace للـ Hero Occasions
-cacheManager.registerNamespace("hero-occasions", {
-  ttl: 3600, // ساعة واحدة افتراضياً
-  compression: true,
-  invalidationStrategy: "immediate",
-  keyPrefix: "hero-occasions",
-});
+// دالة مساعدة لمسح جميع كاشات المناسبات
+const clearAllOccasionsCache = async () => {
+  try {
+    // مسح جميع أنواع الكاش بطريقة أكثر شمولية
+    const strategies = [
+      "hero-occasions",
+      "hero-occasions-active",
+      "hero-occasions-upcoming",
+      "hero-occasions-search",
+    ];
 
-// تسجيل controller
-cacheManager.registerController("heroOccasionsController", {
-  namespace: "hero-occasions",
-  ttl: 1800, // 30 دقيقة
-  compression: true,
-  invalidationStrategy: "immediate",
-  keyPatterns: {
-    active: "active:{limit}",
-    upcoming: "upcoming:{limit}",
-    all: "all:{page}:{limit}:{isActive}:{search}:{language}:{sortBy}:{sortOrder}",
-    single: "single:{id}",
-    search: "search:{query}:{language}:{limit}",
-  },
-});
+    let totalCleared = 0;
+
+    // مسح كل استراتيجية
+    for (const strategy of strategies) {
+      try {
+        const cleared = await cacheLayer.clear(strategy, "*");
+        totalCleared += cleared;
+        console.log(`🧹 Cleared ${cleared} keys for ${strategy}`);
+      } catch (strategyError) {
+        console.warn(`⚠️ Failed to clear ${strategy}:`, strategyError.message);
+      }
+    }
+
+    // مسح إضافي لجميع المفاتيح التي تحتوي على "hero-occasions"
+    try {
+      const allKeys = await cacheLayer.cacheService.getKeys("*hero-occasions*");
+      if (allKeys.length > 0) {
+        for (const key of allKeys) {
+          await cacheLayer.cacheService.del(key);
+        }
+        console.log(
+          `🧹 Cleared ${allKeys.length} additional hero-occasions keys`
+        );
+        totalCleared += allKeys.length;
+      }
+    } catch (additionalError) {
+      console.warn(
+        "⚠️ Failed to clear additional keys:",
+        additionalError.message
+      );
+    }
+
+    console.log(
+      `🗑️ All occasions cache cleared successfully (${totalCleared} total keys)`
+    );
+  } catch (error) {
+    console.error("❌ Error clearing occasions cache:", error.message);
+  }
+};
 
 // Cache TTL Constants
 const CACHE_TTL = {
@@ -137,11 +168,16 @@ export const uploadSingleImage = async (req, res) => {
 // إحصائيات الكاش
 export const getCacheStats = async (req, res) => {
   try {
-    const stats = await cacheManager.getAllStats();
+    const stats = cacheLayer.getStats();
+    const health = await cacheLayer.getHealth();
 
     res.status(200).json({
       success: true,
-      data: stats,
+      data: {
+        stats,
+        health,
+        timestamp: new Date().toISOString(),
+      },
     });
   } catch (error) {
     console.error("Error getting cache stats:", error);
@@ -156,14 +192,14 @@ export const getCacheStats = async (req, res) => {
 // مسح الكاش يدوياً
 export const clearCache = async (req, res) => {
   try {
-    const { namespace, pattern } = req.query;
+    const { strategy, pattern } = req.query;
 
     let result;
-    if (namespace) {
-      result = await cacheManager.clearNamespace(namespace, pattern || "*");
+    if (strategy) {
+      result = await cacheLayer.clear(strategy, pattern || "*");
     } else {
-      // مسح جميع namespaces
-      result = await cacheManager.clearNamespace("hero-occasions");
+      // مسح جميع الاستراتيجيات
+      result = await cacheLayer.clear("hero-occasions", "*");
     }
 
     res.status(200).json({
@@ -184,14 +220,16 @@ export const clearCache = async (req, res) => {
 // تشخيص Redis
 export const diagnoseRedis = async (req, res) => {
   try {
-    const testResult = await cacheManager.cacheService.testConnection();
-    const stats = cacheManager.cacheService.getStats();
+    const testResult = await cacheLayer.cacheService.testConnection();
+    const stats = cacheLayer.getStats();
+    const health = await cacheLayer.getHealth();
 
     res.status(200).json({
       success: true,
       data: {
         ...testResult,
         stats,
+        health,
         timestamp: new Date().toISOString(),
       },
     });
@@ -221,8 +259,7 @@ export const getAllOccasions = async (req, res) => {
     } = req.query;
 
     // محاولة الحصول من الكاش
-    const cacheKey = `all:${page}:${limit}:${isActive}:${search}:${language}:${sortBy}:${sortOrder}`;
-    const cached = await cacheManager.get("hero-occasions", "all", {
+    const cached = await cacheLayer.get("hero-occasions", "all", {
       page,
       limit,
       isActive,
@@ -237,7 +274,7 @@ export const getAllOccasions = async (req, res) => {
         success: true,
         ...cached,
         cached: true,
-        cacheKey: cacheKey,
+        cacheStrategy: "hero-occasions",
       });
     }
 
@@ -285,12 +322,12 @@ export const getAllOccasions = async (req, res) => {
         itemsPerPage: parseInt(limit),
       },
       cached: false,
-      cacheKey: cacheKey,
+      cacheStrategy: "hero-occasions",
     };
 
     // حفظ في الكاش
     if (responseData.data && responseData.data.length > 0) {
-      await cacheManager.set(
+      await cacheLayer.set(
         "hero-occasions",
         "all",
         responseData,
@@ -324,14 +361,14 @@ export const getOccasionById = async (req, res) => {
     const { id } = req.params;
 
     // محاولة الحصول من الكاش
-    const cached = await cacheManager.get("hero-occasions", "single", { id });
+    const cached = await cacheLayer.get("hero-occasions", "single", { id });
 
     if (cached) {
       return res.status(200).json({
         success: true,
         data: cached,
         cached: true,
-        cacheKey: `single:${id}`,
+        cacheStrategy: "hero-occasions",
       });
     }
 
@@ -350,7 +387,7 @@ export const getOccasionById = async (req, res) => {
     }
 
     // حفظ في الكاش
-    await cacheManager.set(
+    await cacheLayer.set(
       "hero-occasions",
       "single",
       occasion,
@@ -364,7 +401,7 @@ export const getOccasionById = async (req, res) => {
       success: true,
       data: occasion,
       cached: false,
-      cacheKey: `single:${id}`,
+      cacheStrategy: "hero-occasions",
     });
   } catch (error) {
     console.error("خطأ في الحصول على المناسبة:", error);
@@ -382,7 +419,7 @@ export const getActiveOccasions = async (req, res) => {
     const { limit = 10 } = req.query;
 
     // محاولة الحصول من الكاش
-    const cached = await cacheManager.get("hero-occasions", "active", {
+    const cached = await cacheLayer.get("hero-occasions-active", "list", {
       limit,
     });
 
@@ -391,7 +428,7 @@ export const getActiveOccasions = async (req, res) => {
         success: true,
         data: cached,
         cached: true,
-        cacheKey: `active:${limit}`,
+        cacheStrategy: "hero-occasions-active",
       });
     }
 
@@ -403,9 +440,9 @@ export const getActiveOccasions = async (req, res) => {
       .limit(parseInt(limit));
 
     // حفظ في الكاش
-    await cacheManager.set(
-      "hero-occasions",
-      "active",
+    await cacheLayer.set(
+      "hero-occasions-active",
+      "list",
       occasions,
       { limit },
       {
@@ -417,7 +454,7 @@ export const getActiveOccasions = async (req, res) => {
       success: true,
       data: occasions,
       cached: false,
-      cacheKey: `active:${limit}`,
+      cacheStrategy: "hero-occasions-active",
     });
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات النشطة:", error);
@@ -435,7 +472,7 @@ export const getUpcomingOccasions = async (req, res) => {
     const { limit = 5 } = req.query;
 
     // محاولة الحصول من الكاش
-    const cached = await cacheManager.get("hero-occasions", "upcoming", {
+    const cached = await cacheLayer.get("hero-occasions-upcoming", "list", {
       limit,
     });
 
@@ -444,7 +481,7 @@ export const getUpcomingOccasions = async (req, res) => {
         success: true,
         data: cached,
         cached: true,
-        cacheKey: `upcoming:${limit}`,
+        cacheStrategy: "hero-occasions-upcoming",
       });
     }
 
@@ -460,9 +497,9 @@ export const getUpcomingOccasions = async (req, res) => {
       .limit(parseInt(limit));
 
     // حفظ في الكاش
-    await cacheManager.set(
-      "hero-occasions",
-      "upcoming",
+    await cacheLayer.set(
+      "hero-occasions-upcoming",
+      "list",
       occasions,
       { limit },
       {
@@ -474,7 +511,7 @@ export const getUpcomingOccasions = async (req, res) => {
       success: true,
       data: occasions,
       cached: false,
-      cacheKey: `upcoming:${limit}`,
+      cacheStrategy: "hero-occasions-upcoming",
     });
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات القادمة:", error);
@@ -501,7 +538,7 @@ export const searchOccasions = async (req, res) => {
     const searchQuery = q.trim();
 
     // محاولة الحصول من الكاش
-    const cached = await cacheManager.get("hero-occasions", "search", {
+    const cached = await cacheLayer.get("hero-occasions", "search", {
       query: searchQuery,
       language,
       limit,
@@ -512,7 +549,7 @@ export const searchOccasions = async (req, res) => {
         success: true,
         data: cached,
         cached: true,
-        cacheKey: `search:${searchQuery}:${language}:${limit}`,
+        cacheStrategy: "hero-occasions",
       });
     }
 
@@ -523,7 +560,7 @@ export const searchOccasions = async (req, res) => {
     const limitedOccasions = occasions.slice(0, parseInt(limit));
 
     // حفظ في الكاش
-    await cacheManager.set(
+    await cacheLayer.set(
       "hero-occasions",
       "search",
       limitedOccasions,
@@ -539,7 +576,7 @@ export const searchOccasions = async (req, res) => {
       success: true,
       data: limitedOccasions,
       cached: false,
-      cacheKey: `search:${searchQuery}:${language}:${limit}`,
+      cacheStrategy: "hero-occasions",
     });
   } catch (error) {
     console.error("خطأ في البحث:", error);
@@ -594,7 +631,7 @@ export const createOccasion = async (req, res) => {
     await newOccasion.populate("createdBy", "name email");
 
     // مسح الكاش بعد إنشاء مناسبة جديدة
-    await cacheManager.invalidate("hero-occasions", "immediate");
+    await clearAllOccasionsCache();
 
     res.status(201).json({
       success: true,
@@ -665,7 +702,7 @@ export const updateOccasion = async (req, res) => {
     }
 
     // مسح الكاش بعد تحديث المناسبة
-    await cacheManager.invalidate("hero-occasions", "immediate");
+    await clearAllOccasionsCache();
 
     res.status(200).json({
       success: true,
@@ -713,7 +750,7 @@ export const deleteOccasion = async (req, res) => {
     }
 
     // مسح الكاش بعد حذف المناسبة
-    await cacheManager.invalidate("hero-occasions", "immediate");
+    await clearAllOccasionsCache();
 
     res.status(200).json({
       success: true,
@@ -747,7 +784,7 @@ export const toggleOccasionStatus = async (req, res) => {
     await occasion.save();
 
     // مسح الكاش بعد تبديل حالة المناسبة
-    await cacheManager.invalidate("hero-occasions", "immediate");
+    await clearAllOccasionsCache();
 
     res.status(200).json({
       success: true,
@@ -807,7 +844,7 @@ export const importOccasions = async (req, res) => {
     }
 
     // مسح الكاش بعد استيراد المناسبات
-    await cacheManager.invalidate("hero-occasions", "immediate");
+    await clearAllOccasionsCache();
 
     res.status(200).json({
       success: true,

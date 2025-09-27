@@ -1,28 +1,30 @@
-// decorators/cacheDecorators.js
-import cacheManager from "../services/cacheManager.js";
+// services/cache/CacheDecorators.js
+// ديكوراتورات الكاش المحسنة
+
+import cacheLayer from "./CacheLayer.js";
 
 /**
- * Cache Decorators - ديكوراتورات الكاش للاستخدام السهل
- * توفر طرق سهلة لتطبيق الكاش على الدوال
+ * Cache Decorators - ديكوراتورات الكاش المحسنة
+ * توفر طرق سهلة ومتقدمة لتطبيق الكاش على الدوال
  */
 
 /**
  * ديكوراتور للكاش التلقائي
+ * @param {string} strategyName - اسم استراتيجية الكاش
  * @param {Object} options - خيارات الكاش
  * @returns {Function} - الديكوراتور
  */
-export function cacheable(options = {}) {
+export function cacheable(strategyName, options = {}) {
   return function (target, propertyName, descriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args) {
       const {
-        namespace = "default",
         operation = propertyName,
-        ttl = 3600,
         keyParams = [],
         skipCache = false,
         cacheCondition = null,
+        ...cacheOptions
       } = options;
 
       // إنشاء معاملات المفتاح من args
@@ -45,28 +47,37 @@ export function cacheable(options = {}) {
 
       try {
         // محاولة الحصول من الكاش
-        const cached = await cacheManager.get(namespace, operation, params, {
-          defaultValue: null,
-        });
+        const cached = await cacheLayer.get(
+          strategyName,
+          operation,
+          params,
+          cacheOptions
+        );
 
         if (cached !== null) {
-          console.log(`✅ Cache HIT: ${namespace}:${operation}`);
+          console.log(`✅ Cache HIT: ${strategyName}:${operation}`);
           return cached;
         }
 
         // Cache MISS - تنفيذ الدالة الأصلية
-        console.log(`🔄 Cache MISS: ${namespace}:${operation}`);
+        console.log(`🔄 Cache MISS: ${strategyName}:${operation}`);
         const result = await originalMethod.apply(this, args);
 
         // حفظ النتيجة في الكاش
         if (result !== null && result !== undefined) {
-          await cacheManager.set(namespace, operation, result, params, { ttl });
+          await cacheLayer.set(
+            strategyName,
+            operation,
+            result,
+            params,
+            cacheOptions
+          );
         }
 
         return result;
       } catch (error) {
         console.error(
-          `Cache decorator error for ${namespace}:${operation}:`,
+          `Cache decorator error for ${strategyName}:${operation}:`,
           error.message
         );
         // في حالة الخطأ، تنفيذ الدالة الأصلية
@@ -80,40 +91,52 @@ export function cacheable(options = {}) {
 
 /**
  * ديكوراتور لمسح الكاش عند التحديث
+ * @param {string} strategyName - اسم استراتيجية الكاش
  * @param {Object} options - خيارات المسح
  * @returns {Function} - الديكوراتور
  */
-export function cacheInvalidate(options = {}) {
+export function cacheInvalidate(strategyName, options = {}) {
   return function (target, propertyName, descriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args) {
       const {
-        namespace = "default",
-        strategy = "immediate",
-        operations = [],
-        pattern = "*",
+        operation = propertyName,
+        keyParams = [],
         afterExecution = true,
+        ...cacheOptions
       } = options;
+
+      // إنشاء معاملات المفتاح من args
+      const params = {};
+      keyParams.forEach((paramName, index) => {
+        if (args[index] !== undefined) {
+          params[paramName] = args[index];
+        }
+      });
 
       // تنفيذ الدالة الأصلية أولاً إذا كان مطلوباً
       let result;
       if (!afterExecution) {
         // مسح الكاش قبل التنفيذ
-        await cacheManager.invalidate(namespace, strategy, {
-          operations,
-          pattern,
-        });
+        await cacheLayer.invalidate(
+          strategyName,
+          operation,
+          params,
+          cacheOptions
+        );
         result = await originalMethod.apply(this, args);
       } else {
         // تنفيذ الدالة ثم مسح الكاش
         result = await originalMethod.apply(this, args);
 
         // مسح الكاش بعد التنفيذ
-        await cacheManager.invalidate(namespace, strategy, {
-          operations,
-          pattern,
-        });
+        await cacheLayer.invalidate(
+          strategyName,
+          operation,
+          params,
+          cacheOptions
+        );
       }
 
       return result;
@@ -125,11 +148,12 @@ export function cacheInvalidate(options = {}) {
 
 /**
  * ديكوراتور للكاش المشروط
+ * @param {string} strategyName - اسم استراتيجية الكاش
  * @param {Function} condition - دالة الشرط
  * @param {Object} options - خيارات الكاش
  * @returns {Function} - الديكوراتور
  */
-export function cacheWhen(condition, options = {}) {
+export function cacheWhen(strategyName, condition, options = {}) {
   return function (target, propertyName, descriptor) {
     const originalMethod = descriptor.value;
 
@@ -140,7 +164,7 @@ export function cacheWhen(condition, options = {}) {
       }
 
       // تطبيق ديكوراتور الكاش العادي
-      const cacheDecorator = cacheable(options);
+      const cacheDecorator = cacheable(strategyName, options);
       const decoratedDescriptor = cacheDecorator(
         target,
         propertyName,
@@ -156,20 +180,17 @@ export function cacheWhen(condition, options = {}) {
 
 /**
  * ديكوراتور للكاش مع TTL ديناميكي
+ * @param {string} strategyName - اسم استراتيجية الكاش
  * @param {Function} ttlFunction - دالة حساب TTL
  * @param {Object} options - خيارات الكاش
  * @returns {Function} - الديكوراتور
  */
-export function cacheWithDynamicTTL(ttlFunction, options = {}) {
+export function cacheWithDynamicTTL(strategyName, ttlFunction, options = {}) {
   return function (target, propertyName, descriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args) {
-      const {
-        namespace = "default",
-        operation = propertyName,
-        keyParams = [],
-      } = options;
+      const { operation = propertyName, keyParams = [] } = options;
 
       // حساب TTL ديناميكياً
       const dynamicTTL = ttlFunction(...args);
@@ -184,24 +205,25 @@ export function cacheWithDynamicTTL(ttlFunction, options = {}) {
 
       try {
         // محاولة الحصول من الكاش
-        const cached = await cacheManager.get(namespace, operation, params);
+        const cached = await cacheLayer.get(strategyName, operation, params);
 
         if (cached !== null) {
           console.log(
-            `✅ Cache HIT: ${namespace}:${operation} (TTL: ${dynamicTTL})`
+            `✅ Cache HIT: ${strategyName}:${operation} (TTL: ${dynamicTTL})`
           );
           return cached;
         }
 
         // Cache MISS
         console.log(
-          `🔄 Cache MISS: ${namespace}:${operation} (TTL: ${dynamicTTL})`
+          `🔄 Cache MISS: ${strategyName}:${operation} (TTL: ${dynamicTTL})`
         );
         const result = await originalMethod.apply(this, args);
 
         // حفظ مع TTL ديناميكي
         if (result !== null && result !== undefined) {
-          await cacheManager.set(namespace, operation, result, params, {
+          await cacheLayer.set(strategyName, operation, result, params, {
+            ...options,
             ttl: dynamicTTL,
           });
         }
@@ -209,7 +231,7 @@ export function cacheWithDynamicTTL(ttlFunction, options = {}) {
         return result;
       } catch (error) {
         console.error(
-          `Dynamic TTL cache error for ${namespace}:${operation}:`,
+          `Dynamic TTL cache error for ${strategyName}:${operation}:`,
           error.message
         );
         return await originalMethod.apply(this, args);
@@ -221,21 +243,21 @@ export function cacheWithDynamicTTL(ttlFunction, options = {}) {
 }
 
 /**
- * ديكوراتور للكاش مع Compress
+ * ديكوراتور للكاش مع Background Refresh
+ * @param {string} strategyName - اسم استراتيجية الكاش
  * @param {Object} options - خيارات الكاش
  * @returns {Function} - الديكوراتور
  */
-export function cacheWithCompression(options = {}) {
+export function cacheWithBackgroundRefresh(strategyName, options = {}) {
   return function (target, propertyName, descriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args) {
       const {
-        namespace = "default",
         operation = propertyName,
-        ttl = 3600,
         keyParams = [],
-        compressionThreshold = 1024,
+        refreshThreshold = 0.8,
+        ...cacheOptions
       } = options;
 
       // إنشاء معاملات المفتاح
@@ -248,38 +270,63 @@ export function cacheWithCompression(options = {}) {
 
       try {
         // محاولة الحصول من الكاش
-        const cached = await cacheManager.get(namespace, operation, params);
+        const cached = await cacheLayer.get(strategyName, operation, params);
 
         if (cached !== null) {
-          console.log(`✅ Cache HIT (compressed): ${namespace}:${operation}`);
+          // التحقق من TTL
+          const config = cacheLayer.getStrategyConfig(strategyName);
+          const key = cacheLayer.buildKey(strategyName, operation, params);
+          const currentTTL = await cacheLayer.cacheService.ttl(key);
+
+          const shouldRefresh = currentTTL < config.ttl * refreshThreshold;
+
+          if (shouldRefresh) {
+            // تحديث في الخلفية
+            setImmediate(async () => {
+              try {
+                console.log(
+                  `🔄 Background refresh for ${strategyName}:${operation}`
+                );
+                const result = await originalMethod.apply(this, args);
+                await cacheLayer.set(
+                  strategyName,
+                  operation,
+                  result,
+                  params,
+                  cacheOptions
+                );
+              } catch (error) {
+                console.error(
+                  `Background refresh failed for ${strategyName}:${operation}:`,
+                  error.message
+                );
+              }
+            });
+          }
+
+          console.log(`✅ Cache HIT: ${strategyName}:${operation}`);
           return cached;
         }
 
         // Cache MISS
-        console.log(`🔄 Cache MISS: ${namespace}:${operation}`);
+        console.log(`🔄 Cache MISS: ${strategyName}:${operation}`);
         const result = await originalMethod.apply(this, args);
 
-        // حفظ مع ضغط
+        // حفظ النتيجة
         if (result !== null && result !== undefined) {
-          const serialized = JSON.stringify(result);
-          const shouldCompress = serialized.length > compressionThreshold;
-
-          await cacheManager.set(namespace, operation, result, params, {
-            ttl,
-            compress: shouldCompress,
-          });
-
-          if (shouldCompress) {
-            console.log(
-              `📦 Compressed cache for ${namespace}:${operation} (${serialized.length} bytes)`
-            );
-          }
+          await cacheLayer.set(
+            strategyName,
+            operation,
+            result,
+            params,
+            cacheOptions
+          );
         }
 
         return result;
       } catch (error) {
         console.error(
-          `Compression cache error for ${namespace}:${operation}:`,
+          `Background refresh cache error for ${strategyName}:${operation}:`,
           error.message
         );
         return await originalMethod.apply(this, args);
@@ -292,21 +339,21 @@ export function cacheWithCompression(options = {}) {
 
 /**
  * ديكوراتور للكاش مع Retry
+ * @param {string} strategyName - اسم استراتيجية الكاش
  * @param {Object} options - خيارات الكاش
  * @returns {Function} - الديكوراتور
  */
-export function cacheWithRetry(options = {}) {
+export function cacheWithRetry(strategyName, options = {}) {
   return function (target, propertyName, descriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args) {
       const {
-        namespace = "default",
         operation = propertyName,
-        ttl = 3600,
         keyParams = [],
         maxRetries = 3,
         retryDelay = 1000,
+        ...cacheOptions
       } = options;
 
       // إنشاء معاملات المفتاح
@@ -322,33 +369,37 @@ export function cacheWithRetry(options = {}) {
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           // محاولة الحصول من الكاش
-          const cached = await cacheManager.get(namespace, operation, params);
+          const cached = await cacheLayer.get(strategyName, operation, params);
 
           if (cached !== null) {
             console.log(
-              `✅ Cache HIT (attempt ${attempt}): ${namespace}:${operation}`
+              `✅ Cache HIT (attempt ${attempt}): ${strategyName}:${operation}`
             );
             return cached;
           }
 
           // Cache MISS - تنفيذ الدالة الأصلية
           console.log(
-            `🔄 Cache MISS (attempt ${attempt}): ${namespace}:${operation}`
+            `🔄 Cache MISS (attempt ${attempt}): ${strategyName}:${operation}`
           );
           const result = await originalMethod.apply(this, args);
 
           // حفظ النتيجة
           if (result !== null && result !== undefined) {
-            await cacheManager.set(namespace, operation, result, params, {
-              ttl,
-            });
+            await cacheLayer.set(
+              strategyName,
+              operation,
+              result,
+              params,
+              cacheOptions
+            );
           }
 
           return result;
         } catch (error) {
           lastError = error;
           console.warn(
-            `Cache attempt ${attempt} failed for ${namespace}:${operation}:`,
+            `Cache attempt ${attempt} failed for ${strategyName}:${operation}:`,
             error.message
           );
 
@@ -362,7 +413,7 @@ export function cacheWithRetry(options = {}) {
 
       // فشلت جميع المحاولات
       console.error(
-        `All cache attempts failed for ${namespace}:${operation}:`,
+        `All cache attempts failed for ${strategyName}:${operation}:`,
         lastError.message
       );
       throw lastError;
@@ -373,21 +424,21 @@ export function cacheWithRetry(options = {}) {
 }
 
 /**
- * ديكوراتور للكاش مع Background Refresh
+ * ديكوراتور للكاش مع Compress
+ * @param {string} strategyName - اسم استراتيجية الكاش
  * @param {Object} options - خيارات الكاش
  * @returns {Function} - الديكوراتور
  */
-export function cacheWithBackgroundRefresh(options = {}) {
+export function cacheWithCompression(strategyName, options = {}) {
   return function (target, propertyName, descriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args) {
       const {
-        namespace = "default",
         operation = propertyName,
-        ttl = 3600,
-        refreshThreshold = 0.8, // تحديث عند 80% من TTL
         keyParams = [],
+        compressionThreshold = 1024,
+        ...cacheOptions
       } = options;
 
       // إنشاء معاملات المفتاح
@@ -400,53 +451,40 @@ export function cacheWithBackgroundRefresh(options = {}) {
 
       try {
         // محاولة الحصول من الكاش
-        const cached = await cacheManager.get(namespace, operation, params);
+        const cached = await cacheLayer.get(strategyName, operation, params);
 
         if (cached !== null) {
-          // التحقق من TTL
-          const currentTTL = await cacheManager.cacheService.ttl(
-            cacheManager.buildKey(namespace, operation, params)
+          console.log(
+            `✅ Cache HIT (compressed): ${strategyName}:${operation}`
           );
-
-          const shouldRefresh = currentTTL < ttl * refreshThreshold;
-
-          if (shouldRefresh) {
-            // تحديث في الخلفية
-            setImmediate(async () => {
-              try {
-                console.log(
-                  `🔄 Background refresh for ${namespace}:${operation}`
-                );
-                const result = await originalMethod.apply(this, args);
-                await cacheManager.set(namespace, operation, result, params, {
-                  ttl,
-                });
-              } catch (error) {
-                console.error(
-                  `Background refresh failed for ${namespace}:${operation}:`,
-                  error.message
-                );
-              }
-            });
-          }
-
-          console.log(`✅ Cache HIT: ${namespace}:${operation}`);
           return cached;
         }
 
         // Cache MISS
-        console.log(`🔄 Cache MISS: ${namespace}:${operation}`);
+        console.log(`🔄 Cache MISS: ${strategyName}:${operation}`);
         const result = await originalMethod.apply(this, args);
 
-        // حفظ النتيجة
+        // حفظ مع ضغط
         if (result !== null && result !== undefined) {
-          await cacheManager.set(namespace, operation, result, params, { ttl });
+          const serialized = JSON.stringify(result);
+          const shouldCompress = serialized.length > compressionThreshold;
+
+          await cacheLayer.set(strategyName, operation, result, params, {
+            ...cacheOptions,
+            compress: shouldCompress,
+          });
+
+          if (shouldCompress) {
+            console.log(
+              `📦 Compressed cache for ${strategyName}:${operation} (${serialized.length} bytes)`
+            );
+          }
         }
 
         return result;
       } catch (error) {
         console.error(
-          `Background refresh cache error for ${namespace}:${operation}:`,
+          `Compression cache error for ${strategyName}:${operation}:`,
           error.message
         );
         return await originalMethod.apply(this, args);
@@ -462,7 +500,7 @@ export default {
   cacheInvalidate,
   cacheWhen,
   cacheWithDynamicTTL,
-  cacheWithCompression,
-  cacheWithRetry,
   cacheWithBackgroundRefresh,
+  cacheWithRetry,
+  cacheWithCompression,
 };

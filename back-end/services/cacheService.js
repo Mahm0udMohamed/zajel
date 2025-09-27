@@ -32,13 +32,18 @@ class CacheService {
    * @returns {Promise<any>} - القيمة المحفوظة أو null
    */
   async get(key, options = {}) {
-    const { parse = true, defaultValue = null, namespace = null } = options;
+    const {
+      parse = true,
+      defaultValue = null,
+      namespace = null,
+      silent = false,
+    } = options;
 
     try {
       this.stats.totalOperations++;
 
       if (!this.isReady()) {
-        console.warn(`Redis not ready for key: ${key}`);
+        if (!silent) console.warn(`Redis not ready for key: ${key}`);
         return defaultValue;
       }
 
@@ -47,24 +52,26 @@ class CacheService {
 
       if (value === null) {
         this.stats.misses++;
-        console.log(`🔄 Cache MISS: ${fullKey}`);
+        if (!silent) console.log(`🔄 Cache MISS: ${fullKey}`);
         return defaultValue;
       }
 
       this.stats.hits++;
-      console.log(`✅ Cache HIT: ${fullKey}`);
+      if (!silent) console.log(`✅ Cache HIT: ${fullKey}`);
 
       if (!parse) return value;
 
       try {
         return JSON.parse(value);
       } catch (parseError) {
-        console.warn(`Failed to parse cached value for key: ${fullKey}`);
+        if (!silent)
+          console.warn(`Failed to parse cached value for key: ${fullKey}`);
         return defaultValue;
       }
     } catch (error) {
       this.stats.errors++;
-      console.error(`Cache GET error for key ${key}:`, error.message);
+      if (!silent)
+        console.error(`Cache GET error for key ${key}:`, error.message);
       return defaultValue;
     }
   }
@@ -83,13 +90,14 @@ class CacheService {
       compress = this.compressionEnabled,
       onlyIfNotExists = false,
       onlyIfExists = false,
+      silent = false,
     } = options;
 
     try {
       this.stats.totalOperations++;
 
       if (!this.isReady()) {
-        console.warn(`Redis not ready for key: ${key}`);
+        if (!silent) console.warn(`Redis not ready for key: ${key}`);
         return false;
       }
 
@@ -105,9 +113,10 @@ class CacheService {
       // تطبيق الضغط إذا كان مفعلاً
       if (compress && serializedValue.length > 1024) {
         // يمكن إضافة ضغط هنا لاحقاً
-        console.log(
-          `📦 Large value detected for key: ${fullKey} (${serializedValue.length} bytes)`
-        );
+        if (!silent)
+          console.log(
+            `📦 Large value detected for key: ${fullKey} (${serializedValue.length} bytes)`
+          );
       }
 
       let result;
@@ -129,14 +138,15 @@ class CacheService {
       }
 
       if (result === "OK" || result === 1) {
-        console.log(`✅ Cached: ${fullKey} (TTL: ${ttl}s)`);
+        if (!silent) console.log(`✅ Cached: ${fullKey} (TTL: ${ttl}s)`);
         return true;
       }
 
       return false;
     } catch (error) {
       this.stats.errors++;
-      console.error(`Cache SET error for key ${key}:`, error.message);
+      if (!silent)
+        console.error(`Cache SET error for key ${key}:`, error.message);
       return false;
     }
   }
@@ -148,13 +158,13 @@ class CacheService {
    * @returns {Promise<boolean>} - نجح الحذف أم لا
    */
   async del(key, options = {}) {
-    const { namespace = null, pattern = false } = options;
+    const { namespace = null, pattern = false, silent = false } = options;
 
     try {
       this.stats.totalOperations++;
 
       if (!this.isReady()) {
-        console.warn(`Redis not ready for key: ${key}`);
+        if (!silent) console.warn(`Redis not ready for key: ${key}`);
         return false;
       }
 
@@ -163,24 +173,27 @@ class CacheService {
         const keys = await this.redis.keys(fullPattern);
 
         if (keys.length === 0) {
-          console.log(`🔍 No keys found for pattern: ${fullPattern}`);
+          if (!silent)
+            console.log(`🔍 No keys found for pattern: ${fullPattern}`);
           return true;
         }
 
         const result = await this.redis.del(...keys);
-        console.log(
-          `🗑️ Deleted ${result} keys matching pattern: ${fullPattern}`
-        );
+        if (!silent)
+          console.log(
+            `🗑️ Deleted ${result} keys matching pattern: ${fullPattern}`
+          );
         return result > 0;
       } else {
         const fullKey = namespace ? `${namespace}:${key}` : key;
         const result = await this.redis.del(fullKey);
-        console.log(`🗑️ Deleted key: ${fullKey}`);
+        if (!silent) console.log(`🗑️ Deleted key: ${fullKey}`);
         return result > 0;
       }
     } catch (error) {
       this.stats.errors++;
-      console.error(`Cache DEL error for key ${key}:`, error.message);
+      if (!silent)
+        console.error(`Cache DEL error for key ${key}:`, error.message);
       return false;
     }
   }
@@ -352,9 +365,10 @@ class CacheService {
 
   /**
    * اختبار الاتصال
+   * @param {boolean} silent - وضع صامت بدون رسائل console
    * @returns {Promise<Object>} - نتيجة الاختبار
    */
-  async testConnection() {
+  async testConnection(silent = false) {
     try {
       const testKey = `test:connection:${Date.now()}`;
       const testValue = {
@@ -363,19 +377,19 @@ class CacheService {
       };
 
       // اختبار SET
-      const setResult = await this.set(testKey, testValue, { ttl: 60 });
+      const setResult = await this.set(testKey, testValue, { ttl: 60, silent });
       if (!setResult) {
         throw new Error("Failed to set test value");
       }
 
       // اختبار GET
-      const getValue = await this.get(testKey);
+      const getValue = await this.get(testKey, { silent });
       if (!getValue || getValue.message !== testValue.message) {
         throw new Error("Failed to get test value");
       }
 
       // اختبار DEL
-      const delResult = await this.del(testKey);
+      const delResult = await this.del(testKey, { silent });
       if (!delResult) {
         throw new Error("Failed to delete test value");
       }

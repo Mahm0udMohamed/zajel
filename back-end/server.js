@@ -16,9 +16,11 @@ import favoritesRoutes from "./routes/favoritesRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import heroOccasionsRoutes from "./routes/heroOccasionsRoutes.js";
+import cacheRoutes from "./routes/cacheRoutes.js";
 import passport from "./config/passport.js";
 import { printServiceStatus } from "./utils/serviceChecker.js";
 import Admin from "./models/Admin.js";
+import { cacheLayer, cacheUtils } from "./services/cache/index.js";
 
 dotenv.config();
 
@@ -89,13 +91,12 @@ setTimeout(createAdminIfNotExists, 2000); // انتظار 2 ثانية للتأ�
 // مسح الكاش الفاسد عند بدء السيرفر
 const clearInvalidCache = async () => {
   try {
-    const redis = await import("./config/redisClient.js");
-    if (redis.default.isReady()) {
-      const keys = await redis.default.keys("hero-occasions:*");
+    if (cacheLayer.cacheService.isReady()) {
+      const keys = await cacheLayer.cacheService.getKeys("hero-occasions:*");
       for (const key of keys) {
-        const value = await redis.default.get(key);
+        const value = await cacheLayer.cacheService.get(key);
         if (value === "{}" || value === "[]") {
-          await redis.default.del(key);
+          await cacheLayer.cacheService.del(key);
           console.log(`🗑️ Cleared invalid cache key: ${key}`);
         }
       }
@@ -110,15 +111,14 @@ setTimeout(clearInvalidCache, 3000); // انتظار 3 ثوان للتأكد م�
 // مسح الكاش الفاسد كل ساعة
 setInterval(async () => {
   try {
-    const redis = await import("./config/redisClient.js");
-    if (redis.default.isReady()) {
-      const keys = await redis.default.keys("hero-occasions:*");
+    if (cacheLayer.cacheService.isReady()) {
+      const keys = await cacheLayer.cacheService.getKeys("hero-occasions:*");
       let clearedCount = 0;
 
       for (const key of keys) {
-        const value = await redis.default.get(key);
+        const value = await cacheLayer.cacheService.get(key);
         if (value === "{}" || value === "[]" || value === "null") {
-          await redis.default.del(key);
+          await cacheLayer.cacheService.del(key);
           clearedCount++;
         }
       }
@@ -221,6 +221,7 @@ app.use("/api/favorites", favoritesRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/hero-occasions", heroOccasionsRoutes);
+app.use("/api/cache", cacheRoutes);
 
 // ✅ إنشاء السيرفر باستخدام HTTPS للتطوير المحلي
 const PORT = process.env.PORT || 3002;
@@ -244,11 +245,10 @@ server.listen(PORT, () => {
 process.on("SIGINT", async () => {
   console.log("🔄 Server restarting, clearing cache...");
   try {
-    const redis = await import("./config/redisClient.js");
-    if (redis.default.isReady()) {
-      const keys = await redis.default.keys("hero-occasions:*");
+    if (cacheLayer.cacheService.isReady()) {
+      const keys = await cacheLayer.cacheService.getKeys("hero-occasions:*");
       if (keys.length > 0) {
-        await redis.default.del(...keys);
+        await cacheLayer.cacheService.del(...keys);
         console.log(`✅ Cleared ${keys.length} cache keys on restart`);
       }
     }
@@ -261,11 +261,10 @@ process.on("SIGINT", async () => {
 process.on("SIGTERM", async () => {
   console.log("🔄 Server stopping, clearing cache...");
   try {
-    const redis = await import("./config/redisClient.js");
-    if (redis.default.isReady()) {
-      const keys = await redis.default.keys("hero-occasions:*");
+    if (cacheLayer.cacheService.isReady()) {
+      const keys = await cacheLayer.cacheService.getKeys("hero-occasions:*");
       if (keys.length > 0) {
-        await redis.default.del(...keys);
+        await cacheLayer.cacheService.del(...keys);
         console.log(`✅ Cleared ${keys.length} cache keys on stop`);
       }
     }
