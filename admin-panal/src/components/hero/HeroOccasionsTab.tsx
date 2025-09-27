@@ -57,11 +57,13 @@ export default function HeroOccasionsTab() {
     images: [""],
     celebratoryMessageAr: "",
     celebratoryMessageEn: "",
-    priority: 5,
     isActive: true,
   });
   const [originalOccasion, setOriginalOccasion] =
     useState<HeroOccasionFormData | null>(null);
+  const [uploadingImages, setUploadingImages] = useState<Set<number>>(
+    new Set()
+  );
 
   const { toast } = useToast();
 
@@ -108,7 +110,7 @@ export default function HeroOccasionsTab() {
     loadOccasions();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleImageUpload = (
+  const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
     imageIndex: number
   ) => {
@@ -134,26 +136,58 @@ export default function HeroOccasionsTab() {
         return;
       }
 
-      // تحويل الصورة إلى base64
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64String = e.target?.result as string;
-        const updatedImages = [...newOccasion.images];
-        updatedImages[imageIndex] = base64String;
-        setNewOccasion({ ...newOccasion, images: updatedImages });
-        toast({
-          title: "تم رفع الصورة",
-          description: "تم رفع الصورة بنجاح",
-        });
-      };
-      reader.onerror = () => {
+      // إضافة مؤشر التحميل
+      setUploadingImages((prev) => new Set(prev).add(imageIndex));
+
+      // إرسال الصورة إلى الباك اند لرفعها إلى Cloudinary
+      try {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const response = await fetch(
+          `${
+            import.meta.env.VITE_API_URL || "https://localhost:3002/api"
+          }/hero-occasions/upload`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${apiService.getAccessToken()}`,
+            },
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const cloudinaryUrl = data.secure_url;
+
+          // تحديث الصورة بالرابط من Cloudinary
+          const updatedImages = [...newOccasion.images];
+          updatedImages[imageIndex] = cloudinaryUrl;
+          setNewOccasion({ ...newOccasion, images: updatedImages });
+
+          toast({
+            title: "تم رفع الصورة",
+            description: "تم رفع الصورة بنجاح",
+          });
+        } else {
+          throw new Error("فشل في رفع الصورة");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
         toast({
           title: "خطأ",
-          description: "فشل في قراءة الصورة",
+          description: "فشل في رفع الصورة",
           variant: "destructive",
         });
-      };
-      reader.readAsDataURL(file);
+      } finally {
+        // إزالة مؤشر التحميل
+        setUploadingImages((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(imageIndex);
+          return newSet;
+        });
+      }
     }
   };
 
@@ -165,7 +199,6 @@ export default function HeroOccasionsTab() {
       images: [""],
       celebratoryMessageAr: "",
       celebratoryMessageEn: "",
-      priority: 5,
       isActive: true,
     });
   };
@@ -320,10 +353,6 @@ export default function HeroOccasionsTab() {
       errors.push("الرسالة التهنئة الإنجليزية مطلوبة");
     }
 
-    if (data.priority < 1 || data.priority > 10) {
-      errors.push("الأولوية يجب أن تكون بين 1 و 10");
-    }
-
     return errors;
   };
 
@@ -340,18 +369,30 @@ export default function HeroOccasionsTab() {
     }
 
     try {
-      // إنشاء معرف فريد للمناسبة
-      const id = newOccasion.nameEn
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "");
+      // فلترة الصور الصحيحة فقط
+      const validImages = newOccasion.images.filter((img) => img.trim() !== "");
+
+      // التحقق من وجود صورة واحدة على الأقل
+      if (validImages.length === 0) {
+        toast({
+          title: "خطأ في التحقق",
+          description: "يجب إضافة صورة واحدة على الأقل",
+          variant: "destructive",
+        });
+        return;
+      }
 
       const occasionData = {
-        id,
-        ...newOccasion,
+        nameAr: newOccasion.nameAr.trim(),
+        nameEn: newOccasion.nameEn.trim(),
         date: new Date(newOccasion.date).toISOString(),
-        images: newOccasion.images.filter((img) => img.trim() !== ""),
+        images: validImages,
+        celebratoryMessageAr: newOccasion.celebratoryMessageAr.trim(),
+        celebratoryMessageEn: newOccasion.celebratoryMessageEn.trim(),
+        isActive: Boolean(newOccasion.isActive),
       };
+
+      console.log("Sending occasion data:", occasionData);
 
       await apiService.createHeroOccasion(occasionData);
       await loadOccasions();
@@ -364,16 +405,18 @@ export default function HeroOccasionsTab() {
       });
     } catch (error) {
       console.error("Error creating occasion:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "خطأ غير معروف";
       toast({
         title: "خطأ",
-        description: "فشل في إضافة المناسبة",
+        description: `فشل في إضافة المناسبة: ${errorMessage}`,
         variant: "destructive",
       });
     }
   };
 
   const handleEdit = (occasion: HeroOccasion) => {
-    const occasionId = occasion.id || `occasion-${Date.now()}`;
+    const occasionId = occasion._id || `occasion-${Date.now()}`;
     setEditingId(occasionId);
 
     // تحويل التاريخ إلى تنسيق datetime-local
@@ -389,7 +432,6 @@ export default function HeroOccasionsTab() {
       images: [...occasion.images],
       celebratoryMessageAr: occasion.celebratoryMessageAr,
       celebratoryMessageEn: occasion.celebratoryMessageEn,
-      priority: occasion.priority,
       isActive: occasion.isActive,
     };
     setNewOccasion(occasionData);
@@ -419,11 +461,30 @@ export default function HeroOccasionsTab() {
     }
 
     try {
+      // فلترة الصور الصحيحة فقط
+      const validImages = newOccasion.images.filter((img) => img.trim() !== "");
+
+      // التحقق من وجود صورة واحدة على الأقل
+      if (validImages.length === 0) {
+        toast({
+          title: "خطأ في التحقق",
+          description: "يجب إضافة صورة واحدة على الأقل",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const occasionData = {
-        ...newOccasion,
+        nameAr: newOccasion.nameAr.trim(),
+        nameEn: newOccasion.nameEn.trim(),
         date: new Date(newOccasion.date).toISOString(),
-        images: newOccasion.images.filter((img) => img.trim() !== ""),
+        images: validImages,
+        celebratoryMessageAr: newOccasion.celebratoryMessageAr.trim(),
+        celebratoryMessageEn: newOccasion.celebratoryMessageEn.trim(),
+        isActive: Boolean(newOccasion.isActive),
       };
+
+      console.log("Updating occasion data:", occasionData);
 
       await apiService.updateHeroOccasion(editingId, occasionData);
       await loadOccasions();
@@ -437,9 +498,11 @@ export default function HeroOccasionsTab() {
       });
     } catch (error) {
       console.error("Error updating occasion:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "خطأ غير معروف";
       toast({
         title: "خطأ",
-        description: "فشل في تحديث المناسبة",
+        description: `فشل في تحديث المناسبة: ${errorMessage}`,
         variant: "destructive",
       });
     }
@@ -620,29 +683,6 @@ export default function HeroOccasionsTab() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="priority"
-                      className="text-white font-medium"
-                    >
-                      الأولوية (1-10)
-                    </Label>
-                    <Input
-                      id="priority"
-                      type="number"
-                      min="1"
-                      max="10"
-                      value={newOccasion.priority}
-                      onChange={(e) =>
-                        setNewOccasion({
-                          ...newOccasion,
-                          priority: parseInt(e.target.value) || 5,
-                        })
-                      }
-                      className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
-                    />
-                  </div>
-
                   <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
                     <Label className="text-white font-medium">
                       رسائل التهنئة
@@ -740,7 +780,16 @@ export default function HeroOccasionsTab() {
                             </Button>
                           )}
                         </div>
-                        {image && (
+                        {uploadingImages.has(index) ? (
+                          <div className="mt-2 flex items-center justify-center w-20 h-20 bg-gray-800 rounded border">
+                            <div className="flex flex-col items-center gap-2">
+                              <RefreshCw className="w-4 h-4 animate-spin text-blue-400" />
+                              <span className="text-xs text-gray-400">
+                                جاري الرفع...
+                              </span>
+                            </div>
+                          </div>
+                        ) : image ? (
                           <div className="mt-2">
                             <img
                               src={image}
@@ -751,7 +800,7 @@ export default function HeroOccasionsTab() {
                               }}
                             />
                           </div>
-                        )}
+                        ) : null}
                       </div>
                     ))}
                     <Button
@@ -843,7 +892,7 @@ export default function HeroOccasionsTab() {
                   .map((occasion, index) => {
                     // التأكد من وجود ID
                     const occasionId =
-                      occasion.id || `occasion-${index}-${Date.now()}`;
+                      occasion._id || `occasion-${index}-${Date.now()}`;
                     return (
                       <TableRow key={occasionId}>
                         <TableCell>
@@ -870,7 +919,7 @@ export default function HeroOccasionsTab() {
                               .slice(0, 3)
                               .map((image, imageIndex) => (
                                 <img
-                                  key={`${occasion.id}-image-${imageIndex}`}
+                                  key={`${occasion._id}-image-${imageIndex}`}
                                   src={image || "/placeholder.svg"}
                                   alt={`صورة ${imageIndex + 1}`}
                                   className="w-8 h-8 object-cover rounded flex-shrink-0"
@@ -1016,29 +1065,6 @@ export default function HeroOccasionsTab() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="edit-priority"
-                  className="text-white font-medium"
-                >
-                  الأولوية (1-10)
-                </Label>
-                <Input
-                  id="edit-priority"
-                  type="number"
-                  min="1"
-                  max="10"
-                  value={newOccasion.priority}
-                  onChange={(e) =>
-                    setNewOccasion({
-                      ...newOccasion,
-                      priority: parseInt(e.target.value) || 5,
-                    })
-                  }
-                  className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
-                />
-              </div>
-
               <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
                 <Label className="text-white font-medium">رسائل التهنئة</Label>
                 <div className="grid grid-cols-2 gap-4">
@@ -1134,7 +1160,16 @@ export default function HeroOccasionsTab() {
                         </Button>
                       )}
                     </div>
-                    {image && (
+                    {uploadingImages.has(index) ? (
+                      <div className="mt-2 flex items-center justify-center w-20 h-20 bg-gray-800 rounded border">
+                        <div className="flex flex-col items-center gap-2">
+                          <RefreshCw className="w-4 h-4 animate-spin text-blue-400" />
+                          <span className="text-xs text-gray-400">
+                            جاري الرفع...
+                          </span>
+                        </div>
+                      </div>
+                    ) : image ? (
                       <div className="mt-2">
                         <img
                           src={image}
@@ -1145,7 +1180,7 @@ export default function HeroOccasionsTab() {
                           }}
                         />
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 ))}
                 <Button

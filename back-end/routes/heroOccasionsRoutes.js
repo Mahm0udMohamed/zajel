@@ -10,22 +10,32 @@ import {
   toggleOccasionStatus,
   searchOccasions,
   importOccasions,
+  uploadSingleImage,
 } from "../controllers/heroOccasionsController.js";
 import { authenticateAdmin } from "../middlewares/adminAuthMiddleware.js";
 import { body, param, query } from "express-validator";
+import multer from "multer";
 
 const router = express.Router();
 
+// إعداد multer لرفع الملفات
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("يجب أن يكون الملف صورة"), false);
+    }
+  },
+});
+
 // التحقق من صحة البيانات للمناسبات
 const occasionValidation = [
-  body("id")
-    .notEmpty()
-    .withMessage("معرف المناسبة مطلوب")
-    .isLength({ min: 2, max: 50 })
-    .withMessage("معرف المناسبة يجب أن يكون بين 2 و 50 حرف")
-    .matches(/^[a-z0-9-]+$/)
-    .withMessage("معرف المناسبة يجب أن يحتوي على أحرف صغيرة وأرقام وشرطات فقط"),
-
   body("nameAr")
     .notEmpty()
     .withMessage("الاسم العربي مطلوب")
@@ -55,11 +65,25 @@ const occasionValidation = [
         if (typeof image !== "string" || image.trim() === "") {
           throw new Error("جميع الصور يجب أن تكون روابط صحيحة");
         }
-        // التحقق من أن الرابط صحيح
-        try {
-          new URL(image);
-        } catch {
-          throw new Error("جميع الصور يجب أن تكون روابط صحيحة");
+        // التحقق من أن الرابط صحيح (HTTP/HTTPS) أو base64
+        if (image.startsWith("data:image")) {
+          // صورة base64 - تحقق من التنسيق
+          if (!image.match(/^data:image\/(jpeg|jpg|png|gif|webp);base64,/)) {
+            throw new Error(
+              "تنسيق الصورة غير مدعوم. يرجى استخدام JPG, PNG, GIF, أو WebP"
+            );
+          }
+        } else if (image.startsWith("http")) {
+          // رابط HTTP - تحقق من صحة الرابط
+          try {
+            new URL(image);
+          } catch {
+            throw new Error("جميع الصور يجب أن تكون روابط صحيحة");
+          }
+        } else {
+          throw new Error(
+            "تنسيق الصورة غير صحيح. يجب أن تكون رابط HTTP أو صورة base64"
+          );
         }
       }
       return true;
@@ -77,11 +101,6 @@ const occasionValidation = [
     .isLength({ min: 5, max: 500 })
     .withMessage("الرسالة التهنئة الإنجليزية يجب أن تكون بين 5 و 500 حرف"),
 
-  body("priority")
-    .optional()
-    .isInt({ min: 1, max: 10 })
-    .withMessage("الأولوية يجب أن تكون رقم بين 1 و 10"),
-
   body("isActive")
     .optional()
     .isBoolean()
@@ -93,8 +112,8 @@ const occasionIdValidation = [
   param("id")
     .notEmpty()
     .withMessage("معرف المناسبة مطلوب")
-    .isLength({ min: 2, max: 50 })
-    .withMessage("معرف المناسبة يجب أن يكون بين 2 و 50 حرف"),
+    .isMongoId()
+    .withMessage("معرف المناسبة غير صحيح"),
 ];
 
 // التحقق من صحة معاملات البحث
@@ -133,11 +152,6 @@ const queryValidation = [
     .isBoolean()
     .withMessage("حالة التفعيل يجب أن تكون true أو false"),
 
-  query("priority")
-    .optional()
-    .isInt({ min: 1, max: 10 })
-    .withMessage("الأولوية يجب أن تكون رقم بين 1 و 10"),
-
   query("language")
     .optional()
     .isIn(["ar", "en"])
@@ -145,7 +159,7 @@ const queryValidation = [
 
   query("sortBy")
     .optional()
-    .isIn(["priority", "date", "nameAr", "nameEn", "createdAt"])
+    .isIn(["date", "nameAr", "nameEn", "createdAt"])
     .withMessage("حقل الترتيب غير صحيح"),
 
   query("sortOrder")
@@ -158,6 +172,14 @@ const queryValidation = [
 
 // GET /api/hero-occasions - الحصول على جميع المناسبات (مع فلترة)
 router.get("/", queryValidation, getAllOccasions);
+
+// POST /api/hero-occasions/upload - رفع صورة واحدة
+router.post(
+  "/upload",
+  authenticateAdmin,
+  upload.single("image"),
+  uploadSingleImage
+);
 
 // GET /api/hero-occasions/active - الحصول على المناسبات النشطة فقط
 router.get("/active", getActiveOccasions);

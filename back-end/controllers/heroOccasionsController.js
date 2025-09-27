@@ -1,6 +1,7 @@
 import HeroOccasion from "../models/HeroOccasion.js";
 import { validationResult } from "express-validator";
 import { v2 as cloudinary } from "cloudinary";
+import multer from "multer";
 
 // دالة لرفع الصور إلى Cloudinary
 const uploadImagesToCloudinary = async (images) => {
@@ -33,6 +34,55 @@ const uploadImagesToCloudinary = async (images) => {
   return uploadedImages;
 };
 
+// دالة لرفع صورة واحدة إلى Cloudinary
+export const uploadSingleImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "لم يتم رفع أي صورة",
+      });
+    }
+
+    // رفع الصورة إلى Cloudinary
+    const result = await cloudinary.uploader.upload_stream(
+      {
+        resource_type: "image",
+        folder: "hero-occasions",
+        quality: "auto",
+        fetch_format: "auto",
+      },
+      (error, result) => {
+        if (error) {
+          console.error("Error uploading to Cloudinary:", error);
+          return res.status(500).json({
+            success: false,
+            message: "فشل في رفع الصورة",
+            error: error.message,
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          message: "تم رفع الصورة بنجاح",
+          secure_url: result.secure_url,
+          public_id: result.public_id,
+        });
+      }
+    );
+
+    // إرسال البيانات إلى Cloudinary
+    result.end(req.file.buffer);
+  } catch (error) {
+    console.error("Error in uploadSingleImage:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ في الخادم",
+      error: error.message,
+    });
+  }
+};
+
 // الحصول على جميع المناسبات
 export const getAllOccasions = async (req, res) => {
   try {
@@ -40,10 +90,9 @@ export const getAllOccasions = async (req, res) => {
       page = 1,
       limit = 10,
       isActive,
-      priority,
       search,
       language = "ar",
-      sortBy = "priority",
+      sortBy = "date",
       sortOrder = "asc",
     } = req.query;
 
@@ -52,10 +101,6 @@ export const getAllOccasions = async (req, res) => {
 
     if (isActive !== undefined) {
       filter.isActive = isActive === "true";
-    }
-
-    if (priority) {
-      filter.priority = parseInt(priority);
     }
 
     if (search) {
@@ -107,7 +152,7 @@ export const getOccasionById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const occasion = await HeroOccasion.findOne({ id })
+    const occasion = await HeroOccasion.findById(id)
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email");
 
@@ -135,15 +180,12 @@ export const getOccasionById = async (req, res) => {
 // الحصول على المناسبات النشطة فقط
 export const getActiveOccasions = async (req, res) => {
   try {
-    const { limit = 10, priority } = req.query;
+    const { limit = 10 } = req.query;
 
     let filter = { isActive: true };
-    if (priority) {
-      filter.priority = parseInt(priority);
-    }
 
     const occasions = await HeroOccasion.find(filter)
-      .sort({ priority: 1, date: 1 })
+      .sort({ date: 1 })
       .limit(parseInt(limit));
 
     res.status(200).json({
@@ -201,39 +243,26 @@ export const createOccasion = async (req, res) => {
     }
 
     const {
-      id,
       nameAr,
       nameEn,
       date,
       images,
       celebratoryMessageAr,
       celebratoryMessageEn,
-      priority = 5,
       isActive = true,
     } = req.body;
-
-    // التحقق من عدم وجود مناسبة بنفس المعرف
-    const existingOccasion = await HeroOccasion.findOne({ id });
-    if (existingOccasion) {
-      return res.status(400).json({
-        success: false,
-        message: "يوجد مناسبة أخرى بنفس المعرف",
-      });
-    }
 
     // رفع الصور إلى Cloudinary
     const uploadedImages = await uploadImagesToCloudinary(images);
 
     // إنشاء المناسبة الجديدة
     const newOccasion = new HeroOccasion({
-      id,
       nameAr,
       nameEn,
       date: new Date(date), // تحويل التاريخ إلى كائن Date
       images: uploadedImages, // استخدام الصور المرفوعة
       celebratoryMessageAr,
       celebratoryMessageEn,
-      priority: parseInt(priority),
       isActive,
       createdBy: req.adminId,
     });
@@ -296,17 +325,12 @@ export const updateOccasion = async (req, res) => {
       updateData.date = new Date(updateData.date);
     }
 
-    // إذا تم تحديث الأولوية، تحويلها إلى رقم
-    if (updateData.priority) {
-      updateData.priority = parseInt(updateData.priority);
-    }
-
     // رفع الصور إلى Cloudinary إذا تم تحديثها
     if (updateData.images) {
       updateData.images = await uploadImagesToCloudinary(updateData.images);
     }
 
-    const occasion = await HeroOccasion.findOneAndUpdate({ id }, updateData, {
+    const occasion = await HeroOccasion.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
     })
@@ -357,7 +381,7 @@ export const deleteOccasion = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const occasion = await HeroOccasion.findOneAndDelete({ id });
+    const occasion = await HeroOccasion.findByIdAndDelete(id);
 
     if (!occasion) {
       return res.status(404).json({
@@ -385,7 +409,7 @@ export const toggleOccasionStatus = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const occasion = await HeroOccasion.findOne({ id });
+    const occasion = await HeroOccasion.findById(id);
     if (!occasion) {
       return res.status(404).json({
         success: false,

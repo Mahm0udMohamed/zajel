@@ -2,12 +2,6 @@ import mongoose from "mongoose";
 
 const heroOccasionSchema = new mongoose.Schema(
   {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
     nameAr: {
       type: String,
       required: true,
@@ -44,13 +38,6 @@ const heroOccasionSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    priority: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 10,
-      default: 5,
-    },
     isActive: {
       type: Boolean,
       default: true,
@@ -73,8 +60,7 @@ const heroOccasionSchema = new mongoose.Schema(
 );
 
 // فهرسة للحصول على أفضل أداء
-heroOccasionSchema.index({ id: 1 });
-heroOccasionSchema.index({ isActive: 1, priority: 1 });
+heroOccasionSchema.index({ isActive: 1, date: 1 });
 heroOccasionSchema.index({ date: 1 });
 heroOccasionSchema.index({ nameAr: "text", nameEn: "text" });
 
@@ -86,9 +72,9 @@ heroOccasionSchema.pre("save", function (next) {
   next();
 });
 
-// دالة للحصول على المناسبات النشطة مرتبة حسب الأولوية
+// دالة للحصول على المناسبات النشطة مرتبة حسب التاريخ
 heroOccasionSchema.statics.getActiveOccasions = function () {
-  return this.find({ isActive: true }).sort({ priority: 1, date: 1 });
+  return this.find({ isActive: true }).sort({ date: 1 });
 };
 
 // دالة للحصول على المناسبات القادمة
@@ -108,7 +94,7 @@ heroOccasionSchema.statics.searchOccasions = function (query, language = "ar") {
   return this.find({
     isActive: true,
     [searchField]: { $regex: query, $options: "i" },
-  }).sort({ priority: 1 });
+  }).sort({ date: 1 });
 };
 
 const HeroOccasion = mongoose.model("HeroOccasion", heroOccasionSchema);

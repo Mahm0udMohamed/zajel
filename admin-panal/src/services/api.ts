@@ -100,6 +100,13 @@ class ApiService {
       const data = await response.json();
 
       if (!response.ok) {
+        // إذا كان هناك تفاصيل أخطاء validation، اعرضها
+        if (data.errors && Array.isArray(data.errors)) {
+          const errorMessages = data.errors
+            .map((err: any) => err.msg || err.message || err)
+            .join("، ");
+          throw new Error(errorMessages || data.message || "حدث خطأ في الخادم");
+        }
         throw new Error(data.message || "حدث خطأ في الخادم");
       }
 
