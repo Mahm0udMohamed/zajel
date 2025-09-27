@@ -6,7 +6,6 @@ import {
   removeFromCart,
   clearCart,
   getCartCount,
-  syncCart,
 } from "../controllers/cartController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
@@ -32,8 +31,5 @@ router.delete("/remove/:productId", removeFromCart);
 
 // Clear entire cart
 router.delete("/clear", clearCart);
-
-// Sync local cart with server cart
-router.post("/sync", syncCart);
 
 export default router;

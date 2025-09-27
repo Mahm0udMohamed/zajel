@@ -28,7 +28,6 @@ interface CartContextType {
   cartCount: number;
   cartTotal: number;
   isLoading: boolean;
-  syncCart: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -43,13 +42,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // إضافة ref لتتبع حالة التحميل من الخادم
   const hasLoadedFromServer = useRef(false);
-  const previousAuthState = useRef<{
-    isAuthenticated: boolean;
-    userId: string | null;
-  }>({
-    isAuthenticated: false,
-    userId: null,
-  });
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("accessToken");
@@ -59,46 +51,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
   };
 
-  // Load cart from server when user is authenticated, or from localStorage when not
+  // Load cart from server when user is authenticated
   useEffect(() => {
-    // تحقق من تغيير حالة التسجيل
-    const authStateChanged =
-      previousAuthState.current.isAuthenticated !== isAuthenticated ||
-      previousAuthState.current.userId !== user?.id;
-
-    if (authStateChanged) {
-      if (isAuthenticated && user) {
-        // إعادة تعيين حالة التحميل عند تغيير المستخدم
-        hasLoadedFromServer.current = false;
-        loadCartFromServer();
-      } else {
-        // مسح السلة وتحميل من التخزين المحلي عند تسجيل الخروج
-        setCart([]);
-        hasLoadedFromServer.current = false;
-        loadCartFromLocalStorage();
-      }
-
-      // تحديث الحالة السابقة
-      previousAuthState.current = {
-        isAuthenticated,
-        userId: user?.id || null,
-      };
+    if (isAuthenticated && user) {
+      // إعادة تعيين حالة التحميل عند تغيير المستخدم
+      hasLoadedFromServer.current = false;
+      loadCartFromServer();
+    } else {
+      // مسح السلة عند تسجيل الخروج
+      setCart([]);
+      hasLoadedFromServer.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user?.id]);
-
-  const loadCartFromLocalStorage = () => {
-    try {
-      const savedCart = localStorage.getItem("zajil-cart");
-      if (savedCart) {
-        const parsedCart = JSON.parse(savedCart);
-        setCart(parsedCart);
-        console.log("تم تحميل السلة من التخزين المحلي:", parsedCart);
-      }
-    } catch (error) {
-      console.error("خطأ في تحميل السلة من التخزين المحلي:", error);
-    }
-  };
 
   const loadCartFromServer = async () => {
     if (!isAuthenticated || hasLoadedFromServer.current) return;
@@ -124,18 +89,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
     }
   };
-
-  // Save cart to localStorage only when user is not authenticated
-  useEffect(() => {
-    if (!isAuthenticated && cart.length > 0) {
-      try {
-        localStorage.setItem("zajil-cart", JSON.stringify(cart));
-        console.log("تم حفظ السلة في التخزين المحلي:", cart);
-      } catch (error) {
-        console.error("خطأ في حفظ السلة في التخزين المحلي:", error);
-      }
-    }
-  }, [cart, isAuthenticated]);
 
   const addToCart = async (product: CartItem) => {
     if (!isAuthenticated) {
@@ -325,62 +278,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const syncCartWithServer = async () => {
-    if (!isAuthenticated) return;
-
-    try {
-      const localCart = localStorage.getItem("zajil-cart");
-      const localCartItems = localCart ? JSON.parse(localCart) : [];
-
-      if (localCartItems.length === 0) {
-        await loadCartFromServer();
-        return;
-      }
-
-      const response = await fetch(`${API_BASE_URL}/sync`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: JSON.stringify({ localCartItems }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCart(data.cart.items || []);
-        localStorage.removeItem("zajil-cart");
-        hasLoadedFromServer.current = true; // تمييز أنه تم المزامنة
-        console.log("تم مزامنة السلة مع الخادم");
-      }
-    } catch (error) {
-      console.error("Error syncing cart:", error);
-    }
-  };
-
-  // Listen for auth events to sync cart
-  useEffect(() => {
-    const handleUserLoggedIn = () => {
-      if (isAuthenticated) {
-        hasLoadedFromServer.current = false; // إعادة تعيين للمزامنة
-        syncCartWithServer();
-      }
-    };
-
-    const handleUserLoggedOut = () => {
-      setCart([]);
-      hasLoadedFromServer.current = false;
-    };
-
-    window.addEventListener("userLoggedIn", handleUserLoggedIn);
-    window.addEventListener("userLoggedOut", handleUserLoggedOut);
-
-    return () => {
-      window.removeEventListener("userLoggedIn", handleUserLoggedIn);
-      window.removeEventListener("userLoggedOut", handleUserLoggedOut);
-    };
-    // إزالة التبعيات المشكوك فيها لتجنب الحلقة اللانهائية
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -398,7 +295,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         cartCount,
         cartTotal,
         isLoading,
-        syncCart: syncCartWithServer,
       }}
     >
       {children}

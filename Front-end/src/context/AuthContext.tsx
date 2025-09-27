@@ -113,8 +113,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response.ok) {
         localStorage.setItem("accessToken", data.accessToken);
         await checkAuthStatus();
-        // Trigger cart sync after successful login
-        window.dispatchEvent(new CustomEvent("userLoggedIn"));
         showSuccess("تم تسجيل الدخول بنجاح", "مرحباً بك مرة أخرى!");
       } else {
         throw new Error(data.message || "فشل في تسجيل الدخول");
@@ -165,8 +163,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       localStorage.removeItem("accessToken");
       setUser(null);
-      // Trigger cart clear after logout
-      window.dispatchEvent(new CustomEvent("userLoggedOut"));
       showSuccess("تم تسجيل الخروج بنجاح", "نراك قريباً!");
     }
   };
@@ -187,8 +183,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response.ok) {
         localStorage.setItem("accessToken", data.accessToken);
         await checkAuthStatus();
-        // Trigger cart sync after successful verification
-        window.dispatchEvent(new CustomEvent("userLoggedIn"));
         showSuccess("تم التحقق من البريد الإلكتروني", data.message);
       } else {
         throw new Error(data.message || "فشل في التحقق من البريد الإلكتروني");
@@ -386,8 +380,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response.ok) {
         localStorage.setItem("accessToken", data.accessToken);
         await checkAuthStatus();
-        // Trigger cart sync after successful phone login
-        window.dispatchEvent(new CustomEvent("userLoggedIn"));
         showSuccess("تم تسجيل الدخول بنجاح", data.message);
       } else {
         throw new Error(data.message || "فشل في تسجيل الدخول");

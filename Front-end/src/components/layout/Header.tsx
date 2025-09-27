@@ -24,7 +24,7 @@ import Logo from "../ui/Logo";
 
 const Header = () => {
   const { t } = useTranslation();
-  const { cartCount, syncCart } = useCart();
+  const { cartCount } = useCart();
   const { favoritesCount } = useFavorites();
   const { user, isAuthenticated, logout } = useAuth();
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -34,12 +34,6 @@ const Header = () => {
   const [showLangMenu, setShowLangMenu] = useState(false);
   const location = useLocation();
   const isRtl = i18n.language === "ar";
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      syncCart();
-    }
-  }, [isAuthenticated, syncCart]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
