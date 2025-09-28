@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { EnhancedImage } from "../../features/images";
@@ -15,6 +21,7 @@ const HeroSlider: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
   const [isOccasionActive, setIsOccasionActive] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Use the custom hook to fetch hero occasions from backend
   const {
@@ -136,17 +143,29 @@ const HeroSlider: React.FC = () => {
     return () => clearInterval(interval);
   }, [updateCountdown]);
 
-  // التنقل التلقائي السلس
-  useEffect(() => {
+  // دالة لإعادة تعيين العد التنازلي
+  const resetAutoSlideTimer = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
     if (allSlides.length <= 1) return;
 
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) =>
-        prev < allSlides.length - 1 ? prev + 1 : prev
-      );
-    }, 6000); // وقت أطول للتنقل السلس
-    return () => clearInterval(interval);
+    intervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % allSlides.length);
+    }, 6000);
   }, [allSlides.length]);
+
+  // التنقل التلقائي السلس - لا نهائي في نفس الاتجاه
+  useEffect(() => {
+    resetAutoSlideTimer();
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [resetAutoSlideTimer]);
 
   // إزالة منطق transitionEnabled المعقد - لم نعد نحتاجه
 
@@ -368,7 +387,10 @@ const HeroSlider: React.FC = () => {
               {allSlides.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => setCurrentSlide(index)}
+                  onClick={() => {
+                    setCurrentSlide(index);
+                    resetAutoSlideTimer(); // إعادة تعيين العد التنازلي
+                  }}
                   className={`transition-all duration-500 ease-out rounded-full ${
                     currentSlide === index
                       ? "w-6 sm:w-8 h-2 sm:h-3 bg-white"
@@ -383,15 +405,15 @@ const HeroSlider: React.FC = () => {
           {/* Navigation Arrows */}
           <button
             onClick={() => {
-              setCurrentSlide((prev) => (prev > 0 ? prev - 1 : prev));
+              setCurrentSlide((prev) =>
+                prev === 0 ? allSlides.length - 1 : prev - 1
+              );
+              resetAutoSlideTimer(); // إعادة تعيين العد التنازلي
             }}
             className={`hidden sm:flex absolute top-1/2 transform -translate-y-1/2 ${
               isArabic ? "right-2 sm:right-4" : "left-2 sm:left-4"
-            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 text-white rounded-full flex items-center justify-center transition-all duration-500 ease-out border border-white/15 hover:bg-white/15 ${
-              currentSlide === 0 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 text-white rounded-full flex items-center justify-center transition-all duration-500 ease-out border border-white/15 hover:bg-white/15`}
             aria-label={isArabic ? "الشريحة السابقة" : "Previous slide"}
-            disabled={currentSlide === 0}
           >
             <span className="text-sm sm:text-base font-light">
               {isArabic ? "→" : "←"}
@@ -400,19 +422,13 @@ const HeroSlider: React.FC = () => {
 
           <button
             onClick={() => {
-              setCurrentSlide((prev) =>
-                prev < allSlides.length - 1 ? prev + 1 : prev
-              );
+              setCurrentSlide((prev) => (prev + 1) % allSlides.length);
+              resetAutoSlideTimer(); // إعادة تعيين العد التنازلي
             }}
             className={`hidden sm:flex absolute top-1/2 transform -translate-y-1/2 ${
               isArabic ? "left-2 sm:left-4" : "right-2 sm:right-4"
-            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 text-white rounded-full flex items-center justify-center transition-all duration-500 ease-out border border-white/15 hover:bg-white/15 ${
-              currentSlide === allSlides.length - 1
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
+            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 text-white rounded-full flex items-center justify-center transition-all duration-500 ease-out border border-white/15 hover:bg-white/15`}
             aria-label={isArabic ? "الشريحة التالية" : "Next slide"}
-            disabled={currentSlide === allSlides.length - 1}
           >
             <span className="text-sm sm:text-base font-light">
               {isArabic ? "←" : "→"}
