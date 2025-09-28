@@ -9,10 +9,12 @@ import {
   cacheDecorators,
 } from "../services/cache/index.js";
 
-// دالة مساعدة لمسح جميع كاشات المناسبات
+// دالة مساعدة لمسح جميع كاشات المناسبات (Best Practice)
 const clearAllOccasionsCache = async () => {
   try {
-    // مسح جميع أنواع الكاش بطريقة أكثر شمولية
+    console.log("🔄 Clearing all occasions cache...");
+
+    // مسح جميع استراتيجيات المناسبات
     const strategies = [
       "hero-occasions",
       "hero-occasions-active",
@@ -20,41 +22,11 @@ const clearAllOccasionsCache = async () => {
       "hero-occasions-search",
     ];
 
-    let totalCleared = 0;
-
-    // مسح كل استراتيجية
     for (const strategy of strategies) {
-      try {
-        const cleared = await cacheLayer.clear(strategy, "*");
-        totalCleared += cleared;
-        console.log(`🧹 Cleared ${cleared} keys for ${strategy}`);
-      } catch (strategyError) {
-        console.warn(`⚠️ Failed to clear ${strategy}:`, strategyError.message);
-      }
+      await cacheLayer.clear(strategy, "*");
     }
 
-    // مسح إضافي لجميع المفاتيح التي تحتوي على "hero-occasions"
-    try {
-      const allKeys = await cacheLayer.cacheService.getKeys("*hero-occasions*");
-      if (allKeys.length > 0) {
-        for (const key of allKeys) {
-          await cacheLayer.cacheService.del(key);
-        }
-        console.log(
-          `🧹 Cleared ${allKeys.length} additional hero-occasions keys`
-        );
-        totalCleared += allKeys.length;
-      }
-    } catch (additionalError) {
-      console.warn(
-        "⚠️ Failed to clear additional keys:",
-        additionalError.message
-      );
-    }
-
-    console.log(
-      `🗑️ All occasions cache cleared successfully (${totalCleared} total keys)`
-    );
+    console.log("✅ All occasions cache cleared successfully");
   } catch (error) {
     console.error("❌ Error clearing occasions cache:", error.message);
   }
@@ -245,7 +217,8 @@ export const diagnoseRedis = async (req, res) => {
 
 // ===== CRUD Operations with Cache =====
 
-// الحصول على جميع المناسبات
+// الحصول على جميع المناسبات مع ضمان دقة البيانات
+// الحصول على جميع المناسبات (Cache-Aside Pattern)
 export const getAllOccasions = async (req, res) => {
   try {
     const {
@@ -258,8 +231,7 @@ export const getAllOccasions = async (req, res) => {
       sortOrder = "asc",
     } = req.query;
 
-    // محاولة الحصول من الكاش
-    const cached = await cacheLayer.get("hero-occasions", "all", {
+    const params = {
       page,
       limit,
       isActive,
@@ -267,19 +239,22 @@ export const getAllOccasions = async (req, res) => {
       language,
       sortBy,
       sortOrder,
-    });
+    };
+
+    // 1. محاولة الحصول من الكاش
+    const cached = await cacheLayer.get("hero-occasions", "all", params);
 
     if (cached) {
+      console.log("✅ Data retrieved from cache");
       return res.status(200).json({
-        success: true,
         ...cached,
         cached: true,
-        cacheStrategy: "hero-occasions",
+        timestamp: new Date().toISOString(),
       });
     }
 
-    // Cache MISS - الحصول من قاعدة البيانات
-    console.log(`🔄 Cache MISS for all occasions, fetching from database`);
+    // 2. Cache MISS - جلب من قاعدة البيانات
+    console.log("🔄 Cache MISS - fetching from database");
 
     // بناء فلتر البحث
     let filter = {};
@@ -323,27 +298,15 @@ export const getAllOccasions = async (req, res) => {
       },
       cached: false,
       cacheStrategy: "hero-occasions",
+      timestamp: new Date().toISOString(),
     };
 
-    // حفظ في الكاش
-    if (responseData.data && responseData.data.length > 0) {
-      await cacheLayer.set(
-        "hero-occasions",
-        "all",
-        responseData,
-        {
-          page,
-          limit,
-          isActive,
-          search,
-          language,
-          sortBy,
-          sortOrder,
-        },
-        { ttl: CACHE_TTL.ALL }
-      );
-    }
+    // 3. حفظ في الكاش
+    await cacheLayer.set("hero-occasions", "all", responseData, params, {
+      ttl: CACHE_TTL.ALL,
+    });
 
+    console.log("✅ Data cached successfully");
     res.status(200).json(responseData);
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات:", error);
@@ -355,25 +318,28 @@ export const getAllOccasions = async (req, res) => {
   }
 };
 
-// الحصول على مناسبة واحدة بالمعرف
+// الحصول على مناسبة واحدة بالمعرف (Cache-Aside Pattern)
 export const getOccasionById = async (req, res) => {
   try {
     const { id } = req.params;
+    const params = { id };
 
-    // محاولة الحصول من الكاش
-    const cached = await cacheLayer.get("hero-occasions", "single", { id });
+    // 1. محاولة الحصول من الكاش
+    const cached = await cacheLayer.get("hero-occasions", "single", params);
 
     if (cached) {
+      console.log("✅ Data retrieved from cache");
       return res.status(200).json({
-        success: true,
-        data: cached,
+        ...cached,
         cached: true,
-        cacheStrategy: "hero-occasions",
+        timestamp: new Date().toISOString(),
       });
     }
 
-    // Cache MISS - الحصول من قاعدة البيانات
-    console.log(`🔄 Cache MISS for occasion by ID: ${id}`);
+    // 2. Cache MISS - جلب من قاعدة البيانات
+    console.log(
+      `🔄 Cache MISS - fetching from database for occasion ID: ${id}`
+    );
 
     const occasion = await HeroOccasion.findById(id)
       .populate("createdBy", "name email")
@@ -383,26 +349,25 @@ export const getOccasionById = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "المناسبة غير موجودة",
+        cached: false,
       });
     }
 
-    // حفظ في الكاش
-    await cacheLayer.set(
-      "hero-occasions",
-      "single",
-      occasion,
-      { id },
-      {
-        ttl: CACHE_TTL.SINGLE,
-      }
-    );
-
-    res.status(200).json({
+    const responseData = {
       success: true,
       data: occasion,
       cached: false,
       cacheStrategy: "hero-occasions",
+      timestamp: new Date().toISOString(),
+    };
+
+    // 3. حفظ في الكاش
+    await cacheLayer.set("hero-occasions", "single", responseData, params, {
+      ttl: CACHE_TTL.SINGLE,
     });
+
+    console.log("✅ Data cached successfully");
+    res.status(200).json(responseData);
   } catch (error) {
     console.error("خطأ في الحصول على المناسبة:", error);
     res.status(500).json({

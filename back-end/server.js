@@ -88,51 +88,22 @@ const createAdminIfNotExists = async () => {
 // تشغيل إنشاء الأدمن بعد الاتصال بقاعدة البيانات
 setTimeout(createAdminIfNotExists, 2000); // انتظار 2 ثانية للتأكد من الاتصال بقاعدة البيانات
 
-// مسح الكاش الفاسد عند بدء السيرفر
-const clearInvalidCache = async () => {
+// مسح الكاش عند بدء السيرفر (Best Practice)
+const clearCacheOnStartup = async () => {
   try {
+    console.log("🔄 Clearing cache on startup...");
+
     if (cacheLayer.cacheService.isReady()) {
-      const keys = await cacheLayer.cacheService.getKeys("hero-occasions:*");
-      for (const key of keys) {
-        const value = await cacheLayer.cacheService.get(key);
-        if (value === "{}" || value === "[]") {
-          await cacheLayer.cacheService.del(key);
-          console.log(`🗑️ Cleared invalid cache key: ${key}`);
-        }
-      }
+      // مسح كاش المناسبات فقط
+      await cacheLayer.clear("hero-occasions", "*");
+      console.log("✅ Cache cleared on startup");
     }
   } catch (error) {
-    console.warn("⚠️ Failed to clear invalid cache:", error.message);
+    console.warn("⚠️ Failed to clear cache on startup:", error.message);
   }
 };
 
-setTimeout(clearInvalidCache, 3000); // انتظار 3 ثوان للتأكد من اتصال Redis
-
-// مسح الكاش الفاسد كل ساعة
-setInterval(async () => {
-  try {
-    if (cacheLayer.cacheService.isReady()) {
-      const keys = await cacheLayer.cacheService.getKeys("hero-occasions:*");
-      let clearedCount = 0;
-
-      for (const key of keys) {
-        const value = await cacheLayer.cacheService.get(key);
-        if (value === "{}" || value === "[]" || value === "null") {
-          await cacheLayer.cacheService.del(key);
-          clearedCount++;
-        }
-      }
-
-      if (clearedCount > 0) {
-        console.log(
-          `🕐 Hourly cache cleanup: cleared ${clearedCount} invalid keys`
-        );
-      }
-    }
-  } catch (error) {
-    console.warn("⚠️ Hourly cache cleanup failed:", error.message);
-  }
-}, 60 * 60 * 1000); // كل ساعة
+setTimeout(clearCacheOnStartup, 3000); // انتظار 3 ثوان للتأكد من اتصال Redis
 
 app.use(cookieParser());
 
@@ -241,16 +212,13 @@ server.listen(PORT, () => {
   printServiceStatus();
 });
 
-// مسح الكاش عند إعادة تشغيل السيرفر
+// مسح الكاش عند إعادة تشغيل السيرفر (Best Practice)
 process.on("SIGINT", async () => {
   console.log("🔄 Server restarting, clearing cache...");
   try {
     if (cacheLayer.cacheService.isReady()) {
-      const keys = await cacheLayer.cacheService.getKeys("hero-occasions:*");
-      if (keys.length > 0) {
-        await cacheLayer.cacheService.del(...keys);
-        console.log(`✅ Cleared ${keys.length} cache keys on restart`);
-      }
+      await cacheLayer.clear("hero-occasions", "*");
+      console.log("✅ Cache cleared on restart");
     }
   } catch (error) {
     console.warn("⚠️ Failed to clear cache on restart:", error.message);
@@ -262,11 +230,8 @@ process.on("SIGTERM", async () => {
   console.log("🔄 Server stopping, clearing cache...");
   try {
     if (cacheLayer.cacheService.isReady()) {
-      const keys = await cacheLayer.cacheService.getKeys("hero-occasions:*");
-      if (keys.length > 0) {
-        await cacheLayer.cacheService.del(...keys);
-        console.log(`✅ Cleared ${keys.length} cache keys on stop`);
-      }
+      await cacheLayer.clear("hero-occasions", "*");
+      console.log("✅ Cache cleared on stop");
     }
   } catch (error) {
     console.warn("⚠️ Failed to clear cache on stop:", error.message);
