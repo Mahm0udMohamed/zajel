@@ -1,17 +1,8 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import Confetti from "react-confetti";
 import { EnhancedImage } from "../../features/images";
 import { usePreloadCriticalImages } from "../../features/images";
-import { usePerformanceMode } from "../../hooks/useMobileDetection";
 import { useHeroSliderOccasions } from "../../hooks/useHeroOccasions";
 import { useActiveHeroPromotions } from "../../hooks/useHeroPromotions";
 
@@ -22,11 +13,8 @@ const HeroSlider: React.FC = () => {
   const { t, i18n } = useTranslation();
   const isArabic = i18n.language === "ar";
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [transitionEnabled, setTransitionEnabled] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
   const [isOccasionActive, setIsOccasionActive] = useState(false);
-  const { isMobile, shouldReduceAnimations } = usePerformanceMode();
-  const sliderRef = useRef<HTMLDivElement>(null);
 
   // Use the custom hook to fetch hero occasions from backend
   const {
@@ -42,7 +30,7 @@ const HeroSlider: React.FC = () => {
     error: promotionsError,
   } = useActiveHeroPromotions(10);
 
-  // دالة لتحويل تدرج Tailwind إلى CSS
+  // دالة مبسطة لتحويل التدرج
   const convertGradientToCSS = (gradient: string) => {
     const gradientMap: { [key: string]: string } = {
       "from-amber-500/80 to-orange-600/80":
@@ -55,18 +43,7 @@ const HeroSlider: React.FC = () => {
         "linear-gradient(to right, #22c55e, #059669)",
       "from-purple-500/80 to-violet-600/80":
         "linear-gradient(to right, #a855f7, #7c3aed)",
-      "from-indigo-500/80 to-blue-600/80":
-        "linear-gradient(to right, #6366f1, #2563eb)",
-      "from-pink-500/80 to-rose-600/80":
-        "linear-gradient(to right, #ec4899, #e11d48)",
-      "from-yellow-500/80 to-orange-600/80":
-        "linear-gradient(to right, #eab308, #ea580c)",
-      "from-teal-500/80 to-cyan-600/80":
-        "linear-gradient(to right, #14b8a6, #0891b2)",
-      "from-lime-500/80 to-green-600/80":
-        "linear-gradient(to right, #84cc16, #16a34a)",
     };
-
     return (
       gradientMap[gradient] || "linear-gradient(to right, #f59e0b, #ea580c)"
     );
@@ -123,10 +100,7 @@ const HeroSlider: React.FC = () => {
   }, [allSlides]);
   usePreloadCriticalImages(heroImages);
 
-  const extendedSlides = useMemo(
-    () => [...allSlides, allSlides[0]],
-    [allSlides]
-  );
+  // إزالة extendedSlides المعقد - سنستخدم allSlides مباشرة
 
   const updateCountdown = useCallback(() => {
     if (!nearestOccasion) return;
@@ -162,38 +136,19 @@ const HeroSlider: React.FC = () => {
     return () => clearInterval(interval);
   }, [updateCountdown]);
 
+  // التنقل التلقائي السلس
   useEffect(() => {
+    if (allSlides.length <= 1) return;
+
     const interval = setInterval(() => {
-      setTransitionEnabled(true);
-      setCurrentSlide((prev) => (prev + 1) % extendedSlides.length);
-    }, 7000);
+      setCurrentSlide((prev) =>
+        prev < allSlides.length - 1 ? prev + 1 : prev
+      );
+    }, 6000); // وقت أطول للتنقل السلس
     return () => clearInterval(interval);
-  }, [extendedSlides.length]);
+  }, [allSlides.length]);
 
-  useEffect(() => {
-    const slider = sliderRef.current;
-    const handleTransitionEnd = () => {
-      if (currentSlide === allSlides.length) {
-        setTransitionEnabled(false);
-        setCurrentSlide(0);
-      }
-    };
-    if (slider) {
-      slider.addEventListener("transitionend", handleTransitionEnd);
-    }
-    return () => {
-      if (slider) {
-        slider.removeEventListener("transitionend", handleTransitionEnd);
-      }
-    };
-  }, [currentSlide, allSlides.length]);
-
-  useEffect(() => {
-    if (!transitionEnabled) {
-      const timeout = setTimeout(() => setTransitionEnabled(true), 50);
-      return () => clearTimeout(timeout);
-    }
-  }, [transitionEnabled]);
+  // إزالة منطق transitionEnabled المعقد - لم نعد نحتاجه
 
   const currentSlideData = allSlides[currentSlide] || allSlides[0];
 
@@ -216,42 +171,21 @@ const HeroSlider: React.FC = () => {
 
   return (
     <section className="relative overflow-hidden py-4 sm:py-8">
-      {!isMobile &&
-        isOccasionActive &&
-        currentSlideData?.type === "occasion" && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <Confetti
-              width={window.innerWidth}
-              height={window.innerHeight}
-              recycle={false}
-              numberOfPieces={100}
-              tweenDuration={4000}
-              colors={["#d8b4fe", "#c084fc", "#8b4589", "#6d28d9"]}
-            />
-          </div>
-        )}
-
       <div className="container-custom px-4 sm:px-16">
-        <div className="relative h-[280px] sm:h-[380px] md:h-[480px] lg:h-[580px] xl:h-[620px] overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 backdrop-blur-sm shadow-lg">
+        <div className="relative h-[280px] sm:h-[380px] md:h-[480px] lg:h-[580px] xl:h-[620px] overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10">
           {/* Background Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-transparent to-secondary-900/20 z-10 rounded-2xl sm:rounded-3xl" />
 
           {/* Slides Container */}
-          <motion.div
-            ref={sliderRef}
-            className="flex h-full w-full will-change-transform"
-            animate={{
-              x: isArabic
-                ? currentSlide * 100 + "%"
-                : -currentSlide * 100 + "%",
-            }}
-            transition={{
-              duration: shouldReduceAnimations ? 0.5 : 1.2,
-              ease: shouldReduceAnimations ? "easeOut" : [0.16, 1, 0.3, 1],
-              type: "tween",
+          <div
+            className="flex h-full w-full transition-transform duration-1000 ease-out"
+            style={{
+              transform: `translateX(${
+                isArabic ? currentSlide * 100 : -currentSlide * 100
+              }%)`,
             }}
           >
-            {extendedSlides.map((slide, index) => (
+            {allSlides.map((slide, index) => (
               <div
                 key={`${slide.id}-${index}`}
                 className="w-full h-full flex-none relative"
@@ -281,246 +215,121 @@ const HeroSlider: React.FC = () => {
                 />
               </div>
             ))}
-          </motion.div>
+          </div>
 
           {/* Content Overlay */}
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-white p-3 sm:p-6 text-center">
-            <AnimatePresence mode="wait">
-              {currentSlideData?.type === "occasion" &&
-              currentSlideData.occasion ? (
-                <motion.div
-                  key="occasion"
-                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -30, scale: 0.95 }}
-                  transition={{
-                    duration: shouldReduceAnimations ? 0.4 : 1.0,
-                    ease: shouldReduceAnimations
-                      ? "easeOut"
-                      : [0.16, 1, 0.3, 1],
-                    staggerChildren: shouldReduceAnimations ? 0.02 : 0.1,
-                  }}
-                  className="max-w-4xl mx-auto px-2 sm:px-0"
-                >
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.3,
-                      duration: 0.8,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="mb-3 sm:mb-6"
-                  >
-                    <div className="inline-block bg-white/8 backdrop-blur-sm rounded-full px-3 py-1 sm:px-5 sm:py-2 mb-2 sm:mb-3 border border-white/15">
-                      <span className="text-xs sm:text-sm font-medium tracking-wide text-white/90">
-                        {isArabic ? "مناسبة خاصة" : "Special Occasion"}
+            {currentSlideData?.type === "occasion" &&
+            currentSlideData.occasion ? (
+              <div className="max-w-4xl mx-auto px-2 sm:px-0">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-3 sm:mb-4 leading-tight text-white">
+                  {isArabic
+                    ? currentSlideData.occasion.nameAr
+                    : currentSlideData.occasion.nameEn}
+                </h2>
+
+                <p className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 max-w-2xl mx-auto opacity-90 leading-relaxed font-light px-2 sm:px-0 text-white/85">
+                  {isOccasionActive
+                    ? isArabic
+                      ? currentSlideData.occasion.celebratoryMessageAr
+                      : currentSlideData.occasion.celebratoryMessageEn
+                    : t("home.hero.expressDelivery")}
+                </p>
+
+                <div>
+                  <Link to="/products">
+                    <div className="inline-flex items-center bg-white/90 text-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 border border-white/20 hover:bg-white">
+                      <span>{t("home.hero.giftNow")}</span>
+                      <span
+                        className={`${
+                          isArabic ? "mr-1 sm:mr-1.5" : "ml-1 sm:ml-1.5"
+                        } text-sm sm:text-base`}
+                      >
+                        {isArabic ? "←" : "→"}
                       </span>
                     </div>
-                  </motion.div>
-
-                  <motion.h2
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.4,
-                      duration: 1.0,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-3 sm:mb-4 leading-tight text-white drop-shadow-sm"
-                  >
-                    {isArabic
-                      ? currentSlideData.occasion.nameAr
-                      : currentSlideData.occasion.nameEn}
-                  </motion.h2>
-
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.5,
-                      duration: 0.8,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 max-w-2xl mx-auto opacity-90 leading-relaxed font-light px-2 sm:px-0 text-white/85"
-                  >
-                    {isOccasionActive
-                      ? isArabic
-                        ? currentSlideData.occasion.celebratoryMessageAr
-                        : currentSlideData.occasion.celebratoryMessageEn
-                      : t("home.hero.expressDelivery")}
-                  </motion.p>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.6,
-                      duration: 0.8,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                  >
-                    <Link to="/products">
-                      <div className="inline-flex items-center bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 border border-white/20 hover:bg-white hover:scale-105">
-                        <span>{t("home.hero.giftNow")}</span>
-                        <motion.span
-                          className={`${
-                            isArabic ? "mr-1 sm:mr-1.5" : "ml-1 sm:ml-1.5"
-                          } text-sm sm:text-base`}
-                          animate={{
-                            x: isArabic ? [-2, 0] : [0, 2],
-                          }}
-                          transition={{
-                            duration: 1.5,
-                            repeat: Infinity,
-                            repeatType: "reverse",
-                            ease: "easeInOut",
-                          }}
-                        >
-                          {isArabic ? "←" : "→"}
-                        </motion.span>
-                      </div>
-                    </Link>
-                  </motion.div>
-                </motion.div>
-              ) : currentSlideData?.type === "promotion" &&
-                currentSlideData.promotion ? (
-                <motion.div
-                  key="promotion"
-                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -30, scale: 0.95 }}
-                  transition={{
-                    duration: shouldReduceAnimations ? 0.4 : 1.0,
-                    ease: shouldReduceAnimations
-                      ? "easeOut"
-                      : [0.16, 1, 0.3, 1],
-                    staggerChildren: shouldReduceAnimations ? 0.02 : 0.1,
+                  </Link>
+                </div>
+              </div>
+            ) : currentSlideData?.type === "promotion" &&
+              currentSlideData.promotion ? (
+              <div className="max-w-4xl mx-auto px-2 sm:px-0">
+                <h2
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 tracking-tight"
+                  style={{
+                    background: convertGradientToCSS(
+                      currentSlideData.promotion?.gradient ||
+                        "from-amber-500/80 to-orange-600/80"
+                    ),
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    fontFamily: "'Crimson Text', 'Georgia', serif",
+                    lineHeight: "1.2",
                   }}
-                  className="max-w-4xl mx-auto px-2 sm:px-0"
                 >
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{
-                      delay: 0.2,
-                      duration: 0.8,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="bg-white/8 backdrop-blur-sm text-white rounded-full px-3 py-1 sm:px-5 sm:py-2 mb-2 sm:mb-3 inline-block text-xs sm:text-sm font-medium uppercase tracking-wide border border-white/15"
-                  >
-                    {isArabic ? "عرض خاص" : "Special Offer"}
-                  </motion.div>
+                  {isArabic
+                    ? currentSlideData.promotion.titleAr
+                    : currentSlideData.promotion.titleEn}
+                </h2>
 
-                  <motion.h2
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.3,
-                      duration: 1.0,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-3 sm:mb-4 tracking-tight leading-tight"
-                    style={{
-                      background: convertGradientToCSS(
-                        currentSlideData.promotion?.gradient ||
-                          "from-amber-500/80 to-orange-600/80"
-                      ),
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    {isArabic
-                      ? currentSlideData.promotion.titleAr
-                      : currentSlideData.promotion.titleEn}
-                  </motion.h2>
+                <p
+                  className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 max-w-2xl mx-auto opacity-90 leading-relaxed font-light px-2 sm:px-0"
+                  style={{
+                    background: convertGradientToCSS(
+                      currentSlideData.promotion?.gradient ||
+                        "from-amber-500/80 to-orange-600/80"
+                    ),
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  {isArabic
+                    ? currentSlideData.promotion.subtitleAr
+                    : currentSlideData.promotion.subtitleEn}
+                </p>
 
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.4,
-                      duration: 0.8,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 max-w-2xl mx-auto opacity-90 leading-relaxed font-light px-2 sm:px-0"
-                    style={{
-                      background: convertGradientToCSS(
-                        currentSlideData.promotion?.gradient ||
-                          "from-amber-500/80 to-orange-600/80"
-                      ),
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    {isArabic
-                      ? currentSlideData.promotion.subtitleAr
-                      : currentSlideData.promotion.subtitleEn}
-                  </motion.p>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.5,
-                      duration: 0.8,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                  >
-                    <Link to={currentSlideData.promotion.link || "/products"}>
-                      <div
-                        className="inline-flex items-center backdrop-blur-sm text-white px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 border border-white/20 hover:scale-105 shadow-lg"
-                        style={{
-                          background: convertGradientToCSS(
-                            currentSlideData.promotion?.gradient ||
-                              "from-amber-500/80 to-orange-600/80"
-                          ),
-                        }}
+                <div>
+                  <Link to={currentSlideData.promotion.link || "/products"}>
+                    <div
+                      className="inline-flex items-center text-white px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 border border-white/20 hover:opacity-90"
+                      style={{
+                        background: convertGradientToCSS(
+                          currentSlideData.promotion?.gradient ||
+                            "from-amber-500/80 to-orange-600/80"
+                        ),
+                      }}
+                    >
+                      <span>
+                        {isArabic
+                          ? currentSlideData.promotion.buttonTextAr
+                          : currentSlideData.promotion.buttonTextEn}
+                      </span>
+                      <span
+                        className={`${
+                          isArabic ? "mr-1 sm:mr-1.5" : "ml-1 sm:ml-1.5"
+                        } text-sm sm:text-base`}
                       >
-                        <span>
-                          {isArabic
-                            ? currentSlideData.promotion.buttonTextAr
-                            : currentSlideData.promotion.buttonTextEn}
-                        </span>
-                        <motion.span
-                          className={`${
-                            isArabic ? "mr-1 sm:mr-1.5" : "ml-1 sm:ml-1.5"
-                          } text-sm sm:text-base`}
-                          animate={{
-                            x: isArabic ? [-2, 0] : [0, 2],
-                          }}
-                          transition={{
-                            duration: 1.5,
-                            repeat: Infinity,
-                            repeatType: "reverse",
-                            ease: "easeInOut",
-                          }}
-                        >
-                          {isArabic ? "←" : "→"}
-                        </motion.span>
-                      </div>
-                    </Link>
-                  </motion.div>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
+                        {isArabic ? "←" : "→"}
+                      </span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            ) : null}
           </div>
 
           {/* Countdown Timer */}
           {!isOccasionActive &&
             nearestOccasion &&
             currentSlideData?.type === "occasion" && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              <div
                 className={`absolute bottom-4 sm:bottom-8 ${
                   isArabic ? "right-4 sm:right-8" : "left-4 sm:left-8"
                 } z-30`}
               >
-                <div className="bg-white/8 backdrop-blur-sm rounded-lg sm:rounded-xl p-1.5 sm:p-2.5 border border-white/15">
+                <div className="bg-white/8 rounded-lg sm:rounded-xl p-1.5 sm:p-2.5 border border-white/15">
                   <div className="flex items-center gap-1.5 sm:gap-3 text-white">
                     <div className="text-center">
                       <div className="text-[10px] sm:text-lg font-bold">
@@ -550,12 +359,12 @@ const HeroSlider: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
 
           {/* Navigation Dots */}
           <div className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-30">
-            <div className="flex items-center gap-2 sm:gap-3 bg-white/8 backdrop-blur-sm rounded-full px-3 py-1 sm:px-4 sm:py-2 border border-white/15">
+            <div className="flex items-center gap-2 sm:gap-3 bg-white/8 rounded-full px-3 py-1 sm:px-4 sm:py-2 border border-white/15">
               {allSlides.map((_, index) => (
                 <button
                   key={index}
@@ -573,15 +382,16 @@ const HeroSlider: React.FC = () => {
 
           {/* Navigation Arrows */}
           <button
-            onClick={() =>
-              setCurrentSlide(
-                currentSlide === 0 ? allSlides.length - 1 : currentSlide - 1
-              )
-            }
+            onClick={() => {
+              setCurrentSlide((prev) => (prev > 0 ? prev - 1 : prev));
+            }}
             className={`hidden sm:flex absolute top-1/2 transform -translate-y-1/2 ${
               isArabic ? "right-2 sm:right-4" : "left-2 sm:left-4"
-            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 backdrop-blur-sm text-white rounded-full flex items-center justify-center transition-all duration-300 border border-white/15 hover:bg-white/15 hover:scale-105`}
+            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 text-white rounded-full flex items-center justify-center transition-all duration-500 ease-out border border-white/15 hover:bg-white/15 ${
+              currentSlide === 0 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             aria-label={isArabic ? "الشريحة السابقة" : "Previous slide"}
+            disabled={currentSlide === 0}
           >
             <span className="text-sm sm:text-base font-light">
               {isArabic ? "→" : "←"}
@@ -589,38 +399,27 @@ const HeroSlider: React.FC = () => {
           </button>
 
           <button
-            onClick={() =>
-              setCurrentSlide((currentSlide + 1) % allSlides.length)
-            }
+            onClick={() => {
+              setCurrentSlide((prev) =>
+                prev < allSlides.length - 1 ? prev + 1 : prev
+              );
+            }}
             className={`hidden sm:flex absolute top-1/2 transform -translate-y-1/2 ${
               isArabic ? "left-2 sm:left-4" : "right-2 sm:right-4"
-            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 backdrop-blur-sm text-white rounded-full flex items-center justify-center transition-all duration-300 border border-white/15 hover:bg-white/15 hover:scale-105`}
+            } z-30 w-6 h-6 sm:w-8 sm:h-8 bg-white/8 text-white rounded-full flex items-center justify-center transition-all duration-500 ease-out border border-white/15 hover:bg-white/15 ${
+              currentSlide === allSlides.length - 1
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
             aria-label={isArabic ? "الشريحة التالية" : "Next slide"}
+            disabled={currentSlide === allSlides.length - 1}
           >
             <span className="text-sm sm:text-base font-light">
               {isArabic ? "←" : "→"}
             </span>
           </button>
-
-          {/* Decorative Elements - Hidden on mobile for performance */}
-          {!isMobile && (
-            <>
-              <div className="absolute top-4 sm:top-8 right-4 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 bg-white/5 rounded-full blur-xl animate-pulse" />
-              <div
-                className="absolute bottom-12 sm:bottom-16 left-4 sm:left-8 w-8 h-8 sm:w-12 sm:h-12 bg-white/5 rounded-full blur-lg animate-pulse"
-                style={{ animationDelay: "1.5s" }}
-              />
-              <div
-                className="absolute top-1/3 right-1/4 w-6 h-6 sm:w-10 sm:h-10 bg-white/5 rounded-full blur-md animate-pulse"
-                style={{ animationDelay: "3s" }}
-              />
-            </>
-          )}
         </div>
       </div>
-
-      {/* Bottom Accent */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-200/30 to-transparent" />
     </section>
   );
 };
