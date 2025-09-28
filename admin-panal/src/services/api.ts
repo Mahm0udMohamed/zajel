@@ -235,7 +235,7 @@ class ApiService {
     const response = await this.makeRequest<{ data: unknown[] }>(
       "/hero-occasions"
     );
-    return response.data || [];
+    return Array.isArray(response.data) ? response.data : [];
   }
 
   async getHeroOccasionById(id: string): Promise<unknown> {
@@ -295,6 +295,93 @@ class ApiService {
       }
     );
     return response.data;
+  }
+
+  // Hero Promotions API
+  async getHeroPromotions(): Promise<unknown[]> {
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      "/hero-promotions"
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async getHeroPromotionById(id: string): Promise<unknown> {
+    const response = await this.makeRequest<{ data: unknown }>(
+      `/hero-promotions/${id}`
+    );
+    return response.data;
+  }
+
+  async createHeroPromotion(promotionData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      "/hero-promotions",
+      {
+        method: "POST",
+        body: JSON.stringify(promotionData),
+      }
+    );
+    return response.data;
+  }
+
+  async updateHeroPromotion(
+    id: string,
+    promotionData: unknown
+  ): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/hero-promotions/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(promotionData),
+      }
+    );
+    return response.data;
+  }
+
+  async deleteHeroPromotion(id: string): Promise<void> {
+    await this.makeAuthenticatedRequest(`/hero-promotions/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  async toggleHeroPromotionStatus(id: string): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/hero-promotions/${id}/toggle`,
+      {
+        method: "PATCH",
+      }
+    );
+    return response.data;
+  }
+
+  async importHeroPromotions(promotions: unknown[]): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown[] }>(
+      "/hero-promotions/import",
+      {
+        method: "POST",
+        body: JSON.stringify({ promotions }),
+      }
+    );
+    return response.data;
+  }
+
+  async uploadHeroPromotionImage(file: File): Promise<{ secure_url: string }> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`${API_BASE_URL}/hero-promotions/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "فشل في رفع الصورة");
+    }
+
+    return await response.json();
   }
 }
 

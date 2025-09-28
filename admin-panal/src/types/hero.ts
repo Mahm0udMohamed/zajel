@@ -24,8 +24,7 @@ export interface HeroOccasion {
 
 // Hero Promotion Interface
 export interface HeroPromotion {
-  id: string;
-  type: "promotion";
+  _id: string;
   image: string;
   titleAr: string;
   titleEn: string;
@@ -39,8 +38,18 @@ export interface HeroPromotion {
   priority: number;
   startDate: string; // ISO date string
   endDate: string; // ISO date string
-  createdAt?: string;
-  updatedAt?: string;
+  createdBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  updatedBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Form data interfaces

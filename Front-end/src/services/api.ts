@@ -42,6 +42,116 @@ const apiRequest = async <T>(
   }
 };
 
+// Hero Promotions API
+export const heroPromotionsApi = {
+  // Get all hero promotions with optional filters
+  getAll: async (params?: {
+    page?: number;
+    limit?: number;
+    isActive?: boolean;
+    language?: "ar" | "en";
+    sortBy?:
+      | "priority"
+      | "titleAr"
+      | "titleEn"
+      | "startDate"
+      | "endDate"
+      | "createdAt";
+    sortOrder?: "asc" | "desc";
+  }) => {
+    const searchParams = new URLSearchParams();
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/hero-promotions${queryString ? `?${queryString}` : ""}`;
+
+    return apiRequest<{
+      success: boolean;
+      data: HeroPromotion[];
+      pagination?: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+      };
+    }>(endpoint);
+  },
+
+  // Get active hero promotions only
+  getActive: async (limit?: number) => {
+    const searchParams = new URLSearchParams();
+    if (limit) {
+      searchParams.append("limit", limit.toString());
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/hero-promotions/active${
+      queryString ? `?${queryString}` : ""
+    }`;
+
+    return apiRequest<{
+      success: boolean;
+      data: HeroPromotion[];
+    }>(endpoint);
+  },
+
+  // Get upcoming hero promotions
+  getUpcoming: async (limit?: number) => {
+    const searchParams = new URLSearchParams();
+    if (limit) {
+      searchParams.append("limit", limit.toString());
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/hero-promotions/upcoming${
+      queryString ? `?${queryString}` : ""
+    }`;
+
+    return apiRequest<{
+      success: boolean;
+      data: HeroPromotion[];
+    }>(endpoint);
+  },
+
+  // Get a single hero promotion by ID
+  getById: async (id: string) => {
+    return apiRequest<{
+      success: boolean;
+      data: HeroPromotion;
+    }>(`/hero-promotions/${id}`);
+  },
+
+  // Search hero promotions
+  search: async (
+    query: string,
+    language: "ar" | "en" = "ar",
+    limit?: number
+  ) => {
+    const searchParams = new URLSearchParams({
+      q: query,
+      language,
+    });
+
+    if (limit) {
+      searchParams.append("limit", limit.toString());
+    }
+
+    const endpoint = `/hero-promotions/search?${searchParams.toString()}`;
+
+    return apiRequest<{
+      success: boolean;
+      data: HeroPromotion[];
+    }>(endpoint);
+  },
+};
+
 // Hero Occasions API
 export const heroOccasionsApi = {
   // Get all hero occasions with optional filters
@@ -147,6 +257,35 @@ export const heroOccasionsApi = {
 };
 
 // Types
+export interface HeroPromotion {
+  _id: string;
+  image: string;
+  titleAr: string;
+  titleEn: string;
+  subtitleAr: string;
+  subtitleEn: string;
+  buttonTextAr: string;
+  buttonTextEn: string;
+  link: string;
+  gradient: string;
+  isActive: boolean;
+  priority: number;
+  startDate: string;
+  endDate: string;
+  createdBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  updatedBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface HeroOccasion {
   _id: string;
   nameAr: string;
@@ -180,5 +319,6 @@ export class ApiError extends Error {
 
 // Export the main API object
 export default {
+  heroPromotions: heroPromotionsApi,
   heroOccasions: heroOccasionsApi,
 };

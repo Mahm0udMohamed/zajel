@@ -13,27 +13,10 @@ import { EnhancedImage } from "../../features/images";
 import { usePreloadCriticalImages } from "../../features/images";
 import { usePerformanceMode } from "../../hooks/useMobileDetection";
 import { useHeroSliderOccasions } from "../../hooks/useHeroOccasions";
-import promotionalSlides from "../../data/promotionalSlides.json";
+import { useActiveHeroPromotions } from "../../hooks/useHeroPromotions";
 
 // Remove the unused Occasion interface since we're using HeroOccasion from the API service
-
-interface PromotionalSlide {
-  id: string;
-  type: "promotion";
-  image: string;
-  titleAr: string;
-  titleEn: string;
-  subtitleAr: string;
-  subtitleEn: string;
-  buttonTextAr: string;
-  buttonTextEn: string;
-  link: string;
-  gradient: string;
-  isActive: boolean;
-  priority: number;
-  startDate: string;
-  endDate: string;
-}
+// Remove the unused PromotionalSlide interface since we're using HeroPromotion from the API service
 
 const HeroSlider: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -52,34 +35,26 @@ const HeroSlider: React.FC = () => {
     error: occasionsError,
   } = useHeroSliderOccasions();
 
-  const activePromotions = useMemo(() => {
-    const now = new Date().getTime();
-    return (promotionalSlides as PromotionalSlide[])
-      .filter((slide) => {
-        if (!slide.isActive) return false;
-        const startDate = new Date(slide.startDate).getTime();
-        const endDate = new Date(slide.endDate).getTime();
-        return now >= startDate && now <= endDate;
-      })
-      .sort((a, b) => a.priority - b.priority);
-  }, []);
+  // Use the custom hook to fetch hero promotions from backend
+  const {
+    promotions: activePromotions,
+    loading: promotionsLoading,
+    error: promotionsError,
+  } = useActiveHeroPromotions(10);
 
   const allSlides = useMemo(() => {
-    // Show loading state if occasions are still loading
-    if (occasionsLoading) {
+    // Show loading state if occasions or promotions are still loading
+    if (occasionsLoading || promotionsLoading) {
       return [];
     }
 
     // Show error state if there's an error
     if (occasionsError) {
       console.error("Error loading hero occasions:", occasionsError);
-      // Fallback to promotional slides only
-      return activePromotions.map((slide) => ({
-        id: slide.id,
-        type: "promotion" as const,
-        image: slide.image,
-        promotion: slide,
-      }));
+    }
+
+    if (promotionsError) {
+      console.error("Error loading hero promotions:", promotionsError);
     }
 
     const occasionSlides = nearestOccasion
@@ -91,11 +66,11 @@ const HeroSlider: React.FC = () => {
         }))
       : [];
 
-    const promoSlides = activePromotions.map((slide) => ({
-      id: slide.id,
+    const promoSlides = activePromotions.map((promotion) => ({
+      id: promotion._id,
       type: "promotion" as const,
-      image: slide.image,
-      promotion: slide,
+      image: promotion.image,
+      promotion: promotion,
     }));
 
     if (occasionSlides.length > 0) {
@@ -103,7 +78,14 @@ const HeroSlider: React.FC = () => {
     }
 
     return promoSlides;
-  }, [nearestOccasion, activePromotions, occasionsLoading, occasionsError]);
+  }, [
+    nearestOccasion,
+    activePromotions,
+    occasionsLoading,
+    occasionsError,
+    promotionsLoading,
+    promotionsError,
+  ]);
 
   // Preload hero images for instant display
   const heroImages = React.useMemo(() => {
@@ -186,7 +168,7 @@ const HeroSlider: React.FC = () => {
   const currentSlideData = allSlides[currentSlide] || allSlides[0];
 
   // Show loading state
-  if (occasionsLoading) {
+  if (occasionsLoading || promotionsLoading) {
     return (
       <section className="relative overflow-hidden py-4 sm:py-8">
         <div className="container-custom px-4 sm:px-16">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -36,17 +36,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Plus, Edit, Trash2, Tag, Calendar, Link, Upload } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Tag,
+  Calendar,
+  Link,
+  Upload,
+  Loader2,
+} from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
+import { apiService } from "../../services/api";
 import type { HeroPromotion, HeroPromotionFormData } from "../../types/hero";
-
-interface HeroPromotionsTabProps {
-  promotions: HeroPromotion[];
-  onAdd: (promotion: HeroPromotion) => void;
-  onUpdate: (id: string, promotion: HeroPromotion) => void;
-  onDelete: (id: string) => void;
-  onToggleActive: (id: string) => void;
-}
 
 const GRADIENT_OPTIONS = [
   { value: "from-red-500/80 to-pink-600/80", label: "أحمر وردي" },
@@ -59,13 +61,9 @@ const GRADIENT_OPTIONS = [
   { value: "from-violet-500/80 to-purple-600/80", label: "بنفسجي" },
 ];
 
-export default function HeroPromotionsTab({
-  promotions,
-  onAdd,
-  onUpdate,
-  onDelete,
-  onToggleActive,
-}: HeroPromotionsTabProps) {
+export default function HeroPromotionsTab() {
+  const [promotions, setPromotions] = useState<HeroPromotion[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -88,20 +86,85 @@ export default function HeroPromotionsTab({
   });
   const [originalPromotion, setOriginalPromotion] =
     useState<HeroPromotionFormData | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const { toast } = useToast();
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // تحميل البيانات من الباك إند
+  const loadPromotions = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getHeroPromotions();
+
+      // معالجة مبسطة للاستجابة
+      if (Array.isArray(response)) {
+        setPromotions(response as HeroPromotion[]);
+      } else {
+        console.warn("Unexpected response format:", response);
+        setPromotions([]);
+      }
+    } catch (error) {
+      console.error("Error loading promotions:", error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تحميل العروض الترويجية",
+        variant: "destructive",
+      });
+      setPromotions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // تحميل البيانات عند بدء المكون
+  useEffect(() => {
+    loadPromotions();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Here you would typically upload to your backend/cloud storage
-      // For now, we'll create a local URL for preview
-      const imageUrl = URL.createObjectURL(file);
-      setNewPromotion({ ...newPromotion, image: imageUrl });
-      toast({
-        title: "تم رفع الصورة",
-        description: "تم رفع الصورة بنجاح",
-      });
+      // التحقق من نوع الملف
+      if (!file.type.startsWith("image/")) {
+        toast({
+          title: "خطأ",
+          description: "يرجى اختيار ملف صورة صحيح",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // التحقق من حجم الملف (5MB كحد أقصى)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "خطأ",
+          description: "حجم الصورة يجب أن يكون أقل من 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setUploadingImage(true);
+
+      try {
+        const response = await apiService.uploadHeroPromotionImage(file);
+        setNewPromotion({ ...newPromotion, image: response.secure_url });
+        toast({
+          title: "تم رفع الصورة",
+          description: "تم رفع الصورة بنجاح",
+        });
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast({
+          title: "خطأ",
+          description: "فشل في رفع الصورة",
+          variant: "destructive",
+        });
+      } finally {
+        setUploadingImage(false);
+      }
     }
   };
 
@@ -136,14 +199,56 @@ export default function HeroPromotionsTab({
     setIsDeleteOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
-    if (deletingId) {
-      onDelete(deletingId);
+  const handleDeleteConfirm = async () => {
+    if (!deletingId) {
+      toast({
+        title: "خطأ",
+        description: "معرف العرض الترويجي غير صحيح",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // حفظ البيانات الأصلية للتراجع في حالة الخطأ
+    const originalPromotions = [...promotions];
+    const promotionToDelete = promotions.find(
+      (promo) => promo._id === deletingId
+    );
+
+    if (!promotionToDelete) {
+      toast({
+        title: "خطأ",
+        description: "العرض الترويجي غير موجود",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // إزالة العرض الترويجي محلياً فوراً لتحسين تجربة المستخدم
+      setPromotions((prevPromotions) =>
+        prevPromotions.filter((promo) => promo._id !== deletingId)
+      );
+
+      // إرسال طلب الحذف إلى الباك إند
+      await apiService.deleteHeroPromotion(deletingId);
+
       toast({
         title: "تم الحذف",
         description: "تم حذف العرض الترويجي بنجاح",
       });
       setDeletingId(null);
+    } catch (error) {
+      console.error("Error deleting promotion:", error);
+
+      // إعادة البيانات الأصلية في حالة الخطأ
+      setPromotions(originalPromotions);
+
+      toast({
+        title: "خطأ",
+        description: "فشل في حذف العرض الترويجي",
+        variant: "destructive",
+      });
     }
   };
 
@@ -198,48 +303,167 @@ export default function HeroPromotionsTab({
     }
   };
 
-  const handleAdd = () => {
-    if (!newPromotion.titleAr || !newPromotion.titleEn || !newPromotion.image) {
+  const validatePromotionData = (data: HeroPromotionFormData) => {
+    const errors: string[] = [];
+
+    if (!data.titleAr?.trim()) {
+      errors.push("العنوان العربي مطلوب");
+    }
+
+    if (!data.titleEn?.trim()) {
+      errors.push("العنوان الإنجليزي مطلوب");
+    }
+
+    if (!data.subtitleAr?.trim()) {
+      errors.push("العنوان الفرعي العربي مطلوب");
+    }
+
+    if (!data.subtitleEn?.trim()) {
+      errors.push("العنوان الفرعي الإنجليزي مطلوب");
+    }
+
+    if (!data.buttonTextAr?.trim()) {
+      errors.push("نص الزر العربي مطلوب");
+    }
+
+    if (!data.buttonTextEn?.trim()) {
+      errors.push("نص الزر الإنجليزي مطلوب");
+    }
+
+    if (!data.link?.trim()) {
+      errors.push("الرابط مطلوب");
+    }
+
+    if (!data.image?.trim()) {
+      errors.push("الصورة مطلوبة");
+    }
+
+    if (!data.startDate) {
+      errors.push("تاريخ البداية مطلوب");
+    } else {
+      const startDate = new Date(data.startDate);
+      if (isNaN(startDate.getTime())) {
+        errors.push("تاريخ البداية غير صحيح");
+      }
+    }
+
+    if (!data.endDate) {
+      errors.push("تاريخ الانتهاء مطلوب");
+    } else {
+      const endDate = new Date(data.endDate);
+      if (isNaN(endDate.getTime())) {
+        errors.push("تاريخ الانتهاء غير صحيح");
+      } else if (endDate <= new Date(data.startDate)) {
+        errors.push("تاريخ الانتهاء يجب أن يكون بعد تاريخ البداية");
+      }
+    }
+
+    if (data.priority < 1 || data.priority > 100) {
+      errors.push("الأولوية يجب أن تكون بين 1 و 100");
+    }
+
+    return errors;
+  };
+
+  const handleAdd = async () => {
+    const validationErrors = validatePromotionData(newPromotion);
+
+    if (validationErrors.length > 0) {
       toast({
-        title: "خطأ",
-        description: "يرجى ملء جميع الحقول المطلوبة",
+        title: "خطأ في التحقق",
+        description: validationErrors.join("، "),
         variant: "destructive",
       });
       return;
     }
 
-    const promotion: HeroPromotion = {
-      id: Date.now().toString(),
-      type: "promotion",
-      ...newPromotion,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const promotionData = {
+        titleAr: newPromotion.titleAr.trim(),
+        titleEn: newPromotion.titleEn.trim(),
+        subtitleAr: newPromotion.subtitleAr.trim(),
+        subtitleEn: newPromotion.subtitleEn.trim(),
+        buttonTextAr: newPromotion.buttonTextAr.trim(),
+        buttonTextEn: newPromotion.buttonTextEn.trim(),
+        link: newPromotion.link.trim(),
+        image: newPromotion.image.trim(),
+        gradient: newPromotion.gradient,
+        isActive: Boolean(newPromotion.isActive),
+        priority: Number(newPromotion.priority),
+        startDate: new Date(newPromotion.startDate).toISOString(),
+        endDate: new Date(newPromotion.endDate).toISOString(),
+      };
 
-    onAdd(promotion);
-    setNewPromotion({
-      image: "",
-      titleAr: "",
-      titleEn: "",
-      subtitleAr: "",
-      subtitleEn: "",
-      buttonTextAr: "",
-      buttonTextEn: "",
-      link: "",
-      gradient: "from-red-500/80 to-pink-600/80",
-      isActive: true,
-      priority: 1,
-      startDate: "",
-      endDate: "",
-    });
-    setIsAddOpen(false);
-    toast({
-      title: "تم بنجاح",
-      description: "تم إضافة العرض بنجاح",
-    });
+      console.log("Sending promotion data:", promotionData);
+
+      // إرسال البيانات إلى الباك إند والحصول على العرض الترويجي الجديد
+      const createdPromotion = await apiService.createHeroPromotion(
+        promotionData
+      );
+
+      // إضافة العرض الترويجي الجديد محلياً فوراً لتحسين تجربة المستخدم
+      if (
+        createdPromotion &&
+        typeof createdPromotion === "object" &&
+        "_id" in createdPromotion
+      ) {
+        const newPromotionItem: HeroPromotion = {
+          _id: createdPromotion._id as string,
+          titleAr: promotionData.titleAr,
+          titleEn: promotionData.titleEn,
+          subtitleAr: promotionData.subtitleAr,
+          subtitleEn: promotionData.subtitleEn,
+          buttonTextAr: promotionData.buttonTextAr,
+          buttonTextEn: promotionData.buttonTextEn,
+          link: promotionData.link,
+          image: promotionData.image,
+          gradient: promotionData.gradient,
+          isActive: promotionData.isActive,
+          priority: promotionData.priority,
+          startDate: promotionData.startDate,
+          endDate: promotionData.endDate,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        setPromotions((prevPromotions) => [
+          ...prevPromotions,
+          newPromotionItem,
+        ]);
+      }
+
+      resetForm();
+      setIsAddOpen(false);
+      toast({
+        title: "تم بنجاح",
+        description: "تم إضافة العرض الترويجي بنجاح",
+      });
+    } catch (error) {
+      console.error("Error creating promotion:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "خطأ غير معروف";
+      toast({
+        title: "خطأ",
+        description: `فشل في إضافة العرض الترويجي: ${errorMessage}`,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleEdit = (promotion: HeroPromotion) => {
-    setEditingId(promotion.id);
+    const promotionId = promotion._id || `promotion-${Date.now()}`;
+    setEditingId(promotionId);
+
+    // تحويل التواريخ إلى تنسيق datetime-local
+    const startDate = new Date(promotion.startDate);
+    const endDate = new Date(promotion.endDate);
+    const formattedStartDate = isNaN(startDate.getTime())
+      ? ""
+      : startDate.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+    const formattedEndDate = isNaN(endDate.getTime())
+      ? ""
+      : endDate.toISOString().slice(0, 16);
+
     const promotionData = {
       image: promotion.image,
       titleAr: promotion.titleAr,
@@ -252,32 +476,107 @@ export default function HeroPromotionsTab({
       gradient: promotion.gradient,
       isActive: promotion.isActive,
       priority: promotion.priority,
-      startDate: promotion.startDate,
-      endDate: promotion.endDate,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
     };
     setNewPromotion(promotionData);
     setOriginalPromotion(promotionData);
     setIsEditOpen(true);
   };
 
-  const handleUpdate = () => {
-    if (!editingId) return;
+  const handleUpdate = async () => {
+    if (!editingId) {
+      toast({
+        title: "خطأ",
+        description: "معرف العرض الترويجي غير صحيح",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    const updatedPromotion: HeroPromotion = {
-      id: editingId,
-      type: "promotion",
-      ...newPromotion,
-      updatedAt: new Date().toISOString(),
-    };
+    const validationErrors = validatePromotionData(newPromotion);
 
-    onUpdate(editingId, updatedPromotion);
-    setEditingId(null);
-    setIsEditOpen(false);
-    setOriginalPromotion(null);
-    toast({
-      title: "تم بنجاح",
-      description: "تم تحديث العرض بنجاح",
-    });
+    if (validationErrors.length > 0) {
+      toast({
+        title: "خطأ في التحقق",
+        description: validationErrors.join("، "),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // حفظ البيانات الأصلية للتراجع في حالة الخطأ
+    const originalPromotions = [...promotions];
+    const promotionIndex = promotions.findIndex(
+      (promo) => promo._id === editingId
+    );
+
+    if (promotionIndex === -1) {
+      toast({
+        title: "خطأ",
+        description: "العرض الترويجي غير موجود",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const promotionData = {
+        titleAr: newPromotion.titleAr.trim(),
+        titleEn: newPromotion.titleEn.trim(),
+        subtitleAr: newPromotion.subtitleAr.trim(),
+        subtitleEn: newPromotion.subtitleEn.trim(),
+        buttonTextAr: newPromotion.buttonTextAr.trim(),
+        buttonTextEn: newPromotion.buttonTextEn.trim(),
+        link: newPromotion.link.trim(),
+        image: newPromotion.image.trim(),
+        gradient: newPromotion.gradient,
+        isActive: Boolean(newPromotion.isActive),
+        priority: Number(newPromotion.priority),
+        startDate: new Date(newPromotion.startDate).toISOString(),
+        endDate: new Date(newPromotion.endDate).toISOString(),
+      };
+
+      console.log("Updating promotion data:", promotionData);
+
+      // تحديث البيانات محلياً فوراً لتحسين تجربة المستخدم
+      const updatedPromotion = {
+        ...promotions[promotionIndex],
+        ...promotionData,
+        _id: editingId,
+        updatedAt: new Date().toISOString(),
+      };
+
+      setPromotions((prevPromotions) =>
+        prevPromotions.map((promo) =>
+          promo._id === editingId ? updatedPromotion : promo
+        )
+      );
+
+      // إرسال التحديث إلى الباك إند
+      await apiService.updateHeroPromotion(editingId, promotionData);
+
+      setEditingId(null);
+      setIsEditOpen(false);
+      setOriginalPromotion(null);
+      toast({
+        title: "تم بنجاح",
+        description: "تم تحديث العرض الترويجي بنجاح",
+      });
+    } catch (error) {
+      console.error("Error updating promotion:", error);
+
+      // إعادة البيانات الأصلية في حالة الخطأ
+      setPromotions(originalPromotions);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "خطأ غير معروف";
+      toast({
+        title: "خطأ",
+        description: `فشل في تحديث العرض الترويجي: ${errorMessage}`,
+        variant: "destructive",
+      });
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -287,6 +586,59 @@ export default function HeroPromotionsTab({
   const getGradientLabel = (value: string) => {
     const option = GRADIENT_OPTIONS.find((opt) => opt.value === value);
     return option ? option.label : value;
+  };
+
+  const handleToggleActive = async (id: string) => {
+    if (!id) {
+      toast({
+        title: "خطأ",
+        description: "معرف العرض الترويجي غير صحيح",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // حفظ الحالة الأصلية للتراجع في حالة الخطأ
+    const originalPromotions = [...promotions];
+    const promotionIndex = promotions.findIndex((promo) => promo._id === id);
+
+    if (promotionIndex === -1) {
+      toast({
+        title: "خطأ",
+        description: "العرض الترويجي غير موجود",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const originalStatus = promotions[promotionIndex].isActive;
+    const newStatus = !originalStatus;
+
+    // تحديث الحالة محلياً فوراً لتحسين تجربة المستخدم
+    setPromotions((prevPromotions) =>
+      prevPromotions.map((promo) =>
+        promo._id === id ? { ...promo, isActive: newStatus } : promo
+      )
+    );
+
+    try {
+      await apiService.toggleHeroPromotionStatus(id);
+      toast({
+        title: "تم بنجاح",
+        description: `تم ${newStatus ? "تفعيل" : "إلغاء تفعيل"} العرض الترويجي`,
+      });
+    } catch (error) {
+      console.error("Error toggling promotion status:", error);
+
+      // إعادة الحالة الأصلية في حالة الخطأ
+      setPromotions(originalPromotions);
+
+      toast({
+        title: "خطأ",
+        description: "فشل في تحديث حالة العرض الترويجي",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -353,10 +705,15 @@ export default function HeroPromotionsTab({
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="bg-purple-500/10 border-purple-500/30 text-purple-400 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 group-hover:text-purple-300 group-hover:shadow-purple-500/40 transition-all duration-200 shadow-purple-500/20"
+                          disabled={uploadingImage}
+                          className="bg-purple-500/10 border-purple-500/30 text-purple-400 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 group-hover:text-purple-300 group-hover:shadow-purple-500/40 transition-all duration-200 shadow-purple-500/20 disabled:opacity-50"
                         >
-                          <Upload className="w-4 h-4 mr-1" />
-                          رفع
+                          {uploadingImage ? (
+                            <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                          ) : (
+                            <Upload className="w-4 h-4 mr-1" />
+                          )}
+                          {uploadingImage ? "جاري الرفع..." : "رفع"}
                         </Button>
                       </div>
                     </div>
@@ -670,118 +1027,151 @@ export default function HeroPromotionsTab({
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-20 min-w-[80px]">الصورة</TableHead>
-              <TableHead className="w-40 min-w-[160px]">العنوان</TableHead>
-              <TableHead className="w-24 min-w-[96px]">التدرج</TableHead>
-              <TableHead className="w-32 min-w-[128px]">الفترة</TableHead>
-              <TableHead className="w-20 min-w-[80px]">الأولوية</TableHead>
-              <TableHead className="w-24 min-w-[96px]">الحالة</TableHead>
-              <TableHead className="w-32 min-w-[128px]">الإجراءات</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {promotions
-              .sort((a, b) => a.priority - b.priority)
-              .map((promotion) => (
-                <TableRow key={promotion.id}>
-                  <TableCell>
-                    <div className="flex justify-center">
-                      <img
-                        src={promotion.image || "/placeholder.svg"}
-                        alt={promotion.titleAr}
-                        className="w-16 h-10 object-cover rounded flex-shrink-0"
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="min-w-0">
-                      <div className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-                        {promotion.titleAr}
-                      </div>
-                      <div className="text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-                        {promotion.titleEn}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-4 h-4 rounded bg-gradient-to-r ${promotion.gradient} flex-shrink-0`}
-                      />
-                      <span className="text-sm flex-shrink-0">
-                        {getGradientLabel(promotion.gradient)}
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>جاري التحميل...</span>
+            </div>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-20 min-w-[80px]">الصورة</TableHead>
+                <TableHead className="w-40 min-w-[160px]">العنوان</TableHead>
+                <TableHead className="w-24 min-w-[96px]">التدرج</TableHead>
+                <TableHead className="w-32 min-w-[128px]">الفترة</TableHead>
+                <TableHead className="w-20 min-w-[80px]">الأولوية</TableHead>
+                <TableHead className="w-24 min-w-[96px]">الحالة</TableHead>
+                <TableHead className="w-32 min-w-[128px]">الإجراءات</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {promotions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8">
+                    <div className="flex flex-col items-center gap-2">
+                      <Tag className="w-8 h-8 text-muted-foreground" />
+                      <span className="text-muted-foreground">
+                        لا توجد عروض ترويجية
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <div className="text-xs">
-                      <div
-                        className={`flex items-center gap-1 ${
-                          promotion.isActive
-                            ? "text-green-400"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        <span className="flex-shrink-0">من:</span>
-                        <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0">
-                          {formatDate(promotion.startDate)}
-                        </span>
-                        <span className="flex-shrink-0">إلى:</span>
-                        <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0">
-                          {formatDate(promotion.endDate)}
-                        </span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-center text-sm font-medium">
-                      {promotion.priority}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Badge
-                        variant={promotion.isActive ? "default" : "secondary"}
-                        className="flex-shrink-0 text-xs"
-                      >
-                        {promotion.isActive ? "نشط" : "غير نشط"}
-                      </Badge>
-                      <Switch
-                        checked={promotion.isActive}
-                        onCheckedChange={() => onToggleActive(promotion.id)}
-                        className="flex-shrink-0 scale-75"
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(promotion)}
-                        className="h-8 px-2 text-xs"
-                      >
-                        <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline mr-1">تعديل</span>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteClick(promotion.id)}
-                        className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20 h-8 px-2 text-xs"
-                      >
-                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline mr-1">حذف</span>
-                      </Button>
-                    </div>
-                  </TableCell>
                 </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+              ) : (
+                promotions
+                  .sort((a, b) => a.priority - b.priority)
+                  .map((promotion, index) => {
+                    // التأكد من وجود ID
+                    const promotionId =
+                      promotion._id || `promotion-${index}-${Date.now()}`;
+                    return (
+                      <TableRow key={promotionId}>
+                        <TableCell>
+                          <div className="flex justify-center">
+                            <img
+                              src={promotion.image || "/placeholder.svg"}
+                              alt={promotion.titleAr}
+                              className="w-16 h-10 object-cover rounded flex-shrink-0"
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="min-w-0">
+                            <div className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+                              {promotion.titleAr}
+                            </div>
+                            <div className="text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+                              {promotion.titleEn}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={`w-4 h-4 rounded bg-gradient-to-r ${promotion.gradient} flex-shrink-0`}
+                            />
+                            <span className="text-sm flex-shrink-0">
+                              {getGradientLabel(promotion.gradient)}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-xs">
+                            <div
+                              className={`flex items-center gap-1 ${
+                                promotion.isActive
+                                  ? "text-green-400"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              <span className="flex-shrink-0">من:</span>
+                              <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0">
+                                {formatDate(promotion.startDate)}
+                              </span>
+                              <span className="flex-shrink-0">إلى:</span>
+                              <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0">
+                                {formatDate(promotion.endDate)}
+                              </span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-center text-sm font-medium">
+                            {promotion.priority}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Badge
+                              variant={
+                                promotion.isActive ? "default" : "secondary"
+                              }
+                              className="flex-shrink-0 text-xs"
+                            >
+                              {promotion.isActive ? "نشط" : "غير نشط"}
+                            </Badge>
+                            <Switch
+                              checked={promotion.isActive}
+                              onCheckedChange={() =>
+                                handleToggleActive(promotionId)
+                              }
+                              className="flex-shrink-0 scale-75"
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(promotion)}
+                              className="h-8 px-2 text-xs"
+                            >
+                              <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline mr-1">
+                                تعديل
+                              </span>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteClick(promotionId)}
+                              className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20 h-8 px-2 text-xs"
+                            >
+                              <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline mr-1">حذف</span>
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+              )}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
 
       {/* Edit Dialog */}
@@ -830,10 +1220,15 @@ export default function HeroPromotionsTab({
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="bg-purple-500/10 border-purple-500/30 text-purple-400 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 group-hover:text-purple-300 group-hover:shadow-purple-500/40 transition-all duration-200 shadow-purple-500/20"
+                      disabled={uploadingImage}
+                      className="bg-purple-500/10 border-purple-500/30 text-purple-400 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 group-hover:text-purple-300 group-hover:shadow-purple-500/40 transition-all duration-200 shadow-purple-500/20 disabled:opacity-50"
                     >
-                      <Upload className="w-4 h-4 mr-1" />
-                      رفع
+                      {uploadingImage ? (
+                        <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4 mr-1" />
+                      )}
+                      {uploadingImage ? "جاري الرفع..." : "رفع"}
                     </Button>
                   </div>
                 </div>
