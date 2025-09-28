@@ -42,6 +42,36 @@ const HeroSlider: React.FC = () => {
     error: promotionsError,
   } = useActiveHeroPromotions(10);
 
+  // دالة لتحويل تدرج Tailwind إلى CSS
+  const convertGradientToCSS = (gradient: string) => {
+    const gradientMap: { [key: string]: string } = {
+      "from-amber-500/80 to-orange-600/80":
+        "linear-gradient(to right, #f59e0b, #ea580c)",
+      "from-red-500/80 to-pink-600/80":
+        "linear-gradient(to right, #ef4444, #db2777)",
+      "from-blue-500/80 to-cyan-600/80":
+        "linear-gradient(to right, #3b82f6, #0891b2)",
+      "from-green-500/80 to-emerald-600/80":
+        "linear-gradient(to right, #22c55e, #059669)",
+      "from-purple-500/80 to-violet-600/80":
+        "linear-gradient(to right, #a855f7, #7c3aed)",
+      "from-indigo-500/80 to-blue-600/80":
+        "linear-gradient(to right, #6366f1, #2563eb)",
+      "from-pink-500/80 to-rose-600/80":
+        "linear-gradient(to right, #ec4899, #e11d48)",
+      "from-yellow-500/80 to-orange-600/80":
+        "linear-gradient(to right, #eab308, #ea580c)",
+      "from-teal-500/80 to-cyan-600/80":
+        "linear-gradient(to right, #14b8a6, #0891b2)",
+      "from-lime-500/80 to-green-600/80":
+        "linear-gradient(to right, #84cc16, #16a34a)",
+    };
+
+    return (
+      gradientMap[gradient] || "linear-gradient(to right, #f59e0b, #ea580c)"
+    );
+  };
+
   const allSlides = useMemo(() => {
     // Show loading state if occasions or promotions are still loading
     if (occasionsLoading || promotionsLoading) {
@@ -390,7 +420,16 @@ const HeroSlider: React.FC = () => {
                       duration: 1.0,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-3 sm:mb-4 tracking-tight leading-tight text-white drop-shadow-sm"
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-3 sm:mb-4 tracking-tight leading-tight"
+                    style={{
+                      background: convertGradientToCSS(
+                        currentSlideData.promotion?.gradient ||
+                          "from-amber-500/80 to-orange-600/80"
+                      ),
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
                   >
                     {isArabic
                       ? currentSlideData.promotion.titleAr
@@ -405,7 +444,16 @@ const HeroSlider: React.FC = () => {
                       duration: 0.8,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 max-w-2xl mx-auto opacity-90 leading-relaxed font-light px-2 sm:px-0 text-white/85"
+                    className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 max-w-2xl mx-auto opacity-90 leading-relaxed font-light px-2 sm:px-0"
+                    style={{
+                      background: convertGradientToCSS(
+                        currentSlideData.promotion?.gradient ||
+                          "from-amber-500/80 to-orange-600/80"
+                      ),
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
                   >
                     {isArabic
                       ? currentSlideData.promotion.subtitleAr
@@ -422,7 +470,15 @@ const HeroSlider: React.FC = () => {
                     }}
                   >
                     <Link to={currentSlideData.promotion.link || "/products"}>
-                      <div className="inline-flex items-center bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 border border-white/20 hover:bg-white hover:scale-105">
+                      <div
+                        className="inline-flex items-center backdrop-blur-sm text-white px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 border border-white/20 hover:scale-105 shadow-lg"
+                        style={{
+                          background: convertGradientToCSS(
+                            currentSlideData.promotion?.gradient ||
+                              "from-amber-500/80 to-orange-600/80"
+                          ),
+                        }}
+                      >
                         <span>
                           {isArabic
                             ? currentSlideData.promotion.buttonTextAr
