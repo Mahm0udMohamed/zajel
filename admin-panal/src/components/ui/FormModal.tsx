@@ -16,6 +16,7 @@ export interface FormModalProps
   isValid?: boolean;
   hasChanges?: boolean;
   hasData?: boolean;
+  mode?: "add" | "edit";
 }
 
 export function FormModal({
@@ -30,19 +31,29 @@ export function FormModal({
   isValid = true,
   hasChanges = false,
   hasData = false,
+  mode = "add",
   onPointerDownOutside,
   onEscapeKeyDown,
   ...props
 }: FormModalProps) {
+  // زر الحفظ يكون معطل إذا لم تكن هناك تغييرات أو إذا كان النموذج غير صالح
+  const isSubmitDisabled = !isValid || !hasChanges || isSubmitting;
+
   const handlePointerDownOutside = (e: Event) => {
-    if (hasChanges || hasData) {
+    // في وضع التعديل: منع الإغلاق فقط إذا كانت هناك تغييرات
+    // في وضع الإضافة: منع الإغلاق إذا كانت هناك بيانات
+    const shouldPreventClose = mode === "edit" ? hasChanges : hasData;
+    if (shouldPreventClose) {
       e.preventDefault();
     }
     onPointerDownOutside?.(e);
   };
 
   const handleEscapeKeyDown = (e: KeyboardEvent) => {
-    if (hasChanges || hasData) {
+    // في وضع التعديل: منع الإغلاق فقط إذا كانت هناك تغييرات
+    // في وضع الإضافة: منع الإغلاق إذا كانت هناك بيانات
+    const shouldPreventClose = mode === "edit" ? hasChanges : hasData;
+    if (shouldPreventClose) {
       e.preventDefault();
     }
     onEscapeKeyDown?.(e);
@@ -57,7 +68,7 @@ export function FormModal({
       onSecondaryClick={onCancel}
       primaryButtonText={submitText}
       secondaryButtonText={cancelText}
-      primaryButtonDisabled={!isValid}
+      primaryButtonDisabled={isSubmitDisabled}
       primaryButtonLoading={isSubmitting}
       onPointerDownOutside={handlePointerDownOutside}
       onEscapeKeyDown={handleEscapeKeyDown}

@@ -64,6 +64,7 @@ export function HeroPromotionModal({
     useState<HeroPromotionFormData | null>(promotion ? { ...formData } : null);
 
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   // تحديث البيانات عند تغيير promotion
@@ -242,6 +243,7 @@ export function HeroPromotionModal({
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const promotionData = {
         titleAr: formData.titleAr.trim(),
@@ -295,6 +297,8 @@ export function HeroPromotionModal({
         } العرض الترويجي: ${errorMessage}`,
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -352,6 +356,8 @@ export function HeroPromotionModal({
       isValid={isFormValid()}
       hasChanges={hasChanges()}
       hasData={hasData()}
+      isSubmitting={isSubmitting}
+      mode={mode}
       icon={<Tag className="w-5 h-5 text-purple-500" />}
       title={mode === "add" ? "إضافة عرض ترويجي جديد" : "تعديل العرض الترويجي"}
       {...restProps}

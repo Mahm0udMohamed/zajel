@@ -41,6 +41,7 @@ export function HeroOccasionModal({
   const [uploadingImages, setUploadingImages] = useState<Set<number>>(
     new Set()
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   // تحديث البيانات عند تغيير occasion
@@ -235,6 +236,7 @@ export function HeroOccasionModal({
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const validImages = formData.images.filter((img) => img.trim() !== "");
       const occasionData = {
@@ -281,6 +283,8 @@ export function HeroOccasionModal({
         } المناسبة: ${errorMessage}`,
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -353,6 +357,8 @@ export function HeroOccasionModal({
       isValid={isFormValid()}
       hasChanges={hasChanges()}
       hasData={hasData()}
+      isSubmitting={isSubmitting}
+      mode={mode}
       icon={<Image className="w-5 h-5 text-blue-500" />}
       title={mode === "add" ? "إضافة مناسبة جديدة" : "تعديل المناسبة"}
       {...restProps}
