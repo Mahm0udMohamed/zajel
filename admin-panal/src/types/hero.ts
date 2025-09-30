@@ -3,7 +3,8 @@ export interface HeroOccasion {
   _id: string;
   nameAr: string;
   nameEn: string;
-  date: string; // ISO date string
+  startDate: string; // ISO date string
+  endDate: string; // ISO date string
   images: string[]; // Array of image URLs
   celebratoryMessageAr: string;
   celebratoryMessageEn: string;
@@ -56,7 +57,8 @@ export interface HeroPromotion {
 export interface HeroOccasionFormData {
   nameAr: string;
   nameEn: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   images: string[];
   celebratoryMessageAr: string;
   celebratoryMessageEn: string;

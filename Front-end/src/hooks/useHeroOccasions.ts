@@ -41,7 +41,7 @@ export const useHeroOccasions = (
         limit,
         isActive,
         language,
-        sortBy: "date",
+        sortBy: "startDate",
         sortOrder: "asc",
       });
 
@@ -188,8 +188,8 @@ export const useHeroSliderOccasions = () => {
       setLoading(true);
       setError(null);
 
-      // Get only the nearest upcoming occasion (limit: 1)
-      const response = await heroOccasionsApi.getUpcoming(1);
+      // Get only the nearest current occasion (limit: 1)
+      const response = await heroOccasionsApi.getCurrent(1);
 
       if (response.success && response.data.length > 0) {
         setNearestOccasion(response.data[0]);

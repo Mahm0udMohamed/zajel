@@ -26,8 +26,11 @@ export function HeroOccasionModal({
   const [formData, setFormData] = useState<HeroOccasionFormData>({
     nameAr: occasion?.nameAr || "",
     nameEn: occasion?.nameEn || "",
-    date: occasion?.date
-      ? new Date(occasion.date).toISOString().split("T")[0]
+    startDate: occasion?.startDate
+      ? new Date(occasion.startDate).toISOString().split("T")[0]
+      : "",
+    endDate: occasion?.endDate
+      ? new Date(occasion.endDate).toISOString().split("T")[0]
       : "",
     images: occasion?.images || [""],
     celebratoryMessageAr: occasion?.celebratoryMessageAr || "",
@@ -52,8 +55,11 @@ export function HeroOccasionModal({
       const updatedFormData = {
         nameAr: occasion.nameAr || "",
         nameEn: occasion.nameEn || "",
-        date: occasion.date
-          ? new Date(occasion.date).toISOString().split("T")[0]
+        startDate: occasion.startDate
+          ? new Date(occasion.startDate).toISOString().split("T")[0]
+          : "",
+        endDate: occasion.endDate
+          ? new Date(occasion.endDate).toISOString().split("T")[0]
           : "",
         images: occasion.images || [""],
         celebratoryMessageAr: occasion.celebratoryMessageAr || "",
@@ -67,7 +73,8 @@ export function HeroOccasionModal({
       const resetFormData = {
         nameAr: "",
         nameEn: "",
-        date: "",
+        startDate: "",
+        endDate: "",
         images: [""],
         celebratoryMessageAr: "",
         celebratoryMessageEn: "",
@@ -85,7 +92,8 @@ export function HeroOccasionModal({
         const resetFormData = {
           nameAr: "",
           nameEn: "",
-          date: "",
+          startDate: "",
+          endDate: "",
           images: [""],
           celebratoryMessageAr: "",
           celebratoryMessageEn: "",
@@ -98,8 +106,11 @@ export function HeroOccasionModal({
         const resetFormData = {
           nameAr: occasion.nameAr || "",
           nameEn: occasion.nameEn || "",
-          date: occasion.date
-            ? new Date(occasion.date).toISOString().split("T")[0]
+          startDate: occasion.startDate
+            ? new Date(occasion.startDate).toISOString().split("T")[0]
+            : "",
+          endDate: occasion.endDate
+            ? new Date(occasion.endDate).toISOString().split("T")[0]
             : "",
           images: occasion.images || [""],
           celebratoryMessageAr: occasion.celebratoryMessageAr || "",
@@ -119,7 +130,8 @@ export function HeroOccasionModal({
     return (
       formData.nameAr !== originalData.nameAr ||
       formData.nameEn !== originalData.nameEn ||
-      formData.date !== originalData.date ||
+      formData.startDate !== originalData.startDate ||
+      formData.endDate !== originalData.endDate ||
       formData.celebratoryMessageAr !== originalData.celebratoryMessageAr ||
       formData.celebratoryMessageEn !== originalData.celebratoryMessageEn ||
       formData.isActive !== originalData.isActive ||
@@ -131,7 +143,8 @@ export function HeroOccasionModal({
     return (
       formData.nameAr.trim() !== "" ||
       formData.nameEn.trim() !== "" ||
-      formData.date !== "" ||
+      formData.startDate !== "" ||
+      formData.endDate !== "" ||
       formData.celebratoryMessageAr.trim() !== "" ||
       formData.celebratoryMessageEn.trim() !== "" ||
       formData.images.some((img) => img.trim() !== "")
@@ -141,9 +154,16 @@ export function HeroOccasionModal({
   const isFormValid = () => {
     const hasNameAr = formData.nameAr.trim() !== "";
     const hasNameEn = formData.nameEn.trim() !== "";
-    const hasDate = formData.date !== "";
+    const hasStartDate = formData.startDate !== "";
+    const hasEndDate = formData.endDate !== "";
     const hasValidImages = formData.images.some((img) => img.trim() !== "");
-    return hasNameAr && hasNameEn && hasDate && hasValidImages;
+
+    // التحقق من أن تاريخ الانتهاء بعد أو يساوي تاريخ البداية
+    const startDate = new Date(formData.startDate);
+    const endDate = new Date(formData.endDate);
+    const isDateRangeValid = hasStartDate && hasEndDate && endDate >= startDate;
+
+    return hasNameAr && hasNameEn && isDateRangeValid && hasValidImages;
   };
 
   const handleImageError = (imageIndex: number) => {
@@ -283,7 +303,8 @@ export function HeroOccasionModal({
       const occasionData = {
         nameAr: formData.nameAr.trim(),
         nameEn: formData.nameEn.trim(),
-        date: new Date(formData.date).toISOString(),
+        startDate: new Date(formData.startDate).toISOString(),
+        endDate: new Date(formData.endDate).toISOString(),
         images: validImages,
         celebratoryMessageAr: formData.celebratoryMessageAr.trim(),
         celebratoryMessageEn: formData.celebratoryMessageEn.trim(),
@@ -338,12 +359,30 @@ export function HeroOccasionModal({
     if (!data.nameEn?.trim()) {
       errors.push("الاسم الإنجليزي مطلوب");
     }
-    if (!data.date) {
-      errors.push("تاريخ المناسبة مطلوب");
+    if (!data.startDate) {
+      errors.push("تاريخ بداية المناسبة مطلوب");
     } else {
-      const date = new Date(data.date);
-      if (isNaN(date.getTime())) {
-        errors.push("تاريخ المناسبة غير صحيح");
+      const startDate = new Date(data.startDate);
+      if (isNaN(startDate.getTime())) {
+        errors.push("تاريخ بداية المناسبة غير صحيح");
+      }
+    }
+
+    if (!data.endDate) {
+      errors.push("تاريخ انتهاء المناسبة مطلوب");
+    } else {
+      const endDate = new Date(data.endDate);
+      if (isNaN(endDate.getTime())) {
+        errors.push("تاريخ انتهاء المناسبة غير صحيح");
+      }
+    }
+
+    // التحقق من أن تاريخ الانتهاء بعد أو يساوي تاريخ البداية
+    if (data.startDate && data.endDate) {
+      const startDate = new Date(data.startDate);
+      const endDate = new Date(data.endDate);
+      if (endDate < startDate) {
+        errors.push("تاريخ الانتهاء يجب أن يكون بعد أو يساوي تاريخ البداية");
       }
     }
 
@@ -436,14 +475,24 @@ export function HeroOccasionModal({
           </div>
         </div>
 
-        <DatePicker
-          label="تاريخ المناسبة"
-          value={formData.date}
-          onChange={(value) => setFormData({ ...formData, date: value })}
-          placeholder="اختر تاريخ المناسبة"
-          required
-          className="w-full"
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <DatePicker
+            label="تاريخ بداية المناسبة"
+            value={formData.startDate}
+            onChange={(value) => setFormData({ ...formData, startDate: value })}
+            placeholder="اختر تاريخ البداية"
+            required
+            className="w-full"
+          />
+          <DatePicker
+            label="تاريخ انتهاء المناسبة"
+            value={formData.endDate}
+            onChange={(value) => setFormData({ ...formData, endDate: value })}
+            placeholder="اختر تاريخ الانتهاء"
+            required
+            className="w-full"
+          />
+        </div>
 
         <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
           <Label className="text-white font-medium">رسائل التهنئة</Label>

@@ -112,27 +112,35 @@ const HeroSlider: React.FC = () => {
   const updateCountdown = useCallback(() => {
     if (!nearestOccasion) return;
     const now = new Date();
-    const occasionDate = new Date(nearestOccasion.date);
+    const occasionStartDate = new Date(nearestOccasion.startDate);
+    const occasionEndDate = new Date(nearestOccasion.endDate);
     const nowDate = new Date(
       Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
     );
-    const occasionDateOnly = new Date(
+    const occasionStartDateOnly = new Date(
       Date.UTC(
-        occasionDate.getUTCFullYear(),
-        occasionDate.getUTCMonth(),
-        occasionDate.getUTCDate()
+        occasionStartDate.getUTCFullYear(),
+        occasionStartDate.getUTCMonth(),
+        occasionStartDate.getUTCDate()
       )
     );
     const oneDayInMs = 24 * 60 * 60 * 1000;
-    const diff = occasionDate.getTime() - now.getTime();
+    const diff = occasionStartDate.getTime() - now.getTime();
 
+    // Check if the occasion is currently active (between start and end date)
+    const isCurrentlyActive =
+      now.getTime() >= occasionStartDate.getTime() &&
+      now.getTime() <= occasionEndDate.getTime();
+
+    // Check if it's the start day
     const isToday =
-      nowDate.getTime() === occasionDateOnly.getTime() ||
-      (nowDate.getTime() > occasionDateOnly.getTime() &&
-        nowDate.getTime() <= occasionDateOnly.getTime() + oneDayInMs);
-    setIsOccasionActive(isToday);
+      nowDate.getTime() === occasionStartDateOnly.getTime() ||
+      (nowDate.getTime() > occasionStartDateOnly.getTime() &&
+        nowDate.getTime() <= occasionStartDateOnly.getTime() + oneDayInMs);
 
-    if (!isToday) {
+    setIsOccasionActive(isCurrentlyActive || isToday);
+
+    if (!isToday && !isCurrentlyActive) {
       setTimeLeft({
         days: Math.floor(diff / oneDayInMs),
         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),

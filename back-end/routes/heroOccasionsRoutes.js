@@ -4,6 +4,7 @@ import {
   getOccasionById,
   getActiveOccasions,
   getUpcomingOccasions,
+  getCurrentOccasions,
   createOccasion,
   updateOccasion,
   deleteOccasion,
@@ -14,6 +15,7 @@ import {
   getCacheStats,
   clearCache,
   diagnoseRedis,
+  checkAndUpdateExpiredOccasions,
 } from "../controllers/heroOccasionsController.js";
 import { authenticateAdmin } from "../middlewares/adminAuthMiddleware.js";
 import { body, param, query } from "express-validator";
@@ -51,11 +53,51 @@ const occasionValidation = [
     .isLength({ min: 2, max: 100 })
     .withMessage("الاسم الإنجليزي يجب أن يكون بين 2 و 100 حرف"),
 
-  body("date")
+  body("startDate")
     .notEmpty()
-    .withMessage("تاريخ المناسبة مطلوب")
+    .withMessage("تاريخ بداية المناسبة مطلوب")
     .isISO8601()
-    .withMessage("تاريخ المناسبة يجب أن يكون صحيحاً"),
+    .withMessage("تاريخ بداية المناسبة يجب أن يكون صحيحاً"),
+
+  body("endDate")
+    .notEmpty()
+    .withMessage("تاريخ انتهاء المناسبة مطلوب")
+    .isISO8601()
+    .withMessage("تاريخ انتهاء المناسبة يجب أن يكون صحيحاً")
+    .custom((value, { req }) => {
+      const startDate = new Date(req.body.startDate);
+      const endDate = new Date(value);
+
+      // التحقق من صحة التواريخ
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new Error("تواريخ غير صحيحة");
+      }
+
+      // تحويل التواريخ إلى نفس اليوم مع أوقات مختلفة للمقارنة (استخدام UTC)
+      const startDateOnly = new Date(
+        Date.UTC(
+          startDate.getUTCFullYear(),
+          startDate.getUTCMonth(),
+          startDate.getUTCDate()
+        )
+      );
+      const endDateOnly = new Date(
+        Date.UTC(
+          endDate.getUTCFullYear(),
+          endDate.getUTCMonth(),
+          endDate.getUTCDate()
+        )
+      );
+
+      // التحقق من أن تاريخ الانتهاء بعد أو يساوي تاريخ البداية
+      if (endDateOnly < startDateOnly) {
+        throw new Error(
+          "تاريخ الانتهاء يجب أن يكون بعد أو يساوي تاريخ البداية"
+        );
+      }
+
+      return true;
+    }),
 
   body("images")
     .isArray({ min: 1 })
@@ -190,6 +232,9 @@ router.get("/active", getActiveOccasions);
 // GET /api/hero-occasions/upcoming - الحصول على المناسبات القادمة
 router.get("/upcoming", getUpcomingOccasions);
 
+// GET /api/hero-occasions/current - الحصول على المناسبات الحالية (النشطة أو القادمة)
+router.get("/current", getCurrentOccasions);
+
 // GET /api/hero-occasions/search - البحث في المناسبات
 router.get("/search", searchValidation, searchOccasions);
 
@@ -258,5 +303,26 @@ router.get("/cache/diagnose", authenticateAdmin, diagnoseRedis);
 
 // DELETE /api/hero-occasions/cache/clear - مسح الكاش يدوياً
 router.delete("/cache/clear", authenticateAdmin, clearCache);
+
+// ===== مسارات إدارة المناسبات المنتهية (تحتاج مصادقة أدمن) =====
+
+// POST /api/hero-occasions/update-expired - تحديث المناسبات المنتهية يدوياً
+router.post("/update-expired", authenticateAdmin, async (req, res) => {
+  try {
+    const updated = await checkAndUpdateExpiredOccasions();
+    res.status(200).json({
+      success: true,
+      message: `تم تحديث ${updated} مناسبة منتهية`,
+      data: { updated },
+    });
+  } catch (error) {
+    console.error("Error updating expired occasions:", error);
+    res.status(500).json({
+      success: false,
+      message: "فشل في تحديث المناسبات المنتهية",
+      error: error.message,
+    });
+  }
+});
 
 export default router;

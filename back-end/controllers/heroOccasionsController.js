@@ -221,13 +221,16 @@ export const diagnoseRedis = async (req, res) => {
 // الحصول على جميع المناسبات (Cache-Aside Pattern)
 export const getAllOccasions = async (req, res) => {
   try {
+    // تحديث المناسبات المنتهية تلقائياً قبل كل طلب
+    await checkAndUpdateExpiredOccasions();
+
     const {
       page = 1,
       limit = 10,
       isActive,
       search,
       language = "ar",
-      sortBy = "date",
+      sortBy = "startDate",
       sortOrder = "asc",
     } = req.query;
 
@@ -381,6 +384,9 @@ export const getOccasionById = async (req, res) => {
 // الحصول على المناسبات النشطة فقط
 export const getActiveOccasions = async (req, res) => {
   try {
+    // تحديث المناسبات المنتهية تلقائياً قبل كل طلب
+    await checkAndUpdateExpiredOccasions();
+
     const { limit = 10 } = req.query;
 
     // محاولة الحصول من الكاش
@@ -401,7 +407,7 @@ export const getActiveOccasions = async (req, res) => {
     console.log(`🔄 Cache MISS for active occasions, fetching from database`);
 
     const occasions = await HeroOccasion.find({ isActive: true })
-      .sort({ date: 1 })
+      .sort({ startDate: 1 })
       .limit(parseInt(limit));
 
     // حفظ في الكاش
@@ -431,7 +437,7 @@ export const getActiveOccasions = async (req, res) => {
   }
 };
 
-// الحصول على المناسبات القادمة
+// الحصول على المناسبات القادمة (فقط المناسبات التي لم تبدأ بعد)
 export const getUpcomingOccasions = async (req, res) => {
   try {
     const { limit = 5 } = req.query;
@@ -453,12 +459,12 @@ export const getUpcomingOccasions = async (req, res) => {
     // Cache MISS - الحصول من قاعدة البيانات
     console.log(`🔄 Cache MISS for upcoming occasions, fetching from database`);
 
-    const today = new Date();
+    const now = new Date();
     const occasions = await HeroOccasion.find({
       isActive: true,
-      date: { $gte: today },
+      startDate: { $gt: now }, // فقط المناسبات القادمة
     })
-      .sort({ date: 1 })
+      .sort({ startDate: 1 })
       .limit(parseInt(limit));
 
     // حفظ في الكاش
@@ -480,6 +486,90 @@ export const getUpcomingOccasions = async (req, res) => {
     });
   } catch (error) {
     console.error("خطأ في الحصول على المناسبات القادمة:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ في الخادم",
+      error: error.message,
+    });
+  }
+};
+
+// الحصول على المناسبات الحالية (مناسبة نشطة واحدة أو القادمة)
+export const getCurrentOccasions = async (req, res) => {
+  try {
+    const { limit = 1 } = req.query; // افتراضياً مناسبة واحدة فقط
+
+    // محاولة الحصول من الكاش
+    const cached = await cacheLayer.get("hero-occasions-current", "list", {
+      limit,
+    });
+
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        data: cached,
+        cached: true,
+        cacheStrategy: "hero-occasions-current",
+      });
+    }
+
+    // Cache MISS - الحصول من قاعدة البيانات
+    console.log(`🔄 Cache MISS for current occasions, fetching from database`);
+
+    const now = new Date();
+    let occasions = [];
+
+    // أولاً: البحث عن مناسبة نشطة حالياً
+    const activeOccasions = await HeroOccasion.find({
+      isActive: true,
+      startDate: { $lte: now }, // بدأت بالفعل
+      endDate: { $gt: now }, // لم تنته بعد
+    })
+      .sort({ startDate: 1 })
+      .limit(1);
+
+    if (activeOccasions.length > 0) {
+      // إذا وجدت مناسبة نشطة، أرسلها
+      occasions = activeOccasions;
+      console.log(`✅ Found active occasion: ${activeOccasions[0].nameAr}`);
+    } else {
+      // إذا لم توجد مناسبة نشطة، ابحث عن القادمة
+      const upcomingOccasions = await HeroOccasion.find({
+        isActive: true,
+        startDate: { $gt: now }, // لم تبدأ بعد
+      })
+        .sort({ startDate: 1 })
+        .limit(1);
+
+      occasions = upcomingOccasions;
+      if (upcomingOccasions.length > 0) {
+        console.log(
+          `✅ Found upcoming occasion: ${upcomingOccasions[0].nameAr}`
+        );
+      } else {
+        console.log(`ℹ️ No active or upcoming occasions found`);
+      }
+    }
+
+    // حفظ في الكاش
+    await cacheLayer.set(
+      "hero-occasions-current",
+      "list",
+      occasions,
+      { limit },
+      {
+        ttl: CACHE_TTL.UPCOMING,
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      data: occasions,
+      cached: false,
+      cacheStrategy: "hero-occasions-current",
+    });
+  } catch (error) {
+    console.error("خطأ في الحصول على المناسبات الحالية:", error);
     res.status(500).json({
       success: false,
       message: "حدث خطأ في الخادم",
@@ -521,7 +611,12 @@ export const searchOccasions = async (req, res) => {
     // Cache MISS - الحصول من قاعدة البيانات
     console.log(`🔄 Cache MISS for search, fetching from database`);
 
-    const occasions = await HeroOccasion.searchOccasions(searchQuery, language);
+    // استخدام isActive فقط في البحث
+    const searchField = language === "en" ? "nameEn" : "nameAr";
+    const occasions = await HeroOccasion.find({
+      isActive: true,
+      [searchField]: { $regex: searchQuery, $options: "i" },
+    }).sort({ startDate: 1, createdAt: -1 });
     const limitedOccasions = occasions.slice(0, parseInt(limit));
 
     // حفظ في الكاش
@@ -553,6 +648,80 @@ export const searchOccasions = async (req, res) => {
   }
 };
 
+// ===== Auto-Update Expired Occasions =====
+
+// دالة بسيطة لتحديث المناسبات المنتهية
+export const checkAndUpdateExpiredOccasions = async () => {
+  try {
+    const now = new Date();
+
+    // إنشاء تاريخ نهاية اليوم الحالي (23:59:59.999)
+    const endOfToday = new Date(now);
+    endOfToday.setHours(23, 59, 59, 999);
+
+    // تحديث المناسبات المنتهية - يجب أن تكون endDate أقل من بداية اليوم التالي
+    // وليس فقط أقل من الوقت الحالي. هذا يضمن أن المناسبات تبقى نشطة حتى 23:59:59
+    const startOfTomorrow = new Date(now);
+    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+    startOfTomorrow.setHours(0, 0, 0, 0);
+
+    const result = await HeroOccasion.updateMany(
+      {
+        isActive: true,
+        endDate: { $lt: startOfTomorrow },
+      },
+      {
+        $set: {
+          isActive: false,
+          updatedAt: now,
+        },
+      }
+    );
+
+    // مسح الكاش فقط إذا تم تحديث شيء
+    if (result.modifiedCount > 0) {
+      await clearAllOccasionsCache();
+      console.log(`✅ Auto-updated ${result.modifiedCount} expired occasions`);
+    }
+
+    return result.modifiedCount;
+  } catch (error) {
+    console.error("❌ Error auto-updating expired occasions:", error);
+    return 0;
+  }
+};
+
+// دالة للتحقق من التواريخ المتداخلة
+const checkDateOverlap = async (startDate, endDate, excludeId = null) => {
+  const query = {
+    isActive: true,
+    $or: [
+      // المناسبة الجديدة تبدأ داخل فترة مناسبة موجودة
+      {
+        startDate: { $lte: startDate },
+        endDate: { $gte: startDate },
+      },
+      // المناسبة الجديدة تنتهي داخل فترة مناسبة موجودة
+      {
+        startDate: { $lte: endDate },
+        endDate: { $gte: endDate },
+      },
+      // المناسبة الجديدة تحتوي على مناسبة موجودة بالكامل
+      {
+        startDate: { $gte: startDate },
+        endDate: { $lte: endDate },
+      },
+    ],
+  };
+
+  if (excludeId) {
+    query._id = { $ne: excludeId };
+  }
+
+  const overlappingOccasions = await HeroOccasion.find(query);
+  return overlappingOccasions;
+};
+
 // ===== Write Operations with Cache Invalidation =====
 
 // إنشاء مناسبة جديدة
@@ -570,12 +739,28 @@ export const createOccasion = async (req, res) => {
     const {
       nameAr,
       nameEn,
-      date,
+      startDate,
+      endDate,
       images,
       celebratoryMessageAr,
       celebratoryMessageEn,
       isActive = true,
     } = req.body;
+
+    // التحقق من التواريخ المتداخلة
+    const overlappingOccasions = await checkDateOverlap(startDate, endDate);
+    if (overlappingOccasions.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "يوجد مناسبة أخرى في نفس الفترة الزمنية",
+        overlappingOccasions: overlappingOccasions.map((occ) => ({
+          nameAr: occ.nameAr,
+          nameEn: occ.nameEn,
+          startDate: occ.startDate,
+          endDate: occ.endDate,
+        })),
+      });
+    }
 
     // رفع الصور إلى Cloudinary
     const uploadedImages = await uploadImagesToCloudinary(images);
@@ -584,10 +769,15 @@ export const createOccasion = async (req, res) => {
     const newOccasion = new HeroOccasion({
       nameAr,
       nameEn,
-      date: (() => {
-        const dateObj = new Date(date);
-        dateObj.setUTCHours(0, 0, 0, 0);
-        return dateObj;
+      startDate: (() => {
+        const startDateObj = new Date(startDate);
+        startDateObj.setUTCHours(0, 0, 0, 0);
+        return startDateObj;
+      })(),
+      endDate: (() => {
+        const endDateObj = new Date(endDate);
+        endDateObj.setUTCHours(23, 59, 59, 999);
+        return endDateObj;
       })(),
       images: uploadedImages,
       celebratoryMessageAr,
@@ -598,6 +788,9 @@ export const createOccasion = async (req, res) => {
 
     await newOccasion.save();
     await newOccasion.populate("createdBy", "name email");
+
+    // التحقق من انتهاء المناسبات بعد إنشاء مناسبة جديدة
+    await checkAndUpdateExpiredOccasions();
 
     // مسح الكاش بعد إنشاء مناسبة جديدة
     await clearAllOccasionsCache();
@@ -648,10 +841,48 @@ export const updateOccasion = async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body, updatedBy: req.adminId };
 
-    if (updateData.date) {
-      const dateObj = new Date(updateData.date);
-      dateObj.setUTCHours(0, 0, 0, 0);
-      updateData.date = dateObj;
+    // التحقق من التواريخ المتداخلة إذا تم تحديث التواريخ
+    if (updateData.startDate || updateData.endDate) {
+      const currentOccasion = await HeroOccasion.findById(id);
+      if (!currentOccasion) {
+        return res.status(404).json({
+          success: false,
+          message: "المناسبة غير موجودة",
+        });
+      }
+
+      const startDate = updateData.startDate || currentOccasion.startDate;
+      const endDate = updateData.endDate || currentOccasion.endDate;
+
+      const overlappingOccasions = await checkDateOverlap(
+        startDate,
+        endDate,
+        id
+      );
+      if (overlappingOccasions.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: "يوجد مناسبة أخرى في نفس الفترة الزمنية",
+          overlappingOccasions: overlappingOccasions.map((occ) => ({
+            nameAr: occ.nameAr,
+            nameEn: occ.nameEn,
+            startDate: occ.startDate,
+            endDate: occ.endDate,
+          })),
+        });
+      }
+    }
+
+    if (updateData.startDate) {
+      const startDate = new Date(updateData.startDate);
+      startDate.setUTCHours(0, 0, 0, 0);
+      updateData.startDate = startDate;
+    }
+
+    if (updateData.endDate) {
+      const endDate = new Date(updateData.endDate);
+      endDate.setUTCHours(23, 59, 59, 999);
+      updateData.endDate = endDate;
     }
 
     if (updateData.images) {
@@ -671,6 +902,9 @@ export const updateOccasion = async (req, res) => {
         message: "المناسبة غير موجودة",
       });
     }
+
+    // التحقق من انتهاء المناسبة بعد التحديث
+    await checkAndUpdateExpiredOccasions();
 
     // مسح الكاش بعد تحديث المناسبة
     await clearAllOccasionsCache();

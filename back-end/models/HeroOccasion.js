@@ -12,7 +12,7 @@ const heroOccasionSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    date: {
+    startDate: {
       type: Date,
       required: true,
       set: function (v) {
@@ -20,6 +20,52 @@ const heroOccasionSchema = new mongoose.Schema(
         if (v) {
           const date = new Date(v);
           date.setUTCHours(0, 0, 0, 0);
+          return date;
+        }
+        return v;
+      },
+    },
+    endDate: {
+      type: Date,
+      required: true,
+      validate: {
+        validator: function (v) {
+          // التحقق من وجود startDate
+          if (!this.startDate) return true;
+
+          // التحقق من صحة التواريخ
+          const startDate = new Date(this.startDate);
+          const endDate = new Date(v);
+
+          if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            return false;
+          }
+
+          // تحويل التواريخ إلى نفس اليوم للمقارنة (استخدام UTC)
+          const startDateOnly = new Date(
+            Date.UTC(
+              startDate.getUTCFullYear(),
+              startDate.getUTCMonth(),
+              startDate.getUTCDate()
+            )
+          );
+          const endDateOnly = new Date(
+            Date.UTC(
+              endDate.getUTCFullYear(),
+              endDate.getUTCMonth(),
+              endDate.getUTCDate()
+            )
+          );
+
+          return endDateOnly >= startDateOnly;
+        },
+        message: "تاريخ الانتهاء يجب أن يكون بعد أو يساوي تاريخ البداية",
+      },
+      set: function (v) {
+        // تحديد الوقت إلى 23:59:59 من نفس اليوم (UTC)
+        if (v) {
+          const date = new Date(v);
+          date.setUTCHours(23, 59, 59, 999);
           return date;
         }
         return v;
@@ -69,8 +115,8 @@ const heroOccasionSchema = new mongoose.Schema(
 );
 
 // فهرسة للحصول على أفضل أداء
-heroOccasionSchema.index({ isActive: 1, date: 1 });
-heroOccasionSchema.index({ date: 1 });
+heroOccasionSchema.index({ isActive: 1, startDate: 1, endDate: 1 });
+heroOccasionSchema.index({ startDate: 1, endDate: 1 });
 heroOccasionSchema.index({ nameAr: "text", nameEn: "text" });
 
 // التحقق من أن كل مناسبة لها على الأقل صورة واحدة
@@ -81,29 +127,59 @@ heroOccasionSchema.pre("save", function (next) {
   next();
 });
 
-// دالة للحصول على المناسبات النشطة مرتبة حسب التاريخ
-heroOccasionSchema.statics.getActiveOccasions = function () {
-  return this.find({ isActive: true }).sort({ date: 1 });
+// التحقق من أن المناسبة نشطة في الفترة الزمنية المحددة
+heroOccasionSchema.virtual("isCurrentlyActive").get(function () {
+  const now = new Date();
+  return (
+    this.isActive &&
+    now.getTime() >= this.startDate.getTime() &&
+    now.getTime() <= this.endDate.getTime()
+  );
+});
+
+// دالة للحصول على المناسبات النشطة حالياً
+heroOccasionSchema.statics.getActiveOccasions = function (limit = 10) {
+  const now = new Date();
+  return this.find({
+    isActive: true,
+    startDate: { $lte: now },
+    endDate: { $gte: now },
+  })
+    .sort({ startDate: 1, createdAt: -1 })
+    .limit(limit);
 };
 
 // دالة للحصول على المناسبات القادمة
 heroOccasionSchema.statics.getUpcomingOccasions = function (limit = 5) {
-  const today = new Date();
+  const now = new Date();
   return this.find({
     isActive: true,
-    date: { $gte: today },
+    startDate: { $gt: now },
   })
-    .sort({ date: 1 })
+    .sort({ startDate: 1 })
     .limit(limit);
 };
 
 // دالة للبحث في المناسبات
 heroOccasionSchema.statics.searchOccasions = function (query, language = "ar") {
   const searchField = language === "en" ? "nameEn" : "nameAr";
+  const now = new Date();
   return this.find({
     isActive: true,
+    startDate: { $lte: now },
+    endDate: { $gte: now },
     [searchField]: { $regex: query, $options: "i" },
-  }).sort({ date: 1 });
+  }).sort({ startDate: 1, createdAt: -1 });
+};
+
+// دالة للحصول على المناسبات المنتهية
+heroOccasionSchema.statics.getExpiredOccasions = function (limit = 10) {
+  const now = new Date();
+  return this.find({
+    endDate: { $lt: now },
+  })
+    .sort({ endDate: -1 })
+    .limit(limit);
 };
 
 const HeroOccasion = mongoose.model("HeroOccasion", heroOccasionSchema);

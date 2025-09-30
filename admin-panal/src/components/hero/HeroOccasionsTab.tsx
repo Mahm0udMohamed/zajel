@@ -266,23 +266,109 @@ export default function HeroOccasionsTab() {
     }
   };
 
-  const isUpcoming = (dateString: string) => {
+  const isUpcoming = (startDateString: string) => {
     try {
-      const occasionDate = new Date(dateString);
+      const occasionStartDate = new Date(startDateString);
       const now = new Date();
 
       // التحقق من صحة التاريخ
-      if (isNaN(occasionDate.getTime())) {
-        console.error("Invalid occasion date:", dateString);
+      if (isNaN(occasionStartDate.getTime())) {
+        console.error("Invalid occasion start date:", startDateString);
         return false;
       }
 
       // مقارنة صحيحة: getTime() يعطي milliseconds منذ epoch (UTC)
-      return occasionDate.getTime() > now.getTime();
+      return occasionStartDate.getTime() > now.getTime();
     } catch (error) {
       console.error("Error checking if occasion is upcoming:", error);
       return false;
     }
+  };
+
+  const isActive = (startDateString: string, endDateString: string) => {
+    try {
+      const startDate = new Date(startDateString);
+      const endDate = new Date(endDateString);
+      const now = new Date();
+
+      // التحقق من صحة التواريخ
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        return false;
+      }
+
+      // التحقق من أن المناسبة نشطة في الفترة الزمنية
+      return (
+        now.getTime() >= startDate.getTime() &&
+        now.getTime() <= endDate.getTime()
+      );
+    } catch (error) {
+      console.error("Error checking if occasion is active:", error);
+      return false;
+    }
+  };
+
+  const isExpired = (endDateString: string) => {
+    try {
+      const endDate = new Date(endDateString);
+      const now = new Date();
+
+      // التحقق من صحة التاريخ
+      if (isNaN(endDate.getTime())) {
+        return false;
+      }
+
+      return endDate.getTime() < now.getTime();
+    } catch (error) {
+      console.error("Error checking if occasion is expired:", error);
+      return false;
+    }
+  };
+
+  // دالة للحصول على حالة المناسبة
+  const getOccasionStatus = (occasion: HeroOccasion) => {
+    if (!occasion.isActive) {
+      return {
+        status: "غير نشط",
+        variant: "secondary" as const,
+        color: "text-gray-400",
+        className: "",
+      };
+    }
+
+    if (isExpired(occasion.endDate)) {
+      return {
+        status: "انتهاء",
+        variant: "destructive" as const,
+        color: "text-red-400",
+        className:
+          "bg-red-500/20 border-red-500/50 text-red-300 hover:bg-red-500/30",
+      };
+    }
+
+    if (isUpcoming(occasion.startDate)) {
+      return {
+        status: "قادمة",
+        variant: "secondary" as const,
+        color: "text-blue-400",
+        className: "bg-blue-500/20 border-blue-500/50 text-blue-300",
+      };
+    }
+
+    if (isActive(occasion.startDate, occasion.endDate)) {
+      return {
+        status: "نشط",
+        variant: "default" as const,
+        color: "text-green-400",
+        className: "bg-green-500/20 border-green-500/50 text-green-300",
+      };
+    }
+
+    return {
+      status: "غير محدد",
+      variant: "secondary" as const,
+      color: "text-gray-400",
+      className: "",
+    };
   };
 
   return (
@@ -317,7 +403,9 @@ export default function HeroOccasionsTab() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-40 min-w-[160px]">الاسم</TableHead>
-                <TableHead className="w-32 min-w-[128px]">التاريخ</TableHead>
+                <TableHead className="w-40 min-w-[160px]">
+                  الفترة الزمنية
+                </TableHead>
                 <TableHead className="w-24 min-w-[96px]">الصور</TableHead>
                 <TableHead className="w-24 min-w-[96px]">الحالة</TableHead>
                 <TableHead className="w-32 min-w-[128px]">الإجراءات</TableHead>
@@ -339,14 +427,23 @@ export default function HeroOccasionsTab() {
                 occasions
                   .sort(
                     (a, b) =>
-                      new Date(a.date).getTime() - new Date(b.date).getTime()
+                      new Date(a.startDate).getTime() -
+                      new Date(b.startDate).getTime()
                   )
                   .map((occasion, index) => {
                     // التأكد من وجود ID
                     const occasionId =
                       occasion._id || `occasion-${index}-${Date.now()}`;
+                    const occasionStatus = getOccasionStatus(occasion);
                     return (
-                      <TableRow key={occasionId}>
+                      <TableRow
+                        key={occasionId}
+                        className={
+                          isExpired(occasion.endDate)
+                            ? "bg-red-500/5 border-red-500/20"
+                            : ""
+                        }
+                      >
                         <TableCell>
                           <div className="flex flex-col items-center justify-center">
                             <div className="font-medium">{occasion.nameAr}</div>
@@ -356,13 +453,30 @@ export default function HeroOccasionsTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center justify-center gap-2">
-                            <span>{formatDate(occasion.date)}</span>
-                            {isUpcoming(occasion.date) && (
-                              <Badge variant="secondary" className="text-xs">
-                                قادمة
-                              </Badge>
-                            )}
+                          <div className="text-xs">
+                            <div
+                              className={`flex items-center justify-center gap-1 ${
+                                !occasion.isActive
+                                  ? "text-red-400"
+                                  : isActive(
+                                      occasion.startDate,
+                                      occasion.endDate
+                                    )
+                                  ? "text-green-400"
+                                  : isUpcoming(occasion.startDate)
+                                  ? "text-blue-400"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              <span className="flex-shrink-0">من:</span>
+                              <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0">
+                                {formatDate(occasion.startDate)}
+                              </span>
+                              <span className="flex-shrink-0">إلى:</span>
+                              <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0">
+                                {formatDate(occasion.endDate)}
+                              </span>
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -387,12 +501,10 @@ export default function HeroOccasionsTab() {
                         <TableCell>
                           <div className="flex items-center justify-center gap-2">
                             <Badge
-                              variant={
-                                occasion.isActive ? "default" : "secondary"
-                              }
-                              className="flex-shrink-0"
+                              variant={occasionStatus.variant}
+                              className={`flex-shrink-0 ${occasionStatus.className}`}
                             >
-                              {occasion.isActive ? "نشط" : "غير نشط"}
+                              {occasionStatus.status}
                             </Badge>
                             <Button
                               variant="outline"

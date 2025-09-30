@@ -160,7 +160,7 @@ export const heroOccasionsApi = {
     limit?: number;
     isActive?: boolean;
     language?: "ar" | "en";
-    sortBy?: "date" | "nameAr" | "nameEn" | "createdAt";
+    sortBy?: "startDate" | "endDate" | "nameAr" | "nameEn" | "createdAt";
     sortOrder?: "asc" | "desc";
   }) => {
     const searchParams = new URLSearchParams();
@@ -215,6 +215,24 @@ export const heroOccasionsApi = {
 
     const queryString = searchParams.toString();
     const endpoint = `/hero-occasions/upcoming${
+      queryString ? `?${queryString}` : ""
+    }`;
+
+    return apiRequest<{
+      success: boolean;
+      data: HeroOccasion[];
+    }>(endpoint);
+  },
+
+  // Get current hero occasions (active or upcoming)
+  getCurrent: async (limit?: number) => {
+    const searchParams = new URLSearchParams();
+    if (limit) {
+      searchParams.append("limit", limit.toString());
+    }
+
+    const queryString = searchParams.toString();
+    const endpoint = `/hero-occasions/current${
       queryString ? `?${queryString}` : ""
     }`;
 
@@ -290,7 +308,8 @@ export interface HeroOccasion {
   _id: string;
   nameAr: string;
   nameEn: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   images: string[];
   celebratoryMessageAr: string;
   celebratoryMessageEn: string;
