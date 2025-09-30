@@ -2,7 +2,6 @@ import express from "express";
 import {
   getAllOccasions,
   getOccasionById,
-  getOccasionBySlug,
   createOccasion,
   updateOccasion,
   deleteOccasion,
@@ -10,8 +9,6 @@ import {
   reorderOccasions,
   searchOccasions,
   getActiveOccasions,
-  getCurrentSeasonalOccasions,
-  getUpcomingOccasions,
   uploadOccasionImage,
   deleteOccasionImage,
   createOccasionWithImage,
@@ -56,13 +53,6 @@ const createOccasionValidation = [
     .withMessage("صورة المناسبة مطلوبة")
     .isURL()
     .withMessage("صورة المناسبة يجب أن تكون رابط صحيح"),
-  body("slug")
-    .notEmpty()
-    .withMessage("معرف المناسبة مطلوب")
-    .matches(/^[a-z0-9-]+$/)
-    .withMessage(
-      "معرف المناسبة يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط"
-    ),
   body("descriptionAr")
     .optional()
     .isLength({ max: 500 })
@@ -103,26 +93,6 @@ const createOccasionValidation = [
     .optional()
     .isLength({ max: 160 })
     .withMessage("وصف SEO بالإنجليزية يجب أن يكون أقل من 160 حرف"),
-  body("occasionType")
-    .optional()
-    .isIn(["seasonal", "permanent", "special"])
-    .withMessage("نوع المناسبة يجب أن يكون seasonal أو permanent أو special"),
-  body("startDate")
-    .optional()
-    .isISO8601()
-    .withMessage("تاريخ البداية يجب أن يكون تاريخ صحيح"),
-  body("endDate")
-    .optional()
-    .isISO8601()
-    .withMessage("تاريخ النهاية يجب أن يكون تاريخ صحيح"),
-  body("celebratoryMessageAr")
-    .optional()
-    .isLength({ max: 200 })
-    .withMessage("الرسالة الاحتفالية بالعربية يجب أن تكون أقل من 200 حرف"),
-  body("celebratoryMessageEn")
-    .optional()
-    .isLength({ max: 200 })
-    .withMessage("الرسالة الاحتفالية بالإنجليزية يجب أن تكون أقل من 200 حرف"),
 ];
 
 const updateOccasionValidation = [
@@ -139,12 +109,6 @@ const updateOccasionValidation = [
     .optional()
     .isURL()
     .withMessage("صورة المناسبة يجب أن تكون رابط صحيح"),
-  body("slug")
-    .optional()
-    .matches(/^[a-z0-9-]+$/)
-    .withMessage(
-      "معرف المناسبة يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط"
-    ),
   body("descriptionAr")
     .optional()
     .isLength({ max: 500 })
@@ -185,36 +149,10 @@ const updateOccasionValidation = [
     .optional()
     .isLength({ max: 160 })
     .withMessage("وصف SEO بالإنجليزية يجب أن يكون أقل من 160 حرف"),
-  body("occasionType")
-    .optional()
-    .isIn(["seasonal", "permanent", "special"])
-    .withMessage("نوع المناسبة يجب أن يكون seasonal أو permanent أو special"),
-  body("startDate")
-    .optional()
-    .isISO8601()
-    .withMessage("تاريخ البداية يجب أن يكون تاريخ صحيح"),
-  body("endDate")
-    .optional()
-    .isISO8601()
-    .withMessage("تاريخ النهاية يجب أن يكون تاريخ صحيح"),
-  body("celebratoryMessageAr")
-    .optional()
-    .isLength({ max: 200 })
-    .withMessage("الرسالة الاحتفالية بالعربية يجب أن تكون أقل من 200 حرف"),
-  body("celebratoryMessageEn")
-    .optional()
-    .isLength({ max: 200 })
-    .withMessage("الرسالة الاحتفالية بالإنجليزية يجب أن تكون أقل من 200 حرف"),
 ];
 
 const occasionIdValidation = [
   param("id").isMongoId().withMessage("معرف المناسبة غير صحيح"),
-];
-
-const slugValidation = [
-  param("slug")
-    .matches(/^[a-z0-9-]+$/)
-    .withMessage("معرف المناسبة غير صحيح"),
 ];
 
 const searchValidation = [
@@ -252,10 +190,7 @@ const reorderValidation = [
 // Public routes (لا تحتاج مصادقة)
 router.get("/", getAllOccasions);
 router.get("/active", getActiveOccasions);
-router.get("/current-seasonal", getCurrentSeasonalOccasions);
-router.get("/upcoming", getUpcomingOccasions);
 router.get("/search", searchValidation, searchOccasions);
-router.get("/slug/:slug", slugValidation, getOccasionBySlug);
 router.get("/:id", occasionIdValidation, getOccasionById);
 
 // Admin routes (تحتاج مصادقة المدير)

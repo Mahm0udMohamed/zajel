@@ -96,54 +96,6 @@ const OccasionSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    // معرف فريد للمناسبة (مثل valentines-day)
-    slug: {
-      type: String,
-      required: [true, "معرف المناسبة مطلوب"],
-      unique: true,
-      trim: true,
-      lowercase: true,
-      match: [
-        /^[a-z0-9-]+$/,
-        "معرف المناسبة يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط",
-      ],
-    },
-    // نوع المناسبة (موسمية، دائمة، إلخ)
-    occasionType: {
-      type: String,
-      enum: ["seasonal", "permanent", "special"],
-      default: "permanent",
-    },
-    // تواريخ المناسبة (للمناسبات الموسمية)
-    startDate: {
-      type: Date,
-      required: function () {
-        return this.occasionType === "seasonal";
-      },
-    },
-    endDate: {
-      type: Date,
-      required: function () {
-        return this.occasionType === "seasonal";
-      },
-    },
-    // رسالة احتفالية
-    celebratoryMessageAr: {
-      type: String,
-      trim: true,
-      maxlength: [
-        200,
-        "الرسالة الاحتفالية بالعربية يجب أن تكون أقل من 200 حرف",
-      ],
-    },
-    celebratoryMessageEn: {
-      type: String,
-      trim: true,
-      maxlength: [
-        200,
-        "الرسالة الاحتفالية بالإنجليزية يجب أن تكون أقل من 200 حرف",
-      ],
-    },
   },
   {
     timestamps: true,
@@ -161,9 +113,6 @@ OccasionSchema.index({
 });
 OccasionSchema.index({ isActive: 1, sortOrder: 1 });
 OccasionSchema.index({ createdBy: 1 });
-OccasionSchema.index({ slug: 1 });
-OccasionSchema.index({ occasionType: 1 });
-OccasionSchema.index({ startDate: 1, endDate: 1 });
 
 // Virtual field للاسم حسب اللغة
 OccasionSchema.virtual("name").get(function () {
@@ -183,21 +132,6 @@ OccasionSchema.virtual("metaTitle").get(function () {
 // Virtual field للوصف حسب اللغة
 OccasionSchema.virtual("metaDescription").get(function () {
   return this.metaDescriptionAr || this.metaDescriptionEn;
-});
-
-// Virtual field للرسالة الاحتفالية حسب اللغة
-OccasionSchema.virtual("celebratoryMessage").get(function () {
-  return this.celebratoryMessageAr || this.celebratoryMessageEn;
-});
-
-// Virtual field للتحقق من أن المناسبة نشطة حالياً
-OccasionSchema.virtual("isCurrentlyActive").get(function () {
-  if (this.occasionType !== "seasonal" || !this.startDate || !this.endDate) {
-    return this.isActive;
-  }
-
-  const now = new Date();
-  return this.isActive && now >= this.startDate && now <= this.endDate;
 });
 
 // Middleware قبل الحفظ - تحديث ترتيب المناسبات
@@ -227,52 +161,7 @@ OccasionSchema.statics.getActiveOccasions = function (language = "ar") {
     .select(
       `name${language === "ar" ? "Ar" : "En"} description${
         language === "ar" ? "Ar" : "En"
-      } imageUrl sortOrder slug occasionType startDate endDate celebratoryMessage${
-        language === "ar" ? "Ar" : "En"
-      }`
-    );
-};
-
-// Static method للحصول على المناسبات الموسمية النشطة حالياً
-OccasionSchema.statics.getCurrentSeasonalOccasions = function (
-  language = "ar"
-) {
-  const now = new Date();
-  return this.find({
-    isActive: true,
-    occasionType: "seasonal",
-    startDate: { $lte: now },
-    endDate: { $gte: now },
-  })
-    .sort({ sortOrder: 1, startDate: 1 })
-    .select(
-      `name${language === "ar" ? "Ar" : "En"} description${
-        language === "ar" ? "Ar" : "En"
-      } imageUrl sortOrder slug startDate endDate celebratoryMessage${
-        language === "ar" ? "Ar" : "En"
-      }`
-    );
-};
-
-// Static method للحصول على المناسبات القادمة
-OccasionSchema.statics.getUpcomingOccasions = function (
-  language = "ar",
-  limit = 5
-) {
-  const now = new Date();
-  return this.find({
-    isActive: true,
-    occasionType: "seasonal",
-    startDate: { $gt: now },
-  })
-    .sort({ startDate: 1 })
-    .limit(limit)
-    .select(
-      `name${language === "ar" ? "Ar" : "En"} description${
-        language === "ar" ? "Ar" : "En"
-      } imageUrl sortOrder slug startDate endDate celebratoryMessage${
-        language === "ar" ? "Ar" : "En"
-      }`
+      } imageUrl sortOrder`
     );
 };
 
@@ -302,9 +191,7 @@ OccasionSchema.statics.searchOccasions = function (
     .select(
       `name${language === "ar" ? "Ar" : "En"} description${
         language === "ar" ? "Ar" : "En"
-      } imageUrl sortOrder slug occasionType startDate endDate celebratoryMessage${
-        language === "ar" ? "Ar" : "En"
-      }`
+      } imageUrl sortOrder`
     );
 };
 
@@ -330,16 +217,6 @@ OccasionSchema.methods.updateProductCount = async function () {
 OccasionSchema.methods.toggleStatus = function () {
   this.isActive = !this.isActive;
   return this.save();
-};
-
-// Method للتحقق من أن المناسبة نشطة حالياً
-OccasionSchema.methods.checkIfCurrentlyActive = function () {
-  if (this.occasionType !== "seasonal" || !this.startDate || !this.endDate) {
-    return this.isActive;
-  }
-
-  const now = new Date();
-  return this.isActive && now >= this.startDate && now <= this.endDate;
 };
 
 const Occasion = mongoose.model("Occasion", OccasionSchema);

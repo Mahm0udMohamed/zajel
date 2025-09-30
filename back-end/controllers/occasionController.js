@@ -36,7 +36,6 @@ export const getAllOccasions = async (req, res) => {
       sortOrder = "asc",
       showInHomePage,
       showInNavigation,
-      occasionType,
     } = req.query;
 
     // بناء query object
@@ -52,10 +51,6 @@ export const getAllOccasions = async (req, res) => {
 
     if (showInNavigation !== undefined) {
       query.showInNavigation = showInNavigation === "true";
-    }
-
-    if (occasionType) {
-      query.occasionType = occasionType;
     }
 
     // إضافة البحث
@@ -88,7 +83,6 @@ export const getAllOccasions = async (req, res) => {
       sortOrder,
       showInHomePage,
       showInNavigation,
-      occasionType,
     };
 
     // محاولة جلب البيانات من الكاش
@@ -143,23 +137,6 @@ export const getAllOccasions = async (req, res) => {
         language === "ar"
           ? occasion.metaDescriptionAr
           : occasion.metaDescriptionEn,
-      slug: occasion.slug,
-      occasionType: occasion.occasionType,
-      startDate: occasion.startDate,
-      endDate: occasion.endDate,
-      celebratoryMessage:
-        language === "ar"
-          ? occasion.celebratoryMessageAr
-          : occasion.celebratoryMessageEn,
-      celebratoryMessageAr: occasion.celebratoryMessageAr,
-      celebratoryMessageEn: occasion.celebratoryMessageEn,
-      isCurrentlyActive:
-        occasion.occasionType === "seasonal" &&
-        occasion.startDate &&
-        occasion.endDate
-          ? new Date() >= new Date(occasion.startDate) &&
-            new Date() <= new Date(occasion.endDate)
-          : occasion.isActive,
       createdBy: occasion.createdBy,
       updatedBy: occasion.updatedBy,
       createdAt: occasion.createdAt,
@@ -263,126 +240,6 @@ export const getOccasionById = async (req, res) => {
         language === "ar"
           ? occasion.metaDescriptionAr
           : occasion.metaDescriptionEn,
-      slug: occasion.slug,
-      occasionType: occasion.occasionType,
-      startDate: occasion.startDate,
-      endDate: occasion.endDate,
-      celebratoryMessage:
-        language === "ar"
-          ? occasion.celebratoryMessageAr
-          : occasion.celebratoryMessageEn,
-      celebratoryMessageAr: occasion.celebratoryMessageAr,
-      celebratoryMessageEn: occasion.celebratoryMessageEn,
-      isCurrentlyActive:
-        occasion.occasionType === "seasonal" &&
-        occasion.startDate &&
-        occasion.endDate
-          ? new Date() >= new Date(occasion.startDate) &&
-            new Date() <= new Date(occasion.endDate)
-          : occasion.isActive,
-      createdBy: occasion.createdBy,
-      updatedBy: occasion.updatedBy,
-      createdAt: occasion.createdAt,
-      updatedAt: occasion.updatedAt,
-    };
-
-    // حفظ البيانات في الكاش لمدة ساعة
-    try {
-      await cacheLayer.set(cacheKey, formattedOccasion, 3600);
-    } catch (cacheError) {
-      console.warn("خطأ في حفظ البيانات في الكاش:", cacheError.message);
-    }
-
-    res.status(200).json({
-      success: true,
-      data: formattedOccasion,
-      message: "تم جلب المناسبة بنجاح",
-    });
-  } catch (error) {
-    console.error("خطأ في جلب المناسبة:", error);
-    res.status(500).json({
-      success: false,
-      message: "حدث خطأ في جلب المناسبة",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-};
-
-/**
- * جلب مناسبة بالـ slug
- */
-export const getOccasionBySlug = async (req, res) => {
-  try {
-    const { slug } = req.params;
-    const { language = "ar" } = req.query;
-
-    const cacheKey = `occasion:slug:${slug}:${language}`;
-
-    // محاولة جلب البيانات من الكاش
-    try {
-      const cachedOccasion = await cacheLayer.get(cacheKey);
-      if (cachedOccasion) {
-        return res.status(200).json({
-          success: true,
-          data: cachedOccasion,
-          message: "تم جلب المناسبة بنجاح من الكاش",
-        });
-      }
-    } catch (cacheError) {
-      console.warn("خطأ في جلب البيانات من الكاش:", cacheError.message);
-    }
-
-    const occasion = await Occasion.findOne({ slug })
-      .populate("createdBy", "name email")
-      .populate("updatedBy", "name email")
-      .lean();
-
-    if (!occasion) {
-      return res.status(404).json({
-        success: false,
-        message: "المناسبة غير موجودة",
-      });
-    }
-
-    // تنسيق البيانات حسب اللغة
-    const formattedOccasion = {
-      _id: occasion._id,
-      name: language === "ar" ? occasion.nameAr : occasion.nameEn,
-      nameAr: occasion.nameAr,
-      nameEn: occasion.nameEn,
-      description:
-        language === "ar" ? occasion.descriptionAr : occasion.descriptionEn,
-      descriptionAr: occasion.descriptionAr,
-      descriptionEn: occasion.descriptionEn,
-      imageUrl: occasion.imageUrl,
-      isActive: occasion.isActive,
-      sortOrder: occasion.sortOrder,
-      productCount: occasion.productCount,
-      showInHomePage: occasion.showInHomePage,
-      showInNavigation: occasion.showInNavigation,
-      metaTitle:
-        language === "ar" ? occasion.metaTitleAr : occasion.metaTitleEn,
-      metaDescription:
-        language === "ar"
-          ? occasion.metaDescriptionAr
-          : occasion.metaDescriptionEn,
-      slug: occasion.slug,
-      occasionType: occasion.occasionType,
-      startDate: occasion.startDate,
-      endDate: occasion.endDate,
-      celebratoryMessage:
-        language === "ar"
-          ? occasion.celebratoryMessageAr
-          : occasion.celebratoryMessageEn,
-      celebratoryMessageAr: occasion.celebratoryMessageAr,
-      celebratoryMessageEn: occasion.celebratoryMessageEn,
-      isCurrentlyActive:
-        occasion.occasionType === "seasonal" &&
-        occasion.startDate &&
-        occasion.endDate
-          ? new Date() >= new Date(occasion.startDate) &&
-            new Date() <= new Date(occasion.endDate)
-          : occasion.isActive,
       createdBy: occasion.createdBy,
       updatedBy: occasion.updatedBy,
       createdAt: occasion.createdAt,
@@ -440,27 +297,20 @@ export const createOccasion = async (req, res) => {
       metaTitleEn = "",
       metaDescriptionAr = "",
       metaDescriptionEn = "",
-      slug,
-      occasionType = "permanent",
-      startDate,
-      endDate,
-      celebratoryMessageAr = "",
-      celebratoryMessageEn = "",
     } = req.body;
 
-    // التحقق من عدم وجود مناسبة بنفس الاسم أو الـ slug
+    // التحقق من عدم وجود مناسبة بنفس الاسم
     const existingOccasion = await Occasion.findOne({
       $or: [
         { nameAr: { $regex: new RegExp(`^${nameAr}$`, "i") } },
         { nameEn: { $regex: new RegExp(`^${nameEn}$`, "i") } },
-        { slug: slug },
       ],
     });
 
     if (existingOccasion) {
       return res.status(409).json({
         success: false,
-        message: "يوجد مناسبة بنفس الاسم أو المعرف بالفعل",
+        message: "يوجد مناسبة بنفس الاسم بالفعل",
       });
     }
 
@@ -479,12 +329,6 @@ export const createOccasion = async (req, res) => {
       metaTitleEn,
       metaDescriptionAr,
       metaDescriptionEn,
-      slug,
-      occasionType,
-      startDate: occasionType === "seasonal" ? startDate : undefined,
-      endDate: occasionType === "seasonal" ? endDate : undefined,
-      celebratoryMessageAr,
-      celebratoryMessageEn,
       createdBy: req.admin._id,
     });
 
@@ -547,7 +391,6 @@ export const updateOccasion = async (req, res) => {
     try {
       await cacheLayer.clear("occasions", "*");
       await cacheLayer.clear(`occasion:${id}`, "*");
-      await cacheLayer.clear(`occasion:slug:${occasion.slug}`, "*");
     } catch (cacheError) {
       console.warn("خطأ في مسح الكاش:", cacheError.message);
     }
@@ -587,7 +430,6 @@ export const deleteOccasion = async (req, res) => {
     try {
       await cacheLayer.clear("occasions", "*");
       await cacheLayer.clear(`occasion:${id}`, "*");
-      await cacheLayer.clear(`occasion:slug:${occasion.slug}`, "*");
     } catch (cacheError) {
       console.warn("خطأ في مسح الكاش:", cacheError.message);
     }
@@ -630,7 +472,6 @@ export const toggleOccasionStatus = async (req, res) => {
     try {
       await cacheLayer.clear("occasions", "*");
       await cacheLayer.clear(`occasion:${id}`, "*");
-      await cacheLayer.clear(`occasion:slug:${occasion.slug}`, "*");
     } catch (cacheError) {
       console.warn("خطأ في مسح الكاش:", cacheError.message);
     }
@@ -772,103 +613,6 @@ export const getActiveOccasions = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "حدث خطأ في جلب المناسبات النشطة",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-};
-
-/**
- * جلب المناسبات الموسمية النشطة حالياً
- */
-export const getCurrentSeasonalOccasions = async (req, res) => {
-  try {
-    const { language = "ar" } = req.query;
-
-    const cacheKey = `current-seasonal-occasions:${language}`;
-
-    // محاولة جلب البيانات من الكاش
-    try {
-      const cachedOccasions = await cacheLayer.get(cacheKey);
-      if (cachedOccasions) {
-        return res.status(200).json({
-          success: true,
-          data: cachedOccasions,
-          message: "تم جلب المناسبات الموسمية النشطة بنجاح من الكاش",
-        });
-      }
-    } catch (cacheError) {
-      console.warn("خطأ في جلب البيانات من الكاش:", cacheError.message);
-    }
-
-    const occasions = await Occasion.getCurrentSeasonalOccasions(language);
-
-    // حفظ البيانات في الكاش لمدة 30 دقيقة
-    try {
-      await cacheLayer.set(cacheKey, occasions, 1800);
-    } catch (cacheError) {
-      console.warn("خطأ في حفظ البيانات في الكاش:", cacheError.message);
-    }
-
-    res.status(200).json({
-      success: true,
-      data: occasions,
-      message: "تم جلب المناسبات الموسمية النشطة بنجاح",
-    });
-  } catch (error) {
-    console.error("خطأ في جلب المناسبات الموسمية النشطة:", error);
-    res.status(500).json({
-      success: false,
-      message: "حدث خطأ في جلب المناسبات الموسمية النشطة",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-};
-
-/**
- * جلب المناسبات القادمة
- */
-export const getUpcomingOccasions = async (req, res) => {
-  try {
-    const { language = "ar", limit = 5 } = req.query;
-
-    const cacheKey = `upcoming-occasions:${language}:${limit}`;
-
-    // محاولة جلب البيانات من الكاش
-    try {
-      const cachedOccasions = await cacheLayer.get(cacheKey);
-      if (cachedOccasions) {
-        return res.status(200).json({
-          success: true,
-          data: cachedOccasions,
-          message: "تم جلب المناسبات القادمة بنجاح من الكاش",
-        });
-      }
-    } catch (cacheError) {
-      console.warn("خطأ في جلب البيانات من الكاش:", cacheError.message);
-    }
-
-    const occasions = await Occasion.getUpcomingOccasions(
-      language,
-      parseInt(limit)
-    );
-
-    // حفظ البيانات في الكاش لمدة 30 دقيقة
-    try {
-      await cacheLayer.set(cacheKey, occasions, 1800);
-    } catch (cacheError) {
-      console.warn("خطأ في حفظ البيانات في الكاش:", cacheError.message);
-    }
-
-    res.status(200).json({
-      success: true,
-      data: occasions,
-      message: "تم جلب المناسبات القادمة بنجاح",
-    });
-  } catch (error) {
-    console.error("خطأ في جلب المناسبات القادمة:", error);
-    res.status(500).json({
-      success: false,
-      message: "حدث خطأ في جلب المناسبات القادمة",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
@@ -1017,12 +761,6 @@ export const createOccasionWithImage = async (req, res) => {
       metaTitleEn = "",
       metaDescriptionAr = "",
       metaDescriptionEn = "",
-      slug,
-      occasionType = "permanent",
-      startDate,
-      endDate,
-      celebratoryMessageAr = "",
-      celebratoryMessageEn = "",
     } = req.body;
 
     let imageUrl = "";
@@ -1069,19 +807,18 @@ export const createOccasionWithImage = async (req, res) => {
       });
     }
 
-    // التحقق من عدم وجود مناسبة بنفس الاسم أو الـ slug
+    // التحقق من عدم وجود مناسبة بنفس الاسم
     const existingOccasion = await Occasion.findOne({
       $or: [
         { nameAr: { $regex: new RegExp(`^${nameAr}$`, "i") } },
         { nameEn: { $regex: new RegExp(`^${nameEn}$`, "i") } },
-        { slug: slug },
       ],
     });
 
     if (existingOccasion) {
       return res.status(409).json({
         success: false,
-        message: "يوجد مناسبة بنفس الاسم أو المعرف بالفعل",
+        message: "يوجد مناسبة بنفس الاسم بالفعل",
       });
     }
 
@@ -1100,12 +837,6 @@ export const createOccasionWithImage = async (req, res) => {
       metaTitleEn,
       metaDescriptionAr,
       metaDescriptionEn,
-      slug,
-      occasionType,
-      startDate: occasionType === "seasonal" ? startDate : undefined,
-      endDate: occasionType === "seasonal" ? endDate : undefined,
-      celebratoryMessageAr,
-      celebratoryMessageEn,
       createdBy: req.admin._id,
     });
 
