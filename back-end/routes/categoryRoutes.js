@@ -9,11 +9,32 @@ import {
   reorderCategories,
   searchCategories,
   getActiveCategories,
+  uploadCategoryImage,
+  deleteCategoryImage,
+  createCategoryWithImage,
 } from "../controllers/categoryController.js";
 import { authenticateAdmin } from "../middlewares/adminAuthMiddleware.js";
 import { body, param, query } from "express-validator";
+import multer from "multer";
 
 const router = express.Router();
+
+// إعداد multer لرفع الملفات
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    // التحقق من نوع الملف
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("يجب أن يكون الملف صورة"), false);
+    }
+  },
+});
 
 // Validation rules
 const createCategoryValidation = [
@@ -187,6 +208,25 @@ router.patch(
   authenticateAdmin,
   reorderValidation,
   reorderCategories
+);
+
+// رفع صورة الفئة
+router.post(
+  "/upload",
+  authenticateAdmin,
+  upload.single("image"),
+  uploadCategoryImage
+);
+
+// حذف صورة الفئة
+router.delete("/image/:publicId", authenticateAdmin, deleteCategoryImage);
+
+// إنشاء فئة مع رفع صورة
+router.post(
+  "/create-with-image",
+  authenticateAdmin,
+  upload.single("image"),
+  createCategoryWithImage
 );
 
 export default router;

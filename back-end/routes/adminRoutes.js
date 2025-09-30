@@ -15,10 +15,31 @@ import {
   toggleCategoryStatus,
   reorderCategories,
   searchCategories,
+  uploadCategoryImage,
+  deleteCategoryImage,
+  createCategoryWithImage,
 } from "../controllers/categoryController.js";
 import { authenticateAdmin } from "../middlewares/adminAuthMiddleware.js";
+import multer from "multer";
 
 const router = express.Router();
+
+// إعداد multer لرفع الملفات
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    // التحقق من نوع الملف
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("يجب أن يكون الملف صورة"), false);
+    }
+  },
+});
 
 // Rate limiting خاص بتسجيل الدخول
 const loginLimiter = rateLimit({
@@ -52,5 +73,12 @@ router.put("/categories/:id", updateCategory);
 router.delete("/categories/:id", deleteCategory);
 router.patch("/categories/:id/toggle", toggleCategoryStatus);
 router.patch("/categories/reorder", reorderCategories);
+router.post("/categories/upload", upload.single("image"), uploadCategoryImage);
+router.delete("/categories/image/:publicId", deleteCategoryImage);
+router.post(
+  "/categories/create-with-image",
+  upload.single("image"),
+  createCategoryWithImage
+);
 
 export default router;

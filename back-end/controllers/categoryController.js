@@ -1,6 +1,7 @@
 import Category from "../models/Category.js";
 import { validationResult } from "express-validator";
 import { cacheLayer } from "../services/cache/index.js";
+import cloudinary from "../utils/cloudinary.js";
 
 /**
  * جلب جميع الفئات مع إمكانية الفلترة والترتيب
@@ -598,6 +599,252 @@ export const getActiveCategories = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "حدث خطأ في جلب الفئات النشطة",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * رفع صورة الفئة إلى Cloudinary
+ */
+export const uploadCategoryImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "لم يتم رفع أي صورة",
+      });
+    }
+
+    // رفع الصورة إلى Cloudinary
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "image",
+            folder: "categories",
+            quality: 100,
+            fetch_format: "auto",
+            transformation: [
+              { width: 800, height: 600, crop: "fill", gravity: "center" },
+              { quality: "auto" },
+            ],
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          }
+        )
+        .end(req.file.buffer);
+    });
+
+    // مسح كاش الفئات بعد رفع صورة جديدة
+    try {
+      await cacheLayer.clear("categories", "*");
+    } catch (cacheError) {
+      console.warn("خطأ في مسح الكاش:", cacheError.message);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "تم رفع صورة الفئة بنجاح",
+      data: {
+        imageUrl: result.secure_url,
+        publicId: result.public_id,
+        width: result.width,
+        height: result.height,
+        format: result.format,
+        size: result.bytes,
+      },
+    });
+  } catch (error) {
+    console.error("خطأ في رفع صورة الفئة:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ في رفع الصورة",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * حذف صورة الفئة من Cloudinary
+ */
+export const deleteCategoryImage = async (req, res) => {
+  try {
+    const { publicId } = req.params;
+
+    if (!publicId) {
+      return res.status(400).json({
+        success: false,
+        message: "معرف الصورة مطلوب",
+      });
+    }
+
+    // حذف الصورة من Cloudinary
+    const result = await cloudinary.uploader.destroy(publicId);
+
+    if (result.result === "not found") {
+      return res.status(404).json({
+        success: false,
+        message: "الصورة غير موجودة",
+      });
+    }
+
+    // مسح كاش الفئات بعد حذف صورة
+    try {
+      await cacheLayer.clear("categories", "*");
+    } catch (cacheError) {
+      console.warn("خطأ في مسح الكاش:", cacheError.message);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "تم حذف الصورة بنجاح",
+      data: {
+        publicId: result.public_id,
+        result: result.result,
+      },
+    });
+  } catch (error) {
+    console.error("خطأ في حذف صورة الفئة:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ في حذف الصورة",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * إنشاء فئة مع رفع صورة في نفس الوقت
+ */
+export const createCategoryWithImage = async (req, res) => {
+  try {
+    // التحقق من صحة البيانات
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: "بيانات غير صحيحة",
+        errors: errors.array(),
+      });
+    }
+
+    const {
+      nameAr,
+      nameEn,
+      descriptionAr = "",
+      descriptionEn = "",
+      isActive = true,
+      sortOrder = 0,
+      showInHomePage = true,
+      showInNavigation = true,
+      metaTitleAr = "",
+      metaTitleEn = "",
+      metaDescriptionAr = "",
+      metaDescriptionEn = "",
+    } = req.body;
+
+    let imageUrl = "";
+
+    // إذا تم رفع صورة
+    if (req.file) {
+      try {
+        const result = await new Promise((resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream(
+              {
+                resource_type: "image",
+                folder: "categories",
+                quality: 100,
+                fetch_format: "auto",
+                transformation: [
+                  { width: 800, height: 600, crop: "fill", gravity: "center" },
+                  { quality: "auto" },
+                ],
+              },
+              (error, result) => {
+                if (error) {
+                  reject(error);
+                } else {
+                  resolve(result);
+                }
+              }
+            )
+            .end(req.file.buffer);
+        });
+
+        imageUrl = result.secure_url;
+      } catch (uploadError) {
+        console.error("خطأ في رفع الصورة:", uploadError);
+        return res.status(500).json({
+          success: false,
+          message: "فشل في رفع الصورة",
+        });
+      }
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "صورة الفئة مطلوبة",
+      });
+    }
+
+    // التحقق من عدم وجود فئة بنفس الاسم
+    const existingCategory = await Category.findOne({
+      $or: [
+        { nameAr: { $regex: new RegExp(`^${nameAr}$`, "i") } },
+        { nameEn: { $regex: new RegExp(`^${nameEn}$`, "i") } },
+      ],
+    });
+
+    if (existingCategory) {
+      return res.status(409).json({
+        success: false,
+        message: "يوجد فئة بنفس الاسم بالفعل",
+      });
+    }
+
+    // إنشاء الفئة الجديدة
+    const newCategory = new Category({
+      nameAr,
+      nameEn,
+      descriptionAr,
+      descriptionEn,
+      imageUrl,
+      isActive,
+      sortOrder,
+      showInHomePage,
+      showInNavigation,
+      metaTitleAr,
+      metaTitleEn,
+      metaDescriptionAr,
+      metaDescriptionEn,
+      createdBy: req.admin._id,
+    });
+
+    await newCategory.save();
+
+    // مسح الكاش المتعلق بالفئات
+    try {
+      await cacheLayer.clear("categories", "*");
+    } catch (cacheError) {
+      console.warn("خطأ في مسح الكاش:", cacheError.message);
+    }
+
+    res.status(201).json({
+      success: true,
+      data: newCategory,
+      message: "تم إنشاء الفئة مع الصورة بنجاح",
+    });
+  } catch (error) {
+    console.error("خطأ في إنشاء الفئة مع الصورة:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ في إنشاء الفئة",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
