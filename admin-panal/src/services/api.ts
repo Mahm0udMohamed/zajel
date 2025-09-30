@@ -419,6 +419,239 @@ class ApiService {
       }
     );
   }
+
+  // Categories API
+  async getCategories(params?: {
+    page?: number;
+    limit?: number;
+    isActive?: boolean;
+    language?: string;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: string;
+    showInHomePage?: boolean;
+    showInNavigation?: boolean;
+  }): Promise<{
+    success: boolean;
+    data: unknown[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+    message: string;
+  }> {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.isActive !== undefined)
+      queryParams.append("isActive", params.isActive.toString());
+    if (params?.language) queryParams.append("language", params.language);
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.sortBy) queryParams.append("sortBy", params.sortBy);
+    if (params?.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+    if (params?.showInHomePage !== undefined)
+      queryParams.append("showInHomePage", params.showInHomePage.toString());
+    if (params?.showInNavigation !== undefined)
+      queryParams.append(
+        "showInNavigation",
+        params.showInNavigation.toString()
+      );
+
+    const endpoint = `/categories${
+      queryParams.toString() ? `?${queryParams.toString()}` : ""
+    }`;
+    const response = await this.makeRequest<{
+      success: boolean;
+      data: unknown[];
+      pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
+      message: string;
+    }>(endpoint);
+    const responseData = response as unknown as {
+      success: boolean;
+      data: unknown[];
+      pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
+      message: string;
+    };
+    return {
+      success: responseData.success,
+      data: responseData.data || [],
+      pagination: responseData.pagination || {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        itemsPerPage: 50,
+        hasNextPage: false,
+        hasPrevPage: false,
+      },
+      message: responseData.message,
+    };
+  }
+
+  async getCategoryById(
+    id: string,
+    language = "ar"
+  ): Promise<{
+    success: boolean;
+    data: unknown;
+    message: string;
+  }> {
+    const response = await this.makeRequest<{
+      success: boolean;
+      data: unknown;
+      message: string;
+    }>(`/categories/${id}?language=${language}`);
+    return {
+      success: response.success,
+      data: response.data,
+      message: response.message,
+    };
+  }
+
+  async getActiveCategories(language = "ar"): Promise<unknown[]> {
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      `/categories/active?language=${language}`
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async createCategory(categoryData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      "/categories",
+      {
+        method: "POST",
+        body: JSON.stringify(categoryData),
+      }
+    );
+    return response.data;
+  }
+
+  async updateCategory(id: string, categoryData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/categories/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(categoryData),
+      }
+    );
+    return response.data;
+  }
+
+  async deleteCategory(id: string): Promise<void> {
+    await this.makeAuthenticatedRequest(`/categories/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  async toggleCategoryStatus(id: string): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/categories/${id}/toggle`,
+      {
+        method: "PATCH",
+      }
+    );
+    return response.data;
+  }
+
+  async reorderCategories(
+    categoryOrders: Array<{ categoryId: string; sortOrder: number }>
+  ): Promise<void> {
+    await this.makeAuthenticatedRequest("/categories/reorder", {
+      method: "PATCH",
+      body: JSON.stringify({ categoryOrders }),
+    });
+  }
+
+  async searchCategories(
+    query: string,
+    language = "ar",
+    limit = 10,
+    page = 1
+  ): Promise<unknown[]> {
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      `/categories/search?q=${encodeURIComponent(
+        query
+      )}&language=${language}&limit=${limit}&page=${page}`
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async uploadCategoryImage(
+    file: File
+  ): Promise<{ imageUrl: string; publicId: string }> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`${API_BASE_URL}/categories/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "فشل في رفع الصورة");
+    }
+
+    const result = await response.json();
+    return {
+      imageUrl: result.data.imageUrl,
+      publicId: result.data.publicId,
+    };
+  }
+
+  async createCategoryWithImage(
+    categoryData: unknown,
+    file: File
+  ): Promise<unknown> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    // إضافة بيانات الفئة كـ JSON string
+    Object.entries(categoryData as Record<string, unknown>).forEach(
+      ([key, value]) => {
+        formData.append(key, String(value));
+      }
+    );
+
+    const response = await fetch(
+      `${API_BASE_URL}/categories/create-with-image`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.getAccessToken()}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "فشل في إنشاء الفئة");
+    }
+
+    const result = await response.json();
+    return result.data;
+  }
 }
 
 export const apiService = new ApiService();

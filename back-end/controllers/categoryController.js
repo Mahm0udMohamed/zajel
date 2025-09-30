@@ -3,6 +3,24 @@ import { validationResult } from "express-validator";
 import { cacheLayer } from "../services/cache/index.js";
 import cloudinary from "../utils/cloudinary.js";
 
+// دالة مساعدة لمسح جميع كاشات الفئات (Best Practice)
+const clearAllCategoriesCache = async () => {
+  try {
+    console.log("🔄 Clearing all categories cache...");
+
+    // مسح جميع استراتيجيات الفئات
+    const strategies = ["categories", "categories-active", "category-details"];
+
+    for (const strategy of strategies) {
+      await cacheLayer.clear(strategy, "*");
+    }
+
+    console.log("✅ All categories cache cleared successfully");
+  } catch (error) {
+    console.error("❌ Error clearing categories cache:", error.message);
+  }
+};
+
 /**
  * جلب جميع الفئات مع إمكانية الفلترة والترتيب
  */
@@ -54,8 +72,8 @@ export const getAllCategories = async (req, res) => {
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    // بناء cache key
-    const cacheKey = `categories:${JSON.stringify({
+    // بناء معاملات الكاش
+    const cacheParams = {
       page: pageNum,
       limit: limitNum,
       isActive,
@@ -65,19 +83,19 @@ export const getAllCategories = async (req, res) => {
       sortOrder,
       showInHomePage,
       showInNavigation,
-    })}`;
+    };
 
     // محاولة جلب البيانات من الكاش
     let categories;
     let totalCount;
 
     try {
-      const cachedData = await cacheLayer.get(cacheKey);
-      if (cachedData) {
+      const cached = await cacheLayer.get("categories", "all", cacheParams);
+      if (cached) {
         return res.status(200).json({
           success: true,
-          data: cachedData.categories,
-          pagination: cachedData.pagination,
+          data: cached.categories,
+          pagination: cached.pagination,
           message: "تم جلب الفئات بنجاح من الكاش",
         });
       }
@@ -141,7 +159,9 @@ export const getAllCategories = async (req, res) => {
 
     // حفظ البيانات في الكاش لمدة 30 دقيقة
     try {
-      await cacheLayer.set(cacheKey, responseData, 1800); // 30 دقيقة
+      await cacheLayer.set("categories", "all", responseData, cacheParams, {
+        ttl: 1800, // 30 دقيقة
+      });
     } catch (cacheError) {
       console.warn("خطأ في حفظ البيانات في الكاش:", cacheError.message);
     }
@@ -314,12 +334,8 @@ export const createCategory = async (req, res) => {
 
     await newCategory.save();
 
-    // مسح الكاش المتعلق بالفئات
-    try {
-      await cacheLayer.clear("categories", "*");
-    } catch (cacheError) {
-      console.warn("خطأ في مسح الكاش:", cacheError.message);
-    }
+    // مسح الكاش بعد إنشاء فئة جديدة
+    await clearAllCategoriesCache();
 
     res.status(201).json({
       success: true,
@@ -501,12 +517,8 @@ export const reorderCategories = async (req, res) => {
 
     await Category.reorderCategories(categoryOrders);
 
-    // مسح الكاش المتعلق بالفئات
-    try {
-      await cacheLayer.clear("categories", "*");
-    } catch (cacheError) {
-      console.warn("خطأ في مسح الكاش:", cacheError.message);
-    }
+    // مسح الكاش بعد إنشاء فئة جديدة
+    await clearAllCategoriesCache();
 
     res.status(200).json({
       success: true,
@@ -828,12 +840,8 @@ export const createCategoryWithImage = async (req, res) => {
 
     await newCategory.save();
 
-    // مسح الكاش المتعلق بالفئات
-    try {
-      await cacheLayer.clear("categories", "*");
-    } catch (cacheError) {
-      console.warn("خطأ في مسح الكاش:", cacheError.message);
-    }
+    // مسح الكاش بعد إنشاء فئة جديدة
+    await clearAllCategoriesCache();
 
     res.status(201).json({
       success: true,

@@ -9,43 +9,9 @@ import HeroOccasionsTab from "../components/hero/HeroOccasionsTab";
 import HeroPromotionsTab from "../components/hero/HeroPromotionsTab";
 import CategoriesTab from "../components/categories/CategoriesTab";
 import OccasionsTab from "../components/occasions/OccasionsTab";
-import type { Category, CategoryFormData } from "../types/categories";
 import type { Occasion, OccasionFormData } from "../types/occasions";
 
 export default function ContentPage() {
-  const [categories, setCategories] = useState<Category[]>([
-    {
-      id: "flowers",
-      nameAr: "الورود",
-      nameEn: "Flowers",
-      imageUrl:
-        "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380621/1_kxxw33.png",
-      isActive: true,
-      sortOrder: 1,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: "jewelry",
-      nameAr: "المجوهرات",
-      nameEn: "Jewelry",
-      imageUrl:
-        "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380621/2_lfbu29.png",
-      isActive: true,
-      sortOrder: 2,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: "plants",
-      nameAr: "النباتات",
-      nameEn: "Plants",
-      imageUrl:
-        "https://res.cloudinary.com/djpl34pm6/image/upload/v1756380626/3_w12azk.png",
-      isActive: true,
-      sortOrder: 3,
-      createdAt: new Date().toISOString(),
-    },
-  ]);
-
   const [occasions, setOccasions] = useState<Occasion[]>([
     {
       id: "birthday",
@@ -78,41 +44,6 @@ export default function ContentPage() {
       createdAt: new Date().toISOString(),
     },
   ]);
-
-  const handleAddCategory = (categoryData: CategoryFormData) => {
-    const category: Category = {
-      id: new Date().getTime().toString(),
-      ...categoryData,
-      createdAt: new Date().toISOString(),
-    };
-    setCategories([...categories, category]);
-  };
-
-  const handleUpdateCategory = (id: string, categoryData: CategoryFormData) => {
-    setCategories(
-      categories.map((cat) =>
-        cat.id === id
-          ? { ...cat, ...categoryData, updatedAt: new Date().toISOString() }
-          : cat
-      )
-    );
-  };
-
-  const handleDeleteCategory = (id: string) => {
-    setCategories(categories.filter((cat) => cat.id !== id));
-  };
-
-  const handleToggleCategoryActive = (id: string) => {
-    setCategories(
-      categories.map((cat) =>
-        cat.id === id ? { ...cat, isActive: !cat.isActive } : cat
-      )
-    );
-  };
-
-  const handleReorderCategories = (reorderedCategories: Category[]) => {
-    setCategories(reorderedCategories);
-  };
 
   const handleAddOccasion = (occasionData: OccasionFormData) => {
     const occasion: Occasion = {
@@ -208,14 +139,7 @@ export default function ContentPage() {
 
         {/* Categories Tab */}
         <TabsContent value="categories" className="space-y-4">
-          <CategoriesTab
-            categories={categories}
-            onAdd={handleAddCategory}
-            onUpdate={handleUpdateCategory}
-            onDelete={handleDeleteCategory}
-            onToggleActive={handleToggleCategoryActive}
-            onReorder={handleReorderCategories}
-          />
+          <CategoriesTab />
         </TabsContent>
 
         {/* Occasions Tab */}
