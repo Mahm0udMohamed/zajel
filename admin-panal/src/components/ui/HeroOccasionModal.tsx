@@ -3,6 +3,7 @@ import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
 import { Switch } from "./switch";
+import { DatePicker } from "./DatePicker";
 import { FormModal, type FormModalProps } from "./FormModal";
 import { Plus, Trash2, Upload, Loader2, Image } from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
@@ -404,7 +405,7 @@ export function HeroOccasionModal({
       {...restProps}
     >
       <div className="grid gap-6">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="nameAr" className="text-white font-medium">
               الاسم بالعربية *
@@ -435,22 +436,18 @@ export function HeroOccasionModal({
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="date" className="text-white font-medium">
-            تاريخ المناسبة *
-          </Label>
-          <Input
-            id="date"
-            type="datetime-local"
-            value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-            className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
-          />
-        </div>
+        <DatePicker
+          label="تاريخ المناسبة"
+          value={formData.date}
+          onChange={(value) => setFormData({ ...formData, date: value })}
+          placeholder="اختر تاريخ المناسبة"
+          required
+          className="w-full"
+        />
 
         <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
           <Label className="text-white font-medium">رسائل التهنئة</Label>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label
                 htmlFor="celebratoryMessageAr"

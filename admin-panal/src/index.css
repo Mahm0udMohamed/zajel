@@ -175,6 +175,32 @@
   text-align: left !important;
 }
 
+/* Date Picker LTR Support - Left to Right for date input */
+.date-picker-input {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: bidi-override !important;
+}
+
+.date-picker-input::placeholder {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: bidi-override !important;
+}
+
+/* Date Picker Input Focus and Typing States */
+.date-picker-input:focus {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: bidi-override !important;
+}
+
+.date-picker-input[data-typing="true"] {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: bidi-override !important;
+}
+
 /* Center text override for login page */
 .center-text {
   text-align: center !important;

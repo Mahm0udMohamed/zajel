@@ -209,7 +209,20 @@ export default function HeroPromotionsTab() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ar-SA");
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return "تاريخ غير صحيح";
+      }
+      // استخدام الأرقام الإنجليزية مع التنسيق DD/MM/YYYY
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "تاريخ غير صحيح";
+    }
   };
 
   const getGradientLabel = (value: string) => {

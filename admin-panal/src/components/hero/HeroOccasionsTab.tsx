@@ -210,13 +210,11 @@ export default function HeroOccasionsTab() {
       if (isNaN(date.getTime())) {
         return "تاريخ غير صحيح";
       }
-      // استخدام التقويم الميلادي مع التنسيق الرقمي
-      return date.toLocaleDateString("ar-EG", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        calendar: "gregory", // التأكد من استخدام التقويم الميلادي
-      });
+      // استخدام الأرقام الإنجليزية مع التنسيق DD/MM/YYYY
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
     } catch (error) {
       console.error("Error formatting date:", error);
       return "تاريخ غير صحيح";

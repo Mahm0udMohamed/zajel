@@ -10,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./select";
+import { DatePicker } from "./DatePicker";
 import { FormModal, type FormModalProps } from "./FormModal";
-import { Upload, Loader2, Tag, Calendar, Link, Image } from "lucide-react";
+import { Upload, Loader2, Tag, Link, Image } from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
 import { apiService } from "../../services/api";
 import type { HeroPromotion, HeroPromotionFormData } from "../../types/hero";
@@ -467,7 +468,7 @@ export function HeroPromotionModal({
         </div>
 
         <div className="bg-black/20 rounded-lg p-4 border border-gray-800/50">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="titleAr" className="text-white font-medium">
                 العنوان بالعربية *
@@ -500,7 +501,7 @@ export function HeroPromotionModal({
         </div>
 
         <div className="bg-black/20 rounded-lg p-4 border border-gray-800/50">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="subtitleAr" className="text-white font-medium">
                 العنوان الفرعي بالعربية
@@ -533,7 +534,7 @@ export function HeroPromotionModal({
         </div>
 
         <div className="bg-black/20 rounded-lg p-4 border border-gray-800/50">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="buttonTextAr" className="text-white font-medium">
                 نص الزر بالعربية
@@ -606,48 +607,30 @@ export function HeroPromotionModal({
         </div>
 
         <div className="bg-black/20 rounded-lg p-4 border border-gray-800/50">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label
-                htmlFor="startDate"
-                className="flex items-center gap-2 text-white font-medium"
-              >
-                <Calendar className="w-4 h-4 text-blue-400" />
-                تاريخ البداية
-              </Label>
-              <Input
-                id="startDate"
-                type="datetime-local"
-                value={formData.startDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, startDate: e.target.value })
-                }
-                className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label
-                htmlFor="endDate"
-                className="flex items-center gap-2 text-white font-medium"
-              >
-                <Calendar className="w-4 h-4 text-blue-400" />
-                تاريخ النهاية
-              </Label>
-              <Input
-                id="endDate"
-                type="datetime-local"
-                value={formData.endDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, endDate: e.target.value })
-                }
-                className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
-              />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <DatePicker
+              label="تاريخ البداية"
+              value={formData.startDate}
+              onChange={(value) =>
+                setFormData({ ...formData, startDate: value })
+              }
+              placeholder="اختر تاريخ البداية"
+              required
+              className="w-full"
+            />
+            <DatePicker
+              label="تاريخ النهاية"
+              value={formData.endDate}
+              onChange={(value) => setFormData({ ...formData, endDate: value })}
+              placeholder="اختر تاريخ النهاية"
+              required
+              className="w-full"
+            />
           </div>
         </div>
 
         <div className="bg-black/20 rounded-lg p-4 border border-gray-800/50">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="priority" className="text-white font-medium">
                 الأولوية
@@ -664,7 +647,7 @@ export function HeroPromotionModal({
                 className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
               />
             </div>
-            <div className="flex items-center justify-end gap-2 pt-6">
+            <div className="flex items-center justify-start sm:justify-end gap-2 pt-6">
               <Label
                 htmlFor="isActive"
                 className="order-2 text-white font-medium"
