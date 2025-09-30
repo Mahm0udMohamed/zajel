@@ -17,6 +17,7 @@ import cartRoutes from "./routes/cartRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import heroOccasionsRoutes from "./routes/heroOccasionsRoutes.js";
 import heroPromotionsRoutes from "./routes/heroPromotionsRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 import cacheRoutes from "./routes/cacheRoutes.js";
 import passport from "./config/passport.js";
 import { printServiceStatus } from "./utils/serviceChecker.js";
@@ -95,9 +96,10 @@ const clearCacheOnStartup = async () => {
     console.log("🔄 Clearing cache on startup...");
 
     if (cacheLayer.cacheService.isReady()) {
-      // مسح كاش المناسبات والعروض الترويجية
+      // مسح كاش المناسبات والعروض الترويجية والفئات
       await cacheLayer.clear("hero-occasions", "*");
       await cacheLayer.clear("hero-promotions", "*");
+      await cacheLayer.clear("categories", "*");
       console.log("✅ Cache cleared on startup");
     }
   } catch (error) {
@@ -195,6 +197,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/hero-occasions", heroOccasionsRoutes);
 app.use("/api/hero-promotions", heroPromotionsRoutes);
+app.use("/api/categories", categoryRoutes);
 app.use("/api/cache", cacheRoutes);
 
 // ✅ إنشاء السيرفر باستخدام HTTPS للتطوير المحلي
@@ -222,6 +225,7 @@ process.on("SIGINT", async () => {
     if (cacheLayer.cacheService.isReady()) {
       await cacheLayer.clear("hero-occasions", "*");
       await cacheLayer.clear("hero-promotions", "*");
+      await cacheLayer.clear("categories", "*");
       console.log("✅ Cache cleared on restart");
     }
   } catch (error) {
@@ -236,6 +240,7 @@ process.on("SIGTERM", async () => {
     if (cacheLayer.cacheService.isReady()) {
       await cacheLayer.clear("hero-occasions", "*");
       await cacheLayer.clear("hero-promotions", "*");
+      await cacheLayer.clear("categories", "*");
       console.log("✅ Cache cleared on stop");
     }
   } catch (error) {

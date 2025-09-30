@@ -103,6 +103,31 @@ export const CACHE_CONFIG = {
       description: "قائمة المفضلة",
     },
 
+    // بيانات الفئات
+    categories: {
+      ttl: 3600, // ساعة واحدة
+      compression: true,
+      invalidationStrategy: "immediate",
+      keyPattern: "categories:{operation}:{params}",
+      description: "بيانات الفئات (قوائم، تفاصيل، بحث)",
+    },
+
+    "categories-active": {
+      ttl: 2 * 60 * 60, // ساعتان
+      compression: true,
+      invalidationStrategy: "immediate",
+      keyPattern: "active-categories:{language}",
+      description: "الفئات النشطة للعرض العام",
+    },
+
+    "category-details": {
+      ttl: 4 * 60 * 60, // 4 ساعات
+      compression: true,
+      invalidationStrategy: "immediate",
+      keyPattern: "category:{id}:{language}",
+      description: "تفاصيل فئة محددة",
+    },
+
     // بيانات الإحصائيات
     analytics: {
       ttl: 300, // 5 دقائق

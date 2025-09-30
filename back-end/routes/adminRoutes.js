@@ -6,6 +6,16 @@ import {
   adminLogout,
   getAdminProfile,
 } from "../controllers/adminController.js";
+import {
+  getAllCategories,
+  getCategoryById,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  toggleCategoryStatus,
+  reorderCategories,
+  searchCategories,
+} from "../controllers/categoryController.js";
 import { authenticateAdmin } from "../middlewares/adminAuthMiddleware.js";
 
 const router = express.Router();
@@ -32,5 +42,15 @@ router.use(authenticateAdmin); // تطبيق middleware على جميع الـ r
 
 router.post("/logout", adminLogout);
 router.get("/profile", getAdminProfile);
+
+// Category Management Routes
+router.get("/categories", getAllCategories);
+router.get("/categories/search", searchCategories);
+router.get("/categories/:id", getCategoryById);
+router.post("/categories", createCategory);
+router.put("/categories/:id", updateCategory);
+router.delete("/categories/:id", deleteCategory);
+router.patch("/categories/:id/toggle", toggleCategoryStatus);
+router.patch("/categories/reorder", reorderCategories);
 
 export default router;
