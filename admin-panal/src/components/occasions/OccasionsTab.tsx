@@ -379,30 +379,38 @@ export default function OccasionsTab({
               .map((occasion) => (
                 <TableRow key={occasion.id}>
                   <TableCell>
-                    <img
-                      src={occasion.imageUrl || "/placeholder.svg"}
-                      alt={occasion.nameAr}
-                      className="w-12 h-12 object-cover rounded"
-                    />
+                    <div className="flex items-center justify-center">
+                      <img
+                        src={occasion.imageUrl || "/placeholder.svg"}
+                        alt={occasion.nameAr}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <div>
+                    <div className="flex flex-col items-center justify-center">
                       <div className="font-medium">{occasion.nameAr}</div>
                       <div className="text-sm text-muted-foreground">
                         {occasion.nameEn}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{occasion.sortOrder}</TableCell>
                   <TableCell>
-                    <Badge
-                      variant={occasion.isActive ? "default" : "secondary"}
-                    >
-                      {occasion.isActive ? "نشط" : "غير نشط"}
-                    </Badge>
+                    <div className="flex items-center justify-center">
+                      {occasion.sortOrder}
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center justify-center">
+                      <Badge
+                        variant={occasion.isActive ? "default" : "secondary"}
+                      >
+                        {occasion.isActive ? "نشط" : "غير نشط"}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center justify-center gap-1">
                       <Button
                         variant="outline"
                         size="sm"

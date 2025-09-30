@@ -290,7 +290,7 @@ export default function HeroOccasionsTab() {
                     return (
                       <TableRow key={occasionId}>
                         <TableCell>
-                          <div>
+                          <div className="flex flex-col items-center justify-center">
                             <div className="font-medium">{occasion.nameAr}</div>
                             <div className="text-sm text-muted-foreground">
                               {occasion.nameEn}
@@ -298,7 +298,7 @@ export default function HeroOccasionsTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center gap-2">
                             <span>{formatDate(occasion.date)}</span>
                             {isUpcoming(occasion.date) && (
                               <Badge variant="secondary" className="text-xs">
@@ -308,7 +308,7 @@ export default function HeroOccasionsTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex gap-1">
+                          <div className="flex justify-center gap-1">
                             {occasion.images
                               .slice(0, 3)
                               .map((image, imageIndex) => (
@@ -330,7 +330,7 @@ export default function HeroOccasionsTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center gap-2">
                             <Badge
                               variant={
                                 occasion.isActive ? "default" : "secondary"
@@ -356,7 +356,7 @@ export default function HeroOccasionsTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center justify-center gap-1">
                             <Button
                               variant="outline"
                               size="sm"

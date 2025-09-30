@@ -231,9 +231,9 @@ export default function HeroPromotionsTab() {
             </CardDescription>
           </div>
           <Button onClick={() => setIsAddOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                إضافة عرض
-                        </Button>
+            <Plus className="w-4 h-4 mr-2" />
+            إضافة عرض
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -248,11 +248,11 @@ export default function HeroPromotionsTab() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-20 min-w-[80px]">الصورة</TableHead>
                 <TableHead className="w-40 min-w-[160px]">العنوان</TableHead>
                 <TableHead className="w-24 min-w-[96px]">التدرج</TableHead>
                 <TableHead className="w-32 min-w-[128px]">الفترة</TableHead>
                 <TableHead className="w-20 min-w-[80px]">الأولوية</TableHead>
+                <TableHead className="w-20 min-w-[80px]">الصورة</TableHead>
                 <TableHead className="w-24 min-w-[96px]">الحالة</TableHead>
                 <TableHead className="w-32 min-w-[128px]">الإجراءات</TableHead>
               </TableRow>
@@ -279,16 +279,7 @@ export default function HeroPromotionsTab() {
                     return (
                       <TableRow key={promotionId}>
                         <TableCell>
-                          <div className="flex justify-center">
-                            <img
-                              src={promotion.image || "/placeholder.svg"}
-                              alt={promotion.titleAr}
-                              className="w-16 h-10 object-cover rounded flex-shrink-0"
-                            />
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="min-w-0">
+                          <div className="flex flex-col items-center justify-center min-w-0">
                             <div className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
                               {promotion.titleAr}
                             </div>
@@ -298,7 +289,7 @@ export default function HeroPromotionsTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center gap-2">
                             <div
                               className={`w-4 h-4 rounded bg-gradient-to-r ${promotion.gradient} flex-shrink-0`}
                             />
@@ -310,7 +301,7 @@ export default function HeroPromotionsTab() {
                         <TableCell>
                           <div className="text-xs">
                             <div
-                              className={`flex items-center gap-1 ${
+                              className={`flex items-center justify-center gap-1 ${
                                 promotion.isActive
                                   ? "text-green-400"
                                   : "text-gray-400"
@@ -328,12 +319,21 @@ export default function HeroPromotionsTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="text-center text-sm font-medium">
+                          <div className="flex items-center justify-center text-sm font-medium">
                             {promotion.priority}
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center justify-center">
+                            <img
+                              src={promotion.image || "/placeholder.svg"}
+                              alt={promotion.titleAr}
+                              className="w-16 h-10 object-cover rounded flex-shrink-0"
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-1">
                             <Badge
                               variant={
                                 promotion.isActive ? "default" : "secondary"
@@ -359,7 +359,7 @@ export default function HeroPromotionsTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center justify-center gap-1">
                             <Button
                               variant="outline"
                               size="sm"

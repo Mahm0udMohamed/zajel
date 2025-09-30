@@ -377,30 +377,38 @@ export default function CategoriesTab({
               .map((category) => (
                 <TableRow key={category.id}>
                   <TableCell>
-                    <img
-                      src={category.imageUrl || "/placeholder.svg"}
-                      alt={category.nameAr}
-                      className="w-12 h-12 object-cover rounded"
-                    />
+                    <div className="flex items-center justify-center">
+                      <img
+                        src={category.imageUrl || "/placeholder.svg"}
+                        alt={category.nameAr}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <div>
+                    <div className="flex flex-col items-center justify-center">
                       <div className="font-medium">{category.nameAr}</div>
                       <div className="text-sm text-muted-foreground">
                         {category.nameEn}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{category.sortOrder}</TableCell>
                   <TableCell>
-                    <Badge
-                      variant={category.isActive ? "default" : "secondary"}
-                    >
-                      {category.isActive ? "نشط" : "غير نشط"}
-                    </Badge>
+                    <div className="flex items-center justify-center">
+                      {category.sortOrder}
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center justify-center">
+                      <Badge
+                        variant={category.isActive ? "default" : "secondary"}
+                      >
+                        {category.isActive ? "نشط" : "غير نشط"}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center justify-center gap-1">
                       <Button
                         variant="outline"
                         size="sm"

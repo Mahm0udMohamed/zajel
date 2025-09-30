@@ -169,6 +169,16 @@
   text-align: center !important;
 }
 
+/* Table header center alignment override */
+.table-header-center {
+  text-align: center !important;
+}
+
+/* Table cell center alignment override */
+.table-cell-center {
+  text-align: center !important;
+}
+
 /* Animation utilities */
 @layer utilities {
   .animate-in {
