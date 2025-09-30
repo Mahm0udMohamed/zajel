@@ -38,8 +38,8 @@ export function DatePicker({
   required = false,
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getUTCMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getUTCFullYear());
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     value ? new Date(value) : null
   );
@@ -57,12 +57,13 @@ export function DatePicker({
       const date = new Date(value);
       if (!isNaN(date.getTime())) {
         setSelectedDate(date);
-        setCurrentMonth(date.getMonth());
-        setCurrentYear(date.getFullYear());
-        // تحويل التاريخ إلى تنسيق DD/MM/YYYY للعرض
-        const day = String(date.getDate()).padStart(2, "0");
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const year = date.getFullYear();
+        // استخدام UTC لجميع العمليات
+        setCurrentMonth(date.getUTCMonth());
+        setCurrentYear(date.getUTCFullYear());
+        // تحويل التاريخ إلى تنسيق DD/MM/YYYY للعرض (استخدام UTC)
+        const day = String(date.getUTCDate()).padStart(2, "0");
+        const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const year = date.getUTCFullYear();
         setInputValue(`${day}/${month}/${year}`);
       }
     } else {
@@ -90,53 +91,53 @@ export function DatePicker({
   }, [isOpen]);
 
   const getDaysInMonth = (month: number, year: number) => {
-    return new Date(year, month + 1, 0).getDate();
+    return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
   };
 
   const getFirstDayOfMonth = (month: number, year: number) => {
-    return new Date(year, month, 1).getDay();
+    return new Date(Date.UTC(year, month, 1)).getUTCDay();
   };
 
   const isToday = (date: Date) => {
     const today = new Date();
     return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear() &&
-      date.getMonth() === currentMonth &&
-      date.getFullYear() === currentYear
+      date.getUTCDate() === today.getUTCDate() &&
+      date.getUTCMonth() === today.getUTCMonth() &&
+      date.getUTCFullYear() === today.getUTCFullYear() &&
+      date.getUTCMonth() === currentMonth &&
+      date.getUTCFullYear() === currentYear
     );
   };
 
   const isSelected = (date: Date) => {
     if (!selectedDate) return false;
     return (
-      date.getDate() === selectedDate.getDate() &&
-      date.getMonth() === selectedDate.getMonth() &&
-      date.getFullYear() === selectedDate.getFullYear() &&
-      date.getMonth() === currentMonth &&
-      date.getFullYear() === currentYear
+      date.getUTCDate() === selectedDate.getUTCDate() &&
+      date.getUTCMonth() === selectedDate.getUTCMonth() &&
+      date.getUTCFullYear() === selectedDate.getUTCFullYear() &&
+      date.getUTCMonth() === currentMonth &&
+      date.getUTCFullYear() === currentYear
     );
   };
 
   const isHovered = (date: Date) => {
     if (!hoveredDate) return false;
     return (
-      date.getDate() === hoveredDate.getDate() &&
-      date.getMonth() === hoveredDate.getMonth() &&
-      date.getFullYear() === hoveredDate.getFullYear()
+      date.getUTCDate() === hoveredDate.getUTCDate() &&
+      date.getUTCMonth() === hoveredDate.getUTCMonth() &&
+      date.getUTCFullYear() === hoveredDate.getUTCFullYear()
     );
   };
 
   const handleDateSelect = (day: number) => {
-    const newDate = new Date(currentYear, currentMonth, day, 0, 0, 0); // تعيين الوقت إلى 00:00 (12 ص)
+    const newDate = new Date(Date.UTC(currentYear, currentMonth, day, 0, 0, 0)); // تعيين الوقت إلى 00:00 (12 ص) UTC
     setSelectedDate(newDate);
 
-    // تحويل التاريخ إلى تنسيق datetime-local
-    const year = newDate.getFullYear();
-    const month = String(newDate.getMonth() + 1).padStart(2, "0");
+    // إرسال التاريخ فقط بدون وقت (استخدام نفس القيم المختارة)
+    const year = currentYear;
+    const month = String(currentMonth + 1).padStart(2, "0");
     const dayStr = String(day).padStart(2, "0");
-    const dateString = `${year}-${month}-${dayStr}T00:00`;
+    const dateString = `${year}-${month}-${dayStr}`;
 
     onChange?.(dateString);
     setIsOpen(false);
@@ -162,24 +163,27 @@ export function DatePicker({
 
   const handleTodayClick = () => {
     const today = new Date();
-    setCurrentMonth(today.getMonth());
-    setCurrentYear(today.getFullYear());
-    // إنشاء تاريخ اليوم مع الوقت 00:00
+    // استخدام UTC لجميع العمليات
+    setCurrentMonth(today.getUTCMonth());
+    setCurrentYear(today.getUTCFullYear());
+    // إنشاء تاريخ اليوم مع الوقت 00:00 UTC
     const todayAtMidnight = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      0,
-      0,
-      0
+      Date.UTC(
+        today.getUTCFullYear(),
+        today.getUTCMonth(),
+        today.getUTCDate(),
+        0,
+        0,
+        0
+      )
     );
     setSelectedDate(todayAtMidnight);
 
-    // تحويل التاريخ إلى تنسيق datetime-local
-    const year = todayAtMidnight.getFullYear();
-    const month = String(todayAtMidnight.getMonth() + 1).padStart(2, "0");
-    const day = String(todayAtMidnight.getDate()).padStart(2, "0");
-    const dateString = `${year}-${month}-${day}T00:00`;
+    // إرسال التاريخ فقط بدون وقت (استخدام UTC)
+    const year = today.getUTCFullYear();
+    const month = String(today.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(today.getUTCDate()).padStart(2, "0");
+    const dateString = `${year}-${month}-${day}`;
 
     onChange?.(dateString);
     setIsOpen(false);
@@ -224,16 +228,17 @@ export function DatePicker({
           year >= 1900 &&
           year <= 2100
         ) {
-          const date = new Date(year, month - 1, day, 0, 0, 0); // تعيين الوقت إلى 00:00 (12 ص)
+          const date = new Date(Date.UTC(year, month - 1, day, 0, 0, 0)); // تعيين الوقت إلى 00:00 (12 ص) UTC
           if (
             !isNaN(date.getTime()) &&
-            date.getDate() === day &&
-            date.getMonth() === month - 1
+            date.getUTCDate() === day &&
+            date.getUTCMonth() === month - 1
           ) {
-            const yearStr = date.getFullYear();
-            const monthStr = String(date.getMonth() + 1).padStart(2, "0");
-            const dayStr = String(date.getDate()).padStart(2, "0");
-            const dateString = `${yearStr}-${monthStr}-${dayStr}T00:00`;
+            // إرسال التاريخ فقط بدون وقت
+            const yearStr = String(date.getUTCFullYear());
+            const monthStr = String(date.getUTCMonth() + 1).padStart(2, "0");
+            const dayStr = String(date.getUTCDate()).padStart(2, "0");
+            const dateString = `${yearStr}-${monthStr}-${dayStr}`;
             onChange?.(dateString);
             // تحديث inputValue بالتنسيق المكتوب (DD/MM/YYYY)
             setInputValue(formatTypedDate(date));
@@ -273,7 +278,7 @@ export function DatePicker({
 
     // إضافة أيام الشهر
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(currentYear, currentMonth, day);
+      const date = new Date(Date.UTC(currentYear, currentMonth, day));
       const isSelectedDay = isSelected(date);
       const isTodayDay = isToday(date);
       const isHoveredDay = isHovered(date);
@@ -323,20 +328,20 @@ export function DatePicker({
 
     // إذا كان التاريخ من التقويم، نعرضه بالتنسيق العربي فقط إذا لم يكن هناك inputValue
     if (selectedDate && !isTyping && !inputValue) {
-      const day = selectedDate.getDate();
-      const month = MONTHS[selectedDate.getMonth()];
-      const year = selectedDate.getFullYear();
+      const day = selectedDate.getUTCDate();
+      const month = MONTHS[selectedDate.getUTCMonth()];
+      const year = selectedDate.getUTCFullYear();
       return `${day} ${month} ${year}`;
     }
 
     return "";
   };
 
-  // دالة لتنسيق التاريخ المكتوب
+  // دالة لتنسيق التاريخ المكتوب (استخدام UTC)
   const formatTypedDate = (date: Date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
     return `${day}/${month}/${year}`;
   };
 

@@ -113,11 +113,15 @@ const HeroSlider: React.FC = () => {
     if (!nearestOccasion) return;
     const now = new Date();
     const occasionDate = new Date(nearestOccasion.date);
-    const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const nowDate = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+    );
     const occasionDateOnly = new Date(
-      occasionDate.getFullYear(),
-      occasionDate.getMonth(),
-      occasionDate.getDate()
+      Date.UTC(
+        occasionDate.getUTCFullYear(),
+        occasionDate.getUTCMonth(),
+        occasionDate.getUTCDate()
+      )
     );
     const oneDayInMs = 24 * 60 * 60 * 1000;
     const diff = occasionDate.getTime() - now.getTime();

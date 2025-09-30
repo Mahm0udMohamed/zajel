@@ -584,7 +584,11 @@ export const createOccasion = async (req, res) => {
     const newOccasion = new HeroOccasion({
       nameAr,
       nameEn,
-      date: new Date(date),
+      date: (() => {
+        const dateObj = new Date(date);
+        dateObj.setUTCHours(0, 0, 0, 0);
+        return dateObj;
+      })(),
       images: uploadedImages,
       celebratoryMessageAr,
       celebratoryMessageEn,
@@ -645,7 +649,9 @@ export const updateOccasion = async (req, res) => {
     const updateData = { ...req.body, updatedBy: req.adminId };
 
     if (updateData.date) {
-      updateData.date = new Date(updateData.date);
+      const dateObj = new Date(updateData.date);
+      dateObj.setUTCHours(0, 0, 0, 0);
+      updateData.date = dateObj;
     }
 
     if (updateData.images) {
@@ -795,7 +801,11 @@ export const importOccasions = async (req, res) => {
 
         const newOccasion = new HeroOccasion({
           ...occasionData,
-          date: new Date(occasionData.date),
+          date: (() => {
+            const dateObj = new Date(occasionData.date);
+            dateObj.setUTCHours(0, 0, 0, 0);
+            return dateObj;
+          })(),
           createdBy: req.adminId,
         });
 

@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "./dialog";
 import { Button } from "./button";
-import { AlertTriangle, Trash2 } from "lucide-react";
+import { AlertTriangle, Trash2, Loader2 } from "lucide-react";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -19,6 +19,7 @@ interface ConfirmDialogProps {
   cancelText?: string;
   variant?: "destructive" | "default";
   icon?: React.ReactNode;
+  isLoading?: boolean;
 }
 
 export function ConfirmDialog({
@@ -31,10 +32,12 @@ export function ConfirmDialog({
   cancelText = "إلغاء",
   variant = "destructive",
   icon,
+  isLoading = false,
 }: ConfirmDialogProps) {
   const handleConfirm = () => {
-    onConfirm();
-    onOpenChange(false);
+    if (!isLoading) {
+      onConfirm();
+    }
   };
 
   const defaultIcon =
@@ -62,19 +65,28 @@ export function ConfirmDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:border-gray-500"
+            disabled={isLoading}
+            className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:border-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {cancelText}
           </Button>
           <Button
             onClick={handleConfirm}
+            disabled={isLoading}
             className={
               variant === "destructive"
-                ? "bg-red-600 hover:bg-red-700 text-white"
-                : "bg-purple-600 hover:bg-purple-700 text-white"
+                ? "bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                : "bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             }
           >
-            {confirmText}
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                جاري الحذف...
+              </>
+            ) : (
+              confirmText
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

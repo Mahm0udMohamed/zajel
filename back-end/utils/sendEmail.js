@@ -256,7 +256,7 @@ const footer = () => `
     <p>Need help? Reach out to <a href="mailto:support@MedRX.site" style="${
       styles.link
     }">support@MedRX.com</a></p>
-    <p>© ${new Date().getFullYear()} MedRX, Inc. All rights reserved.</p>
+    <p>© ${new Date().getUTCFullYear()} MedRX, Inc. All rights reserved.</p>
   </div>
 `;
 

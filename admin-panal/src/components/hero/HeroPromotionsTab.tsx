@@ -33,7 +33,7 @@ function ImageWithError({
   src: string;
   alt: string;
   className: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }) {
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
@@ -87,6 +87,7 @@ export default function HeroPromotionsTab() {
     useState<HeroPromotion | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { toast } = useToast();
 
@@ -156,8 +157,6 @@ export default function HeroPromotionsTab() {
       return;
     }
 
-    // حفظ البيانات الأصلية للتراجع في حالة الخطأ
-    const originalPromotions = [...promotions];
     const promotionToDelete = promotions.find(
       (promo) => promo._id === deletingId
     );
@@ -172,30 +171,32 @@ export default function HeroPromotionsTab() {
     }
 
     try {
-      // إزالة العرض الترويجي محلياً فوراً لتحسين تجربة المستخدم
+      setIsDeleting(true);
+
+      // إرسال طلب الحذف إلى الباك إند أولاً
+      await apiService.deleteHeroPromotion(deletingId);
+
+      // إزالة العرض الترويجي من القائمة فقط بعد نجاح العملية في الباك إند
       setPromotions((prevPromotions) =>
         prevPromotions.filter((promo) => promo._id !== deletingId)
       );
-
-      // إرسال طلب الحذف إلى الباك إند
-      await apiService.deleteHeroPromotion(deletingId);
 
       toast({
         title: "تم الحذف",
         description: "تم حذف العرض الترويجي بنجاح",
       });
       setDeletingId(null);
+      setIsDeleteOpen(false);
     } catch (error) {
       console.error("Error deleting promotion:", error);
-
-      // إعادة البيانات الأصلية في حالة الخطأ
-      setPromotions(originalPromotions);
 
       toast({
         title: "خطأ",
         description: "فشل في حذف العرض الترويجي",
         variant: "destructive",
       });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -258,10 +259,10 @@ export default function HeroPromotionsTab() {
       if (isNaN(date.getTime())) {
         return "تاريخ غير صحيح";
       }
-      // استخدام الأرقام الإنجليزية مع التنسيق DD/MM/YYYY
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
+      // استخدام UTC لتجنب مشاكل timezone
+      const day = String(date.getUTCDate()).padStart(2, "0");
+      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+      const year = date.getUTCFullYear();
       return `${day}/${month}/${year}`;
     } catch (error) {
       console.error("Error formatting date:", error);
@@ -272,6 +273,57 @@ export default function HeroPromotionsTab() {
   const getGradientLabel = (value: string) => {
     const option = GRADIENT_OPTIONS.find((opt) => opt.value === value);
     return option ? option.label : value;
+  };
+
+  // دالة للتحقق من انتهاء فترة العرض الترويجي
+  const isPromotionExpired = (endDate: string) => {
+    try {
+      const end = new Date(endDate);
+      const now = new Date();
+
+      // التحقق من صحة التاريخ
+      if (isNaN(end.getTime())) {
+        console.error("Invalid endDate:", endDate);
+        return false;
+      }
+
+      // مقارنة صحيحة: endDate من قاعدة البيانات هو UTC
+      // now.getTime() يعطي الوقت المحلي، لكن المقارنة صحيحة
+      // لأن getTime() يعطي milliseconds منذ epoch في UTC
+      return now.getTime() > end.getTime();
+    } catch (error) {
+      console.error("Error checking promotion expiry:", error);
+      return false;
+    }
+  };
+
+  // دالة للحصول على حالة العرض الترويجي
+  const getPromotionStatus = (promotion: HeroPromotion) => {
+    if (!promotion.isActive) {
+      return {
+        status: "غير نشط",
+        variant: "secondary" as const,
+        color: "text-gray-400",
+        className: "",
+      };
+    }
+
+    if (isPromotionExpired(promotion.endDate)) {
+      return {
+        status: "انتهاء",
+        variant: "destructive" as const,
+        color: "text-red-400",
+        className:
+          "bg-red-500/20 border-red-500/50 text-red-300 hover:bg-red-500/30",
+      };
+    }
+
+    return {
+      status: "نشط",
+      variant: "default" as const,
+      color: "text-green-400",
+      className: "",
+    };
   };
 
   return (
@@ -334,7 +386,14 @@ export default function HeroPromotionsTab() {
                     const promotionId =
                       promotion._id || `promotion-${index}-${Date.now()}`;
                     return (
-                      <TableRow key={promotionId}>
+                      <TableRow
+                        key={promotionId}
+                        className={
+                          isPromotionExpired(promotion.endDate)
+                            ? "bg-red-500/5 border-red-500/20"
+                            : ""
+                        }
+                      >
                         <TableCell>
                           <div className="flex flex-col items-center justify-center min-w-0">
                             <div className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
@@ -348,9 +407,19 @@ export default function HeroPromotionsTab() {
                         <TableCell>
                           <div className="flex items-center justify-center gap-2">
                             <div
-                              className={`w-4 h-4 rounded bg-gradient-to-r ${promotion.gradient} flex-shrink-0`}
+                              className={`w-4 h-4 rounded flex-shrink-0 ${
+                                isPromotionExpired(promotion.endDate)
+                                  ? "bg-gray-400 opacity-50"
+                                  : `bg-gradient-to-r ${promotion.gradient}`
+                              }`}
                             />
-                            <span className="text-sm flex-shrink-0">
+                            <span
+                              className={`text-sm flex-shrink-0 ${
+                                isPromotionExpired(promotion.endDate)
+                                  ? "text-gray-500"
+                                  : ""
+                              }`}
+                            >
                               {getGradientLabel(promotion.gradient)}
                             </span>
                           </div>
@@ -359,7 +428,9 @@ export default function HeroPromotionsTab() {
                           <div className="text-xs">
                             <div
                               className={`flex items-center justify-center gap-1 ${
-                                promotion.isActive
+                                isPromotionExpired(promotion.endDate)
+                                  ? "text-red-400"
+                                  : promotion.isActive
                                   ? "text-green-400"
                                   : "text-gray-400"
                               }`}
@@ -382,37 +453,54 @@ export default function HeroPromotionsTab() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center justify-center">
-                            <ImageWithError
-                              src={promotion.image}
-                              alt={promotion.titleAr}
-                              className="w-16 h-10 object-cover rounded flex-shrink-0"
-                            />
+                            <div
+                              className={`w-16 h-10 rounded flex-shrink-0 overflow-hidden ${
+                                isPromotionExpired(promotion.endDate)
+                                  ? "opacity-50 grayscale"
+                                  : ""
+                              }`}
+                            >
+                              <ImageWithError
+                                src={promotion.image}
+                                alt={promotion.titleAr}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center justify-center gap-1">
-                            <Badge
-                              variant={
-                                promotion.isActive ? "default" : "secondary"
-                              }
-                              className="flex-shrink-0 text-xs"
-                            >
-                              {promotion.isActive ? "نشط" : "غير نشط"}
-                            </Badge>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleToggleActive(promotionId)}
-                              className="flex-shrink-0 scale-75"
-                            >
-                              <div
-                                className={`w-4 h-4 rounded-full border-2 ${
-                                  promotion.isActive
-                                    ? "bg-green-500 border-green-500"
-                                    : "bg-gray-400 border-gray-400"
-                                }`}
-                              />
-                            </Button>
+                            {(() => {
+                              const statusInfo = getPromotionStatus(promotion);
+                              return (
+                                <>
+                                  <Badge
+                                    variant={statusInfo.variant}
+                                    className={`flex-shrink-0 text-xs ${statusInfo.className}`}
+                                  >
+                                    {statusInfo.status}
+                                  </Badge>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                      handleToggleActive(promotionId)
+                                    }
+                                    className="flex-shrink-0 scale-75"
+                                  >
+                                    <div
+                                      className={`w-4 h-4 rounded-full border-2 ${
+                                        isPromotionExpired(promotion.endDate)
+                                          ? "bg-red-500 border-red-500"
+                                          : promotion.isActive
+                                          ? "bg-green-500 border-green-500"
+                                          : "bg-gray-400 border-gray-400"
+                                      }`}
+                                    />
+                                  </Button>
+                                </>
+                              );
+                            })()}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -477,6 +565,7 @@ export default function HeroPromotionsTab() {
         confirmText="حذف"
         cancelText="إلغاء"
         variant="destructive"
+        isLoading={isDeleting}
       />
     </Card>
   );

@@ -27,7 +27,7 @@ export function HeroOccasionModal({
     nameAr: occasion?.nameAr || "",
     nameEn: occasion?.nameEn || "",
     date: occasion?.date
-      ? new Date(occasion.date).toISOString().slice(0, 16)
+      ? new Date(occasion.date).toISOString().split("T")[0]
       : "",
     images: occasion?.images || [""],
     celebratoryMessageAr: occasion?.celebratoryMessageAr || "",
@@ -53,7 +53,7 @@ export function HeroOccasionModal({
         nameAr: occasion.nameAr || "",
         nameEn: occasion.nameEn || "",
         date: occasion.date
-          ? new Date(occasion.date).toISOString().slice(0, 16)
+          ? new Date(occasion.date).toISOString().split("T")[0]
           : "",
         images: occasion.images || [""],
         celebratoryMessageAr: occasion.celebratoryMessageAr || "",
@@ -99,7 +99,7 @@ export function HeroOccasionModal({
           nameAr: occasion.nameAr || "",
           nameEn: occasion.nameEn || "",
           date: occasion.date
-            ? new Date(occasion.date).toISOString().slice(0, 16)
+            ? new Date(occasion.date).toISOString().split("T")[0]
             : "",
           images: occasion.images || [""],
           celebratoryMessageAr: occasion.celebratoryMessageAr || "",

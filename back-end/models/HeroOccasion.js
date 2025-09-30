@@ -15,6 +15,15 @@ const heroOccasionSchema = new mongoose.Schema(
     date: {
       type: Date,
       required: true,
+      set: function (v) {
+        // تحديد الوقت إلى 00:00:00 من نفس اليوم (UTC)
+        if (v) {
+          const date = new Date(v);
+          date.setUTCHours(0, 0, 0, 0);
+          return date;
+        }
+        return v;
+      },
     },
     images: [
       {

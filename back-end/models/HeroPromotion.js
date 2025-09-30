@@ -73,6 +73,15 @@ const heroPromotionSchema = new mongoose.Schema(
     startDate: {
       type: Date,
       required: true,
+      set: function (v) {
+        // تحديد الوقت إلى 00:00:00 من نفس اليوم (UTC)
+        if (v) {
+          const date = new Date(v);
+          date.setUTCHours(0, 0, 0, 0);
+          return date;
+        }
+        return v;
+      },
     },
     endDate: {
       type: Date,
@@ -90,9 +99,34 @@ const heroPromotionSchema = new mongoose.Schema(
             return false;
           }
 
-          return endDate > startDate;
+          // تحويل التواريخ إلى نفس اليوم للمقارنة (استخدام UTC)
+          const startDateOnly = new Date(
+            Date.UTC(
+              startDate.getUTCFullYear(),
+              startDate.getUTCMonth(),
+              startDate.getUTCDate()
+            )
+          );
+          const endDateOnly = new Date(
+            Date.UTC(
+              endDate.getUTCFullYear(),
+              endDate.getUTCMonth(),
+              endDate.getUTCDate()
+            )
+          );
+
+          return endDateOnly >= startDateOnly;
         },
-        message: "تاريخ الانتهاء يجب أن يكون بعد تاريخ البداية",
+        message: "تاريخ الانتهاء يجب أن يكون بعد أو يساوي تاريخ البداية",
+      },
+      set: function (v) {
+        // تحديد الوقت إلى 23:59:59 من نفس اليوم (UTC)
+        if (v) {
+          const date = new Date(v);
+          date.setUTCHours(23, 59, 59, 999);
+          return date;
+        }
+        return v;
       },
     },
     createdBy: {
@@ -120,7 +154,11 @@ heroPromotionSchema.index({ titleAr: "text", titleEn: "text" });
 // التحقق من أن العرض نشط في الفترة الزمنية المحددة
 heroPromotionSchema.virtual("isCurrentlyActive").get(function () {
   const now = new Date();
-  return this.isActive && now >= this.startDate && now <= this.endDate;
+  return (
+    this.isActive &&
+    now.getTime() >= this.startDate.getTime() &&
+    now.getTime() <= this.endDate.getTime()
+  );
 });
 
 // دالة للحصول على العروض النشطة حالياً

@@ -14,6 +14,8 @@ import {
   getCacheStats,
   clearCache,
   diagnoseRedis,
+  checkAndUpdateExpiredPromotions,
+  getPromotionsStats,
 } from "../controllers/heroPromotionsController.js";
 import { authenticateAdmin } from "../middlewares/adminAuthMiddleware.js";
 import { body, param, query } from "express-validator";
@@ -130,9 +132,27 @@ const promotionValidation = [
         throw new Error("تواريخ غير صحيحة");
       }
 
-      // التحقق من أن تاريخ الانتهاء بعد تاريخ البداية
-      if (endDate <= startDate) {
-        throw new Error("تاريخ الانتهاء يجب أن يكون بعد تاريخ البداية");
+      // تحويل التواريخ إلى نفس اليوم مع أوقات مختلفة للمقارنة (استخدام UTC)
+      const startDateOnly = new Date(
+        Date.UTC(
+          startDate.getUTCFullYear(),
+          startDate.getUTCMonth(),
+          startDate.getUTCDate()
+        )
+      );
+      const endDateOnly = new Date(
+        Date.UTC(
+          endDate.getUTCFullYear(),
+          endDate.getUTCMonth(),
+          endDate.getUTCDate()
+        )
+      );
+
+      // التحقق من أن تاريخ الانتهاء بعد أو يساوي تاريخ البداية
+      if (endDateOnly < startDateOnly) {
+        throw new Error(
+          "تاريخ الانتهاء يجب أن يكون بعد أو يساوي تاريخ البداية"
+        );
       }
 
       return true;
@@ -299,5 +319,44 @@ router.get("/cache/diagnose", authenticateAdmin, diagnoseRedis);
 
 // DELETE /api/hero-promotions/cache/clear - مسح الكاش يدوياً
 router.delete("/cache/clear", authenticateAdmin, clearCache);
+
+// ===== مسارات إدارة العروض المنتهية (تحتاج مصادقة أدمن) =====
+
+// POST /api/hero-promotions/update-expired - تحديث العروض المنتهية يدوياً
+router.post("/update-expired", authenticateAdmin, async (req, res) => {
+  try {
+    const updated = await checkAndUpdateExpiredPromotions();
+    res.status(200).json({
+      success: true,
+      message: `تم تحديث ${updated} عرض ترويجي منتهي`,
+      data: { updated },
+    });
+  } catch (error) {
+    console.error("Error updating expired promotions:", error);
+    res.status(500).json({
+      success: false,
+      message: "فشل في تحديث العروض المنتهية",
+      error: error.message,
+    });
+  }
+});
+
+// GET /api/hero-promotions/stats - الحصول على إحصائيات العروض
+router.get("/stats", authenticateAdmin, async (req, res) => {
+  try {
+    const stats = await getPromotionsStats();
+    res.status(200).json({
+      success: true,
+      data: stats,
+    });
+  } catch (error) {
+    console.error("Error getting promotions stats:", error);
+    res.status(500).json({
+      success: false,
+      message: "فشل في الحصول على إحصائيات العروض",
+      error: error.message,
+    });
+  }
+});
 
 export default router;

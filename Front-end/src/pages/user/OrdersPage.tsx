@@ -491,14 +491,17 @@ const OrdersPage: React.FC = () => {
                             <div className="flex items-center gap-1">
                               <Calendar size={14} />
                               <span>
-                                {new Date(order.date).toLocaleDateString(
-                                  isRtl ? "ar-EG" : "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                  }
-                                )}
+                                {(() => {
+                                  const date = new Date(order.date);
+                                  const day = String(
+                                    date.getUTCDate()
+                                  ).padStart(2, "0");
+                                  const month = String(
+                                    date.getUTCMonth() + 1
+                                  ).padStart(2, "0");
+                                  const year = date.getUTCFullYear();
+                                  return `${day}/${month}/${year}`;
+                                })()}
                               </span>
                             </div>
                             <div className="flex items-center gap-1">

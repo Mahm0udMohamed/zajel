@@ -383,6 +383,42 @@ class ApiService {
 
     return await response.json();
   }
+
+  // تحديث العروض المنتهية
+  async updateExpiredPromotions(): Promise<{
+    success: boolean;
+    data: { updated: number };
+  }> {
+    const response = await this.makeAuthenticatedRequest<{
+      success: boolean;
+      data: { updated: number };
+    }>("/hero-promotions/update-expired", {
+      method: "POST",
+    });
+    return response.data || { success: false, data: { updated: 0 } };
+  }
+
+  // الحصول على إحصائيات العروض
+  async getHeroPromotionsStats(): Promise<{
+    success: boolean;
+    data: { total: number; active: number; expired: number; upcoming: number };
+  }> {
+    const response = await this.makeAuthenticatedRequest<{
+      success: boolean;
+      data: {
+        total: number;
+        active: number;
+        expired: number;
+        upcoming: number;
+      };
+    }>("/hero-promotions/stats");
+    return (
+      response.data || {
+        success: false,
+        data: { total: 0, active: 0, expired: 0, upcoming: 0 },
+      }
+    );
+  }
 }
 
 export const apiService = new ApiService();

@@ -154,7 +154,7 @@ const ProfilePage: React.FC = () => {
               <span className="text-gray-600">
                 {isRtl ? "عضو منذ" : "Member since"}{" "}
                 {profile?.createdAt
-                  ? new Date(profile.createdAt).getFullYear()
+                  ? new Date(profile.createdAt).getUTCFullYear()
                   : "2025"}
               </span>
             </div>
@@ -411,12 +411,41 @@ const ProfilePage: React.FC = () => {
                               </p>
                               <p className="text-blue-600 text-xs">
                                 {profile?.createdAt
-                                  ? new Date(
-                                      profile.createdAt
-                                    ).toLocaleDateString(
-                                      isRtl ? "ar-EG" : "en-US",
-                                      { year: "numeric", month: "long" }
-                                    )
+                                  ? (() => {
+                                      const date = new Date(profile.createdAt);
+                                      const year = date.getUTCFullYear();
+                                      const month = date.getUTCMonth();
+                                      const monthNames = isRtl
+                                        ? [
+                                            "يناير",
+                                            "فبراير",
+                                            "مارس",
+                                            "أبريل",
+                                            "مايو",
+                                            "يونيو",
+                                            "يوليو",
+                                            "أغسطس",
+                                            "سبتمبر",
+                                            "أكتوبر",
+                                            "نوفمبر",
+                                            "ديسمبر",
+                                          ]
+                                        : [
+                                            "January",
+                                            "February",
+                                            "March",
+                                            "April",
+                                            "May",
+                                            "June",
+                                            "July",
+                                            "August",
+                                            "September",
+                                            "October",
+                                            "November",
+                                            "December",
+                                          ];
+                                      return `${monthNames[month]} ${year}`;
+                                    })()
                                   : "2025"}
                               </p>
                             </div>

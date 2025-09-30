@@ -284,7 +284,16 @@ export default function OrdersPage() {
                     <TableCell>{order.totalAmount} ر.س</TableCell>
                     <TableCell>{getStatusBadge(order.status)}</TableCell>
                     <TableCell>
-                      {new Date(order.orderDate).toLocaleDateString("en-GB")}
+                      {(() => {
+                        const date = new Date(order.orderDate);
+                        const day = String(date.getUTCDate()).padStart(2, "0");
+                        const month = String(date.getUTCMonth() + 1).padStart(
+                          2,
+                          "0"
+                        );
+                        const year = date.getUTCFullYear();
+                        return `${day}/${month}/${year}`;
+                      })()}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -333,9 +342,19 @@ export default function OrdersPage() {
                                     </h4>
                                     <p>
                                       <strong>التاريخ:</strong>{" "}
-                                      {new Date(
-                                        selectedOrder.orderDate
-                                      ).toLocaleDateString("en-GB")}
+                                      {(() => {
+                                        const date = new Date(
+                                          selectedOrder.orderDate
+                                        );
+                                        const day = String(
+                                          date.getUTCDate()
+                                        ).padStart(2, "0");
+                                        const month = String(
+                                          date.getUTCMonth() + 1
+                                        ).padStart(2, "0");
+                                        const year = date.getUTCFullYear();
+                                        return `${day}/${month}/${year}`;
+                                      })()}
                                     </p>
                                     <p>
                                       <strong>الحالة:</strong>{" "}

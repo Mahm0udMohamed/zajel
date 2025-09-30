@@ -88,6 +88,74 @@ export const uploadPromotionImage = async (req, res) => {
   }
 };
 
+// ===== Auto-Update Expired Promotions =====
+
+// دالة بسيطة لتحديث العروض المنتهية
+export const checkAndUpdateExpiredPromotions = async () => {
+  try {
+    const now = new Date();
+
+    // تحديث العروض المنتهية مباشرة
+    const result = await HeroPromotion.updateMany(
+      {
+        isActive: true,
+        endDate: { $lt: now },
+      },
+      {
+        $set: {
+          isActive: false,
+          updatedAt: now,
+        },
+      }
+    );
+
+    // مسح الكاش فقط إذا تم تحديث شيء
+    if (result.modifiedCount > 0) {
+      await clearAllPromotionsCache();
+      console.log(`✅ Auto-updated ${result.modifiedCount} expired promotions`);
+    }
+
+    return result.modifiedCount;
+  } catch (error) {
+    console.error("❌ Error auto-updating expired promotions:", error);
+    return 0;
+  }
+};
+
+// دالة للحصول على إحصائيات العروض
+export const getPromotionsStats = async () => {
+  try {
+    const now = new Date();
+
+    const [total, active, expired, upcoming] = await Promise.all([
+      HeroPromotion.countDocuments(),
+      HeroPromotion.countDocuments({
+        isActive: true,
+        startDate: { $lte: now },
+        endDate: { $gte: now },
+      }),
+      HeroPromotion.countDocuments({
+        endDate: { $lt: now },
+      }),
+      HeroPromotion.countDocuments({
+        isActive: true,
+        startDate: { $gt: now },
+      }),
+    ]);
+
+    return {
+      total,
+      active,
+      expired,
+      upcoming,
+      timestamp: now.toISOString(),
+    };
+  } catch (error) {
+    console.error("Error getting promotions stats:", error);
+    throw error;
+  }
+};
+
 // ===== Cache Management APIs =====
 
 // إحصائيات الكاش
@@ -173,6 +241,9 @@ export const diagnoseRedis = async (req, res) => {
 // الحصول على جميع العروض الترويجية (Cache-Aside Pattern)
 export const getAllPromotions = async (req, res) => {
   try {
+    // تحديث العروض المنتهية تلقائياً قبل كل طلب
+    await checkAndUpdateExpiredPromotions();
+
     const {
       page = 1,
       limit = 10,
@@ -333,6 +404,9 @@ export const getPromotionById = async (req, res) => {
 // الحصول على العروض الترويجية النشطة فقط
 export const getActivePromotions = async (req, res) => {
   try {
+    // تحديث العروض المنتهية تلقائياً قبل كل طلب
+    await checkAndUpdateExpiredPromotions();
+
     const { limit = 10 } = req.query;
 
     // محاولة الحصول من الكاش
@@ -352,7 +426,12 @@ export const getActivePromotions = async (req, res) => {
     // Cache MISS - الحصول من قاعدة البيانات
     console.log(`🔄 Cache MISS for active promotions, fetching from database`);
 
-    const promotions = await HeroPromotion.getActivePromotions(parseInt(limit));
+    // استخدام isActive فقط بدلاً من فلترة التواريخ
+    const promotions = await HeroPromotion.find({
+      isActive: true,
+    })
+      .sort({ priority: 1, createdAt: -1 })
+      .limit(parseInt(limit));
 
     // حفظ في الكاش
     await cacheLayer.set(
@@ -405,9 +484,13 @@ export const getUpcomingPromotions = async (req, res) => {
       `🔄 Cache MISS for upcoming promotions, fetching from database`
     );
 
-    const promotions = await HeroPromotion.getUpcomingPromotions(
-      parseInt(limit)
-    );
+    // استخدام isActive فقط للعروض القادمة
+    const promotions = await HeroPromotion.find({
+      isActive: true,
+      startDate: { $gt: now },
+    })
+      .sort({ startDate: 1, priority: 1 })
+      .limit(parseInt(limit));
 
     // حفظ في الكاش
     await cacheLayer.set(
@@ -469,10 +552,12 @@ export const searchPromotions = async (req, res) => {
     // Cache MISS - الحصول من قاعدة البيانات
     console.log(`🔄 Cache MISS for search, fetching from database`);
 
-    const promotions = await HeroPromotion.searchPromotions(
-      searchQuery,
-      language
-    );
+    // استخدام isActive فقط في البحث
+    const searchField = language === "en" ? "titleEn" : "titleAr";
+    const promotions = await HeroPromotion.find({
+      isActive: true,
+      [searchField]: { $regex: searchQuery, $options: "i" },
+    }).sort({ priority: 1, createdAt: -1 });
     const limitedPromotions = promotions.slice(0, parseInt(limit));
 
     // حفظ في الكاش
@@ -547,13 +632,24 @@ export const createPromotion = async (req, res) => {
       gradient,
       isActive,
       priority: parseInt(priority),
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
+      startDate: (() => {
+        const startDateObj = new Date(startDate);
+        startDateObj.setUTCHours(0, 0, 0, 0);
+        return startDateObj;
+      })(),
+      endDate: (() => {
+        const endDateObj = new Date(endDate);
+        endDateObj.setUTCHours(23, 59, 59, 999);
+        return endDateObj;
+      })(),
       createdBy: req.adminId,
     });
 
     await newPromotion.save();
     await newPromotion.populate("createdBy", "name email");
+
+    // التحقق من انتهاء العروض بعد إنشاء عرض جديد
+    await checkAndUpdateExpiredPromotions();
 
     // مسح الكاش بعد إنشاء عرض ترويجي جديد
     await clearAllPromotionsCache();
@@ -605,11 +701,15 @@ export const updatePromotion = async (req, res) => {
     const updateData = { ...req.body, updatedBy: req.adminId };
 
     if (updateData.startDate) {
-      updateData.startDate = new Date(updateData.startDate);
+      const startDate = new Date(updateData.startDate);
+      startDate.setUTCHours(0, 0, 0, 0);
+      updateData.startDate = startDate;
     }
 
     if (updateData.endDate) {
-      updateData.endDate = new Date(updateData.endDate);
+      const endDate = new Date(updateData.endDate);
+      endDate.setUTCHours(23, 59, 59, 999);
+      updateData.endDate = endDate;
     }
 
     if (updateData.priority) {
@@ -629,6 +729,9 @@ export const updatePromotion = async (req, res) => {
         message: "العرض الترويجي غير موجود",
       });
     }
+
+    // التحقق من انتهاء العرض بعد التحديث
+    await checkAndUpdateExpiredPromotions();
 
     // مسح الكاش بعد تحديث العرض الترويجي
     await clearAllPromotionsCache();
@@ -712,6 +815,9 @@ export const togglePromotionStatus = async (req, res) => {
     promotion.updatedBy = req.adminId;
     await promotion.save();
 
+    // التحقق من انتهاء العروض بعد تبديل الحالة
+    await checkAndUpdateExpiredPromotions();
+
     // مسح الكاش بعد تبديل حالة العرض الترويجي
     await clearAllPromotionsCache();
 
@@ -759,8 +865,16 @@ export const importPromotions = async (req, res) => {
 
         const newPromotion = new HeroPromotion({
           ...promotionData,
-          startDate: new Date(promotionData.startDate),
-          endDate: new Date(promotionData.endDate),
+          startDate: (() => {
+            const startDateObj = new Date(promotionData.startDate);
+            startDateObj.setUTCHours(0, 0, 0, 0);
+            return startDateObj;
+          })(),
+          endDate: (() => {
+            const endDateObj = new Date(promotionData.endDate);
+            endDateObj.setUTCHours(23, 59, 59, 999);
+            return endDateObj;
+          })(),
           createdBy: req.adminId,
         });
 

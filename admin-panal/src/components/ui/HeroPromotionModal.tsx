@@ -54,10 +54,10 @@ export function HeroPromotionModal({
     isActive: promotion?.isActive ?? true,
     priority: promotion?.priority || 1,
     startDate: promotion?.startDate
-      ? new Date(promotion.startDate).toISOString().slice(0, 16)
+      ? new Date(promotion.startDate).toISOString().split("T")[0]
       : "",
     endDate: promotion?.endDate
-      ? new Date(promotion.endDate).toISOString().slice(0, 16)
+      ? new Date(promotion.endDate).toISOString().split("T")[0]
       : "",
   });
 
@@ -85,10 +85,10 @@ export function HeroPromotionModal({
         isActive: promotion.isActive ?? true,
         priority: promotion.priority || 1,
         startDate: promotion.startDate
-          ? new Date(promotion.startDate).toISOString().slice(0, 16)
+          ? new Date(promotion.startDate).toISOString().split("T")[0]
           : "",
         endDate: promotion.endDate
-          ? new Date(promotion.endDate).toISOString().slice(0, 16)
+          ? new Date(promotion.endDate).toISOString().split("T")[0]
           : "",
       };
       setFormData(updatedFormData);
@@ -151,10 +151,10 @@ export function HeroPromotionModal({
           isActive: promotion.isActive ?? true,
           priority: promotion.priority || 1,
           startDate: promotion.startDate
-            ? new Date(promotion.startDate).toISOString().slice(0, 16)
+            ? new Date(promotion.startDate).toISOString().split("T")[0]
             : "",
           endDate: promotion.endDate
-            ? new Date(promotion.endDate).toISOString().slice(0, 16)
+            ? new Date(promotion.endDate).toISOString().split("T")[0]
             : "",
         };
         setFormData(resetFormData);
@@ -373,8 +373,8 @@ export function HeroPromotionModal({
       const endDate = new Date(data.endDate);
       if (isNaN(endDate.getTime())) {
         errors.push("تاريخ الانتهاء غير صحيح");
-      } else if (endDate <= new Date(data.startDate)) {
-        errors.push("تاريخ الانتهاء يجب أن يكون بعد تاريخ البداية");
+      } else if (endDate < new Date(data.startDate)) {
+        errors.push("تاريخ الانتهاء يجب أن يكون بعد أو يساوي تاريخ البداية");
       }
     }
 

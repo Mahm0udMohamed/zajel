@@ -86,8 +86,8 @@ const FavoritesPage: React.FC = () => {
         (filterBy === "bestseller" && item.isBestSeller) ||
         (filterBy === "special" && item.isSpecialGift) ||
         (filterBy === "recent" &&
-          new Date(item.dateAdded) >
-            new Date(Date.now() - 1000 * 60 * 60 * 24));
+          new Date(item.dateAdded).getTime() >
+            new Date(Date.now() - 1000 * 60 * 60 * 24).getTime());
 
       return matchesSearch && matchesFilter;
     })
@@ -718,9 +718,17 @@ const FavoritesPage: React.FC = () => {
                             <div className="mt-2">
                               <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                                 {isRtl ? "أُضيف في" : "Added on"}{" "}
-                                {new Date(item.dateAdded).toLocaleDateString(
-                                  isRtl ? "ar-EG" : "en-US"
-                                )}
+                                {(() => {
+                                  const date = new Date(item.dateAdded);
+                                  const day = String(
+                                    date.getUTCDate()
+                                  ).padStart(2, "0");
+                                  const month = String(
+                                    date.getUTCMonth() + 1
+                                  ).padStart(2, "0");
+                                  const year = date.getUTCFullYear();
+                                  return `${day}/${month}/${year}`;
+                                })()}
                               </span>
                             </div>
                           </div>
@@ -794,9 +802,17 @@ const FavoritesPage: React.FC = () => {
                                   </span>
                                 )}
                                 <span className="text-xs text-gray-500">
-                                  {new Date(item.dateAdded).toLocaleDateString(
-                                    isRtl ? "ar-EG" : "en-US"
-                                  )}
+                                  {(() => {
+                                    const date = new Date(item.dateAdded);
+                                    const day = String(
+                                      date.getUTCDate()
+                                    ).padStart(2, "0");
+                                    const month = String(
+                                      date.getUTCMonth() + 1
+                                    ).padStart(2, "0");
+                                    const year = date.getUTCFullYear();
+                                    return `${day}/${month}/${year}`;
+                                  })()}
                                 </span>
                               </div>
                             </div>

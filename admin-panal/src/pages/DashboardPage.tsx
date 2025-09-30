@@ -51,7 +51,13 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-foreground">لوحة التحكم</h1>
         <div className="text-sm text-muted-foreground">
-          {new Date().toLocaleDateString("en-GB")}
+          {(() => {
+            const date = new Date();
+            const day = String(date.getUTCDate()).padStart(2, "0");
+            const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+            const year = date.getUTCFullYear();
+            return `${day}/${month}/${year}`;
+          })()}
         </div>
       </div>
 

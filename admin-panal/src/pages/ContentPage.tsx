@@ -9,34 +9,10 @@ import HeroOccasionsTab from "../components/hero/HeroOccasionsTab";
 import HeroPromotionsTab from "../components/hero/HeroPromotionsTab";
 import CategoriesTab from "../components/categories/CategoriesTab";
 import OccasionsTab from "../components/occasions/OccasionsTab";
-import type { HeroPromotion } from "../types/hero";
 import type { Category, CategoryFormData } from "../types/categories";
 import type { Occasion, OccasionFormData } from "../types/occasions";
 
 export default function ContentPage() {
-  // Hero Promotions State
-  const [heroPromotions, setHeroPromotions] = useState<HeroPromotion[]>([
-    {
-      id: "1",
-      type: "promotion",
-      image:
-        "https://images.pexels.com/photos/6214479/pexels-photo-6214479.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      titleAr: "خصم 50% على جميع الهدايا",
-      titleEn: "50% Off All Gifts",
-      subtitleAr: "عرض محدود لفترة قصيرة",
-      subtitleEn: "Limited Time Offer",
-      buttonTextAr: "تسوق الآن",
-      buttonTextEn: "Shop Now",
-      link: "/products?sale=50",
-      gradient: "from-red-500/80 to-pink-600/80",
-      isActive: true,
-      priority: 1,
-      startDate: "2025-01-01T00:00:00",
-      endDate: "2025-12-31T23:59:59",
-      createdAt: new Date().toISOString(),
-    },
-  ]);
-
   const [categories, setCategories] = useState<Category[]>([
     {
       id: "flowers",
@@ -103,37 +79,9 @@ export default function ContentPage() {
     },
   ]);
 
-  // Hero Promotions Handlers
-  const handleAddPromotion = (promotion: HeroPromotion) => {
-    setHeroPromotions([...heroPromotions, promotion]);
-  };
-
-  const handleUpdatePromotion = (
-    id: string,
-    updatedPromotion: HeroPromotion
-  ) => {
-    setHeroPromotions(
-      heroPromotions.map((promo) =>
-        promo.id === id ? updatedPromotion : promo
-      )
-    );
-  };
-
-  const handleDeletePromotion = (id: string) => {
-    setHeroPromotions(heroPromotions.filter((promo) => promo.id !== id));
-  };
-
-  const handleTogglePromotionActive = (id: string) => {
-    setHeroPromotions(
-      heroPromotions.map((promo) =>
-        promo.id === id ? { ...promo, isActive: !promo.isActive } : promo
-      )
-    );
-  };
-
   const handleAddCategory = (categoryData: CategoryFormData) => {
     const category: Category = {
-      id: Date.now().toString(),
+      id: new Date().getTime().toString(),
       ...categoryData,
       createdAt: new Date().toISOString(),
     };
@@ -168,7 +116,7 @@ export default function ContentPage() {
 
   const handleAddOccasion = (occasionData: OccasionFormData) => {
     const occasion: Occasion = {
-      id: Date.now().toString(),
+      id: new Date().getTime().toString(),
       ...occasionData,
       createdAt: new Date().toISOString(),
     };
@@ -253,13 +201,7 @@ export default function ContentPage() {
 
             {/* Hero Promotions Sub-Tab */}
             <TabsContent value="hero-promotions" className="space-y-4">
-              <HeroPromotionsTab
-                promotions={heroPromotions}
-                onAdd={handleAddPromotion}
-                onUpdate={handleUpdatePromotion}
-                onDelete={handleDeletePromotion}
-                onToggleActive={handleTogglePromotionActive}
-              />
+              <HeroPromotionsTab />
             </TabsContent>
           </Tabs>
         </TabsContent>

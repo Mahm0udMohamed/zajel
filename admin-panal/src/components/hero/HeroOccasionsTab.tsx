@@ -33,7 +33,7 @@ function ImageWithError({
   src: string;
   alt: string;
   className: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }) {
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
@@ -77,6 +77,7 @@ export default function HeroOccasionsTab() {
   );
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { toast } = useToast();
 
@@ -154,8 +155,6 @@ export default function HeroOccasionsTab() {
       return;
     }
 
-    // حفظ البيانات الأصلية للتراجع في حالة الخطأ
-    const originalOccasions = [...occasions];
     const occasionToDelete = occasions.find((occ) => occ._id === deletingId);
 
     if (!occasionToDelete) {
@@ -168,30 +167,32 @@ export default function HeroOccasionsTab() {
     }
 
     try {
-      // إزالة المناسبة محلياً فوراً لتحسين تجربة المستخدم
+      setIsDeleting(true);
+
+      // إرسال طلب الحذف إلى الباك إند أولاً
+      await apiService.deleteHeroOccasion(deletingId);
+
+      // إزالة المناسبة من القائمة فقط بعد نجاح العملية في الباك إند
       setOccasions((prevOccasions) =>
         prevOccasions.filter((occ) => occ._id !== deletingId)
       );
-
-      // إرسال طلب الحذف إلى الباك إند
-      await apiService.deleteHeroOccasion(deletingId);
 
       toast({
         title: "تم الحذف",
         description: "تم حذف المناسبة بنجاح",
       });
       setDeletingId(null);
+      setIsDeleteOpen(false);
     } catch (error) {
       console.error("Error deleting occasion:", error);
-
-      // إعادة البيانات الأصلية في حالة الخطأ
-      setOccasions(originalOccasions);
 
       toast({
         title: "خطأ",
         description: "فشل في حذف المناسبة",
         variant: "destructive",
       });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -254,10 +255,10 @@ export default function HeroOccasionsTab() {
       if (isNaN(date.getTime())) {
         return "تاريخ غير صحيح";
       }
-      // استخدام الأرقام الإنجليزية مع التنسيق DD/MM/YYYY
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
+      // استخدام UTC لتجنب مشاكل timezone
+      const day = String(date.getUTCDate()).padStart(2, "0");
+      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+      const year = date.getUTCFullYear();
       return `${day}/${month}/${year}`;
     } catch (error) {
       console.error("Error formatting date:", error);
@@ -266,7 +267,22 @@ export default function HeroOccasionsTab() {
   };
 
   const isUpcoming = (dateString: string) => {
-    return new Date(dateString) > new Date();
+    try {
+      const occasionDate = new Date(dateString);
+      const now = new Date();
+
+      // التحقق من صحة التاريخ
+      if (isNaN(occasionDate.getTime())) {
+        console.error("Invalid occasion date:", dateString);
+        return false;
+      }
+
+      // مقارنة صحيحة: getTime() يعطي milliseconds منذ epoch (UTC)
+      return occasionDate.getTime() > now.getTime();
+    } catch (error) {
+      console.error("Error checking if occasion is upcoming:", error);
+      return false;
+    }
   };
 
   return (
@@ -456,6 +472,7 @@ export default function HeroOccasionsTab() {
         confirmText="حذف"
         cancelText="إلغاء"
         variant="destructive"
+        isLoading={isDeleting}
       />
     </Card>
   );
