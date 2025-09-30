@@ -164,6 +164,17 @@
   text-align: right !important;
 }
 
+/* LTR Support for English placeholders */
+.placeholder-ltr {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+.placeholder-ltr::placeholder {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
 /* Center text override for login page */
 .center-text {
   text-align: center !important;

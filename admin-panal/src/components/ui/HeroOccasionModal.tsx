@@ -430,7 +430,7 @@ export function HeroOccasionModal({
                 setFormData({ ...formData, nameEn: e.target.value })
               }
               placeholder="Example: Eid Fitr"
-              className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+              className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 placeholder-ltr"
             />
           </div>
         </div>
@@ -488,7 +488,7 @@ export function HeroOccasionModal({
                   })
                 }
                 placeholder="Example: Eid Fitr Mubarak!"
-                className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 placeholder-ltr"
               />
             </div>
           </div>

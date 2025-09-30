@@ -493,7 +493,7 @@ export function HeroPromotionModal({
                   setFormData({ ...formData, titleEn: e.target.value })
                 }
                 placeholder="Example: 50% Off All Gifts"
-                className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20 placeholder-ltr"
               />
             </div>
           </div>
@@ -526,7 +526,7 @@ export function HeroPromotionModal({
                   setFormData({ ...formData, subtitleEn: e.target.value })
                 }
                 placeholder="Example: Limited Time Offer"
-                className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20 placeholder-ltr"
               />
             </div>
           </div>
@@ -559,7 +559,7 @@ export function HeroPromotionModal({
                   setFormData({ ...formData, buttonTextEn: e.target.value })
                 }
                 placeholder="Example: Shop Now"
-                className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20 placeholder-ltr"
               />
             </div>
           </div>
