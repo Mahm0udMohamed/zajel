@@ -18,10 +18,54 @@ import {
 import { Badge } from "../ui/badge";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { HeroOccasionModal } from "../ui/HeroOccasionModal";
-import { Plus, Edit, Trash2, Calendar, Loader2 } from "lucide-react";
+import { Plus, Edit, Trash2, Calendar, Loader2, Image } from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
 import { apiService } from "../../services/api";
 import type { HeroOccasion } from "../../types/hero";
+
+// مكون لعرض الصور مع معالجة الأخطاء
+function ImageWithError({
+  src,
+  alt,
+  className,
+  ...props
+}: {
+  src: string;
+  alt: string;
+  className: string;
+  [key: string]: any;
+}) {
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
+
+  const handleImageError = () => {
+    setImageLoadFailed(true);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoadFailed(false);
+  };
+
+  if (imageLoadFailed || !src) {
+    return (
+      <div
+        className={`${className} bg-gray-800/90 rounded-lg border border-gray-600/50 flex items-center justify-center backdrop-blur-sm`}
+      >
+        <Image className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-gray-400" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      onError={handleImageError}
+      onLoad={handleImageLoad}
+      {...props}
+    />
+  );
+}
 
 export default function HeroOccasionsTab() {
   const [occasions, setOccasions] = useState<HeroOccasion[]>([]);
@@ -310,14 +354,11 @@ export default function HeroOccasionsTab() {
                             {occasion.images
                               .slice(0, 3)
                               .map((image, imageIndex) => (
-                                <img
+                                <ImageWithError
                                   key={`${occasion._id}-image-${imageIndex}`}
-                                  src={image || "/placeholder.svg"}
+                                  src={image}
                                   alt={`صورة ${imageIndex + 1}`}
                                   className="w-8 h-8 object-cover rounded flex-shrink-0"
-                                  onError={(e) => {
-                                    e.currentTarget.src = "/placeholder.svg";
-                                  }}
                                 />
                               ))}
                             {occasion.images.length > 3 && (

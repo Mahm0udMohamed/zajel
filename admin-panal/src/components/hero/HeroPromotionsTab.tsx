@@ -18,10 +18,54 @@ import {
 import { Badge } from "../ui/badge";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { HeroPromotionModal } from "../ui/HeroPromotionModal";
-import { Plus, Edit, Trash2, Tag, Loader2 } from "lucide-react";
+import { Plus, Edit, Trash2, Tag, Loader2, Image } from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
 import { apiService } from "../../services/api";
 import type { HeroPromotion } from "../../types/hero";
+
+// مكون لعرض الصور مع معالجة الأخطاء
+function ImageWithError({
+  src,
+  alt,
+  className,
+  ...props
+}: {
+  src: string;
+  alt: string;
+  className: string;
+  [key: string]: any;
+}) {
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
+
+  const handleImageError = () => {
+    setImageLoadFailed(true);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoadFailed(false);
+  };
+
+  if (imageLoadFailed || !src) {
+    return (
+      <div
+        className={`${className} bg-gray-800/90 rounded-lg border border-gray-600/50 flex items-center justify-center backdrop-blur-sm`}
+      >
+        <Image className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      onError={handleImageError}
+      onLoad={handleImageLoad}
+      {...props}
+    />
+  );
+}
 
 const GRADIENT_OPTIONS = [
   { value: "from-red-500/80 to-pink-600/80", label: "أحمر وردي" },
@@ -338,8 +382,8 @@ export default function HeroPromotionsTab() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center justify-center">
-                            <img
-                              src={promotion.image || "/placeholder.svg"}
+                            <ImageWithError
+                              src={promotion.image}
                               alt={promotion.titleAr}
                               className="w-16 h-10 object-cover rounded flex-shrink-0"
                             />
