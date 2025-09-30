@@ -36,8 +36,11 @@ export function FormModal({
   onEscapeKeyDown,
   ...props
 }: FormModalProps) {
-  // زر الحفظ يكون معطل إذا لم تكن هناك تغييرات أو إذا كان النموذج غير صالح
-  const isSubmitDisabled = !isValid || !hasChanges || isSubmitting;
+  // زر الحفظ يكون معطل إذا لم تكن هناك تغييرات (في وضع التعديل) أو إذا كان النموذج غير صالح
+  // في وضع الإضافة: يجب أن تكون البيانات صحيحة فقط
+  // في وضع التعديل: يجب أن تكون البيانات صحيحة وأن تكون هناك تغييرات
+  const isSubmitDisabled =
+    !isValid || (mode === "edit" && !hasChanges) || isSubmitting;
 
   const handlePointerDownOutside = (e: Event) => {
     // في وضع التعديل: منع الإغلاق فقط إذا كانت هناك تغييرات

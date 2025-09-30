@@ -41,6 +41,7 @@ export function HeroOccasionModal({
   const [uploadingImages, setUploadingImages] = useState<Set<number>>(
     new Set()
   );
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -78,20 +79,39 @@ export function HeroOccasionModal({
 
   // مسح البيانات عند إغلاق النافذة
   useEffect(() => {
-    if (!props.open && mode === "add") {
-      const resetFormData = {
-        nameAr: "",
-        nameEn: "",
-        date: "",
-        images: [""],
-        celebratoryMessageAr: "",
-        celebratoryMessageEn: "",
-        isActive: true,
-      };
-      setFormData(resetFormData);
-      setOriginalData(null);
+    if (!props.open) {
+      if (mode === "add") {
+        const resetFormData = {
+          nameAr: "",
+          nameEn: "",
+          date: "",
+          images: [""],
+          celebratoryMessageAr: "",
+          celebratoryMessageEn: "",
+          isActive: true,
+        };
+        setFormData(resetFormData);
+        setOriginalData(null);
+      } else if (mode === "edit" && occasion) {
+        // إعادة تعيين البيانات إلى القيم الأصلية عند إغلاق نافذة التعديل
+        const resetFormData = {
+          nameAr: occasion.nameAr || "",
+          nameEn: occasion.nameEn || "",
+          date: occasion.date
+            ? new Date(occasion.date).toISOString().slice(0, 16)
+            : "",
+          images: occasion.images || [""],
+          celebratoryMessageAr: occasion.celebratoryMessageAr || "",
+          celebratoryMessageEn: occasion.celebratoryMessageEn || "",
+          isActive: occasion.isActive ?? true,
+        };
+        setFormData(resetFormData);
+        setOriginalData(resetFormData);
+      }
+      // إعادة تعيين حالة فشل الصور
+      setFailedImages(new Set());
     }
-  }, [props.open, mode]);
+  }, [props.open, mode, occasion]);
 
   const hasChanges = () => {
     if (!originalData) return false;
@@ -123,6 +143,18 @@ export function HeroOccasionModal({
     const hasDate = formData.date !== "";
     const hasValidImages = formData.images.some((img) => img.trim() !== "");
     return hasNameAr && hasNameEn && hasDate && hasValidImages;
+  };
+
+  const handleImageError = (imageIndex: number) => {
+    setFailedImages((prev) => new Set(prev).add(imageIndex));
+  };
+
+  const handleImageLoad = (imageIndex: number) => {
+    setFailedImages((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(imageIndex);
+      return newSet;
+    });
   };
 
   const handleImageUpload = async (
@@ -205,6 +237,8 @@ export function HeroOccasionModal({
       ...formData,
       images: [...formData.images, ""],
     });
+    // إعادة تعيين حالة فشل الصور عند إضافة صورة جديدة
+    setFailedImages(new Set());
   };
 
   const removeImageField = (index: number) => {
@@ -222,6 +256,12 @@ export function HeroOccasionModal({
     setFormData({
       ...formData,
       images: newImages,
+    });
+    // إعادة تعيين حالة فشل الصورة عند تغيير الرابط
+    setFailedImages((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(index);
+      return newSet;
     });
   };
 
@@ -507,14 +547,24 @@ export function HeroOccasionModal({
                 </div>
               ) : image ? (
                 <div className="mt-2">
-                  <img
-                    src={image}
-                    alt={`معاينة الصورة ${index + 1}`}
-                    className="w-20 h-20 object-cover rounded border"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.svg";
-                    }}
-                  />
+                  {failedImages.has(index) ? (
+                    <div className="w-20 h-20 bg-gray-800 rounded border flex items-center justify-center">
+                      <div className="text-center px-1">
+                        <Image className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mx-auto mb-1" />
+                        <span className="text-[10px] xs:text-xs text-gray-500 leading-tight">
+                          صورة غير صحيحة
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <img
+                      src={image}
+                      alt={`معاينة الصورة ${index + 1}`}
+                      className="w-20 h-20 object-cover rounded border"
+                      onError={() => handleImageError(index)}
+                      onLoad={() => handleImageLoad(index)}
+                    />
+                  )}
                 </div>
               ) : null}
             </div>

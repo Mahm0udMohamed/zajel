@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "./select";
 import { FormModal, type FormModalProps } from "./FormModal";
-import { Upload, Loader2, Tag, Calendar, Link } from "lucide-react";
+import { Upload, Loader2, Tag, Calendar, Link, Image } from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
 import { apiService } from "../../services/api";
 import type { HeroPromotion, HeroPromotionFormData } from "../../types/hero";
@@ -64,6 +64,7 @@ export function HeroPromotionModal({
     useState<HeroPromotionFormData | null>(promotion ? { ...formData } : null);
 
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -115,26 +116,53 @@ export function HeroPromotionModal({
 
   // مسح البيانات عند إغلاق النافذة
   useEffect(() => {
-    if (!props.open && mode === "add") {
-      const resetFormData = {
-        image: "",
-        titleAr: "",
-        titleEn: "",
-        subtitleAr: "",
-        subtitleEn: "",
-        buttonTextAr: "",
-        buttonTextEn: "",
-        link: "",
-        gradient: "from-red-500/80 to-pink-600/80",
-        isActive: true,
-        priority: 1,
-        startDate: "",
-        endDate: "",
-      };
-      setFormData(resetFormData);
-      setOriginalData(null);
+    if (!props.open) {
+      if (mode === "add") {
+        const resetFormData = {
+          image: "",
+          titleAr: "",
+          titleEn: "",
+          subtitleAr: "",
+          subtitleEn: "",
+          buttonTextAr: "",
+          buttonTextEn: "",
+          link: "",
+          gradient: "from-red-500/80 to-pink-600/80",
+          isActive: true,
+          priority: 1,
+          startDate: "",
+          endDate: "",
+        };
+        setFormData(resetFormData);
+        setOriginalData(null);
+      } else if (mode === "edit" && promotion) {
+        // إعادة تعيين البيانات إلى القيم الأصلية عند إغلاق نافذة التعديل
+        const resetFormData = {
+          image: promotion.image || "",
+          titleAr: promotion.titleAr || "",
+          titleEn: promotion.titleEn || "",
+          subtitleAr: promotion.subtitleAr || "",
+          subtitleEn: promotion.subtitleEn || "",
+          buttonTextAr: promotion.buttonTextAr || "",
+          buttonTextEn: promotion.buttonTextEn || "",
+          link: promotion.link || "",
+          gradient: promotion.gradient || "from-red-500/80 to-pink-600/80",
+          isActive: promotion.isActive ?? true,
+          priority: promotion.priority || 1,
+          startDate: promotion.startDate
+            ? new Date(promotion.startDate).toISOString().slice(0, 16)
+            : "",
+          endDate: promotion.endDate
+            ? new Date(promotion.endDate).toISOString().slice(0, 16)
+            : "",
+        };
+        setFormData(resetFormData);
+        setOriginalData(resetFormData);
+      }
+      // إعادة تعيين حالة فشل الصورة
+      setImageLoadFailed(false);
     }
-  }, [props.open, mode]);
+  }, [props.open, mode, promotion]);
 
   const hasChanges = () => {
     if (!originalData) return false;
@@ -187,6 +215,20 @@ export function HeroPromotionModal({
     );
   };
 
+  const handleImageError = () => {
+    setImageLoadFailed(true);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoadFailed(false);
+  };
+
+  const handleImageChange = (value: string) => {
+    setFormData({ ...formData, image: value });
+    // إعادة تعيين حالة فشل الصورة عند تغيير الرابط
+    setImageLoadFailed(false);
+  };
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -216,6 +258,7 @@ export function HeroPromotionModal({
     try {
       const response = await apiService.uploadHeroPromotionImage(file);
       setFormData({ ...formData, image: response.secure_url });
+      setImageLoadFailed(false); // إعادة تعيين حالة فشل الصورة عند رفع صورة جديدة
       toast({
         title: "تم رفع الصورة",
         description: "تم رفع الصورة بنجاح",
@@ -371,9 +414,7 @@ export function HeroPromotionModal({
             <Input
               id="image"
               value={formData.image}
-              onChange={(e) =>
-                setFormData({ ...formData, image: e.target.value })
-              }
+              onChange={(e) => handleImageChange(e.target.value)}
               placeholder="رابط صورة العرض أو ارفع صورة"
               className="flex-1 bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
             />
@@ -403,11 +444,24 @@ export function HeroPromotionModal({
           </div>
           {formData.image && (
             <div className="mt-3">
-              <img
-                src={formData.image}
-                alt="معاينة الصورة"
-                className="w-20 h-20 object-cover rounded-lg border border-gray-700"
-              />
+              {imageLoadFailed ? (
+                <div className="w-20 h-20 bg-gray-800 rounded-lg border border-gray-700 flex items-center justify-center">
+                  <div className="text-center px-1">
+                    <Image className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mx-auto mb-1" />
+                    <span className="text-[10px] xs:text-xs text-gray-500 leading-tight">
+                      صورة غير صحيحة
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <img
+                  src={formData.image}
+                  alt="معاينة الصورة"
+                  className="w-20 h-20 object-cover rounded-lg border border-gray-700"
+                  onError={handleImageError}
+                  onLoad={handleImageLoad}
+                />
+              )}
             </div>
           )}
         </div>
