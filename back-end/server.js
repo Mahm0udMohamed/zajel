@@ -18,6 +18,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import heroOccasionsRoutes from "./routes/heroOccasionsRoutes.js";
 import heroPromotionsRoutes from "./routes/heroPromotionsRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import occasionRoutes from "./routes/occasionRoutes.js";
 import cacheRoutes from "./routes/cacheRoutes.js";
 import passport from "./config/passport.js";
 import { printServiceStatus } from "./utils/serviceChecker.js";
@@ -198,6 +199,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/hero-occasions", heroOccasionsRoutes);
 app.use("/api/hero-promotions", heroPromotionsRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/occasions", occasionRoutes);
 app.use("/api/cache", cacheRoutes);
 
 // ✅ إنشاء السيرفر باستخدام HTTPS للتطوير المحلي
