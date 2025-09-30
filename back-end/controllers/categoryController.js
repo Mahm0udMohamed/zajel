@@ -35,7 +35,6 @@ export const getAllCategories = async (req, res) => {
       sortBy = "sortOrder",
       sortOrder = "asc",
       showInHomePage,
-      showInNavigation,
     } = req.query;
 
     // بناء query object
@@ -47,10 +46,6 @@ export const getAllCategories = async (req, res) => {
 
     if (showInHomePage !== undefined) {
       query.showInHomePage = showInHomePage === "true";
-    }
-
-    if (showInNavigation !== undefined) {
-      query.showInNavigation = showInNavigation === "true";
     }
 
     // إضافة البحث
@@ -82,7 +77,6 @@ export const getAllCategories = async (req, res) => {
       sortBy,
       sortOrder,
       showInHomePage,
-      showInNavigation,
     };
 
     // محاولة جلب البيانات من الكاش
@@ -130,7 +124,6 @@ export const getAllCategories = async (req, res) => {
       sortOrder: category.sortOrder,
       productCount: category.productCount,
       showInHomePage: category.showInHomePage,
-      showInNavigation: category.showInNavigation,
       metaTitle:
         language === "ar" ? category.metaTitleAr : category.metaTitleEn,
       metaDescription:
@@ -233,7 +226,6 @@ export const getCategoryById = async (req, res) => {
       sortOrder: category.sortOrder,
       productCount: category.productCount,
       showInHomePage: category.showInHomePage,
-      showInNavigation: category.showInNavigation,
       metaTitle:
         language === "ar" ? category.metaTitleAr : category.metaTitleEn,
       metaDescription:
@@ -292,7 +284,6 @@ export const createCategory = async (req, res) => {
       isActive = true,
       sortOrder = 0,
       showInHomePage = true,
-      showInNavigation = true,
       metaTitleAr = "",
       metaTitleEn = "",
       metaDescriptionAr = "",
@@ -324,7 +315,6 @@ export const createCategory = async (req, res) => {
       isActive,
       sortOrder,
       showInHomePage,
-      showInNavigation,
       metaTitleAr,
       metaTitleEn,
       metaDescriptionAr,
@@ -754,7 +744,6 @@ export const createCategoryWithImage = async (req, res) => {
       isActive = true,
       sortOrder = 0,
       showInHomePage = true,
-      showInNavigation = true,
       metaTitleAr = "",
       metaTitleEn = "",
       metaDescriptionAr = "",
@@ -830,7 +819,6 @@ export const createCategoryWithImage = async (req, res) => {
       isActive,
       sortOrder,
       showInHomePage,
-      showInNavigation,
       metaTitleAr,
       metaTitleEn,
       metaDescriptionAr,

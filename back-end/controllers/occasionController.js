@@ -35,7 +35,6 @@ export const getAllOccasions = async (req, res) => {
       sortBy = "sortOrder",
       sortOrder = "asc",
       showInHomePage,
-      showInNavigation,
     } = req.query;
 
     // بناء query object
@@ -47,10 +46,6 @@ export const getAllOccasions = async (req, res) => {
 
     if (showInHomePage !== undefined) {
       query.showInHomePage = showInHomePage === "true";
-    }
-
-    if (showInNavigation !== undefined) {
-      query.showInNavigation = showInNavigation === "true";
     }
 
     // إضافة البحث
@@ -82,7 +77,6 @@ export const getAllOccasions = async (req, res) => {
       sortBy,
       sortOrder,
       showInHomePage,
-      showInNavigation,
     };
 
     // محاولة جلب البيانات من الكاش
@@ -130,7 +124,6 @@ export const getAllOccasions = async (req, res) => {
       sortOrder: occasion.sortOrder,
       productCount: occasion.productCount,
       showInHomePage: occasion.showInHomePage,
-      showInNavigation: occasion.showInNavigation,
       metaTitle:
         language === "ar" ? occasion.metaTitleAr : occasion.metaTitleEn,
       metaDescription:
@@ -233,7 +226,6 @@ export const getOccasionById = async (req, res) => {
       sortOrder: occasion.sortOrder,
       productCount: occasion.productCount,
       showInHomePage: occasion.showInHomePage,
-      showInNavigation: occasion.showInNavigation,
       metaTitle:
         language === "ar" ? occasion.metaTitleAr : occasion.metaTitleEn,
       metaDescription:
@@ -292,7 +284,6 @@ export const createOccasion = async (req, res) => {
       isActive = true,
       sortOrder = 0,
       showInHomePage = true,
-      showInNavigation = true,
       metaTitleAr = "",
       metaTitleEn = "",
       metaDescriptionAr = "",
@@ -324,7 +315,6 @@ export const createOccasion = async (req, res) => {
       isActive,
       sortOrder,
       showInHomePage,
-      showInNavigation,
       metaTitleAr,
       metaTitleEn,
       metaDescriptionAr,
@@ -756,7 +746,6 @@ export const createOccasionWithImage = async (req, res) => {
       isActive = true,
       sortOrder = 0,
       showInHomePage = true,
-      showInNavigation = true,
       metaTitleAr = "",
       metaTitleEn = "",
       metaDescriptionAr = "",
@@ -832,7 +821,6 @@ export const createOccasionWithImage = async (req, res) => {
       isActive,
       sortOrder,
       showInHomePage,
-      showInNavigation,
       metaTitleAr,
       metaTitleEn,
       metaDescriptionAr,

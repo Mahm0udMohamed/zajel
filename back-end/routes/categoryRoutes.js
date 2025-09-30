@@ -73,10 +73,6 @@ const createCategoryValidation = [
     .optional()
     .isBoolean()
     .withMessage("عرض في الصفحة الرئيسية يجب أن يكون true أو false"),
-  body("showInNavigation")
-    .optional()
-    .isBoolean()
-    .withMessage("عرض في التنقل يجب أن يكون true أو false"),
   body("metaTitleAr")
     .optional()
     .isLength({ max: 60 })
@@ -129,10 +125,6 @@ const updateCategoryValidation = [
     .optional()
     .isBoolean()
     .withMessage("عرض في الصفحة الرئيسية يجب أن يكون true أو false"),
-  body("showInNavigation")
-    .optional()
-    .isBoolean()
-    .withMessage("عرض في التنقل يجب أن يكون true أو false"),
   body("metaTitleAr")
     .optional()
     .isLength({ max: 60 })

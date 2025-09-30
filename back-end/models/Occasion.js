@@ -92,10 +92,6 @@ const OccasionSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    showInNavigation: {
-      type: Boolean,
-      default: true,
-    },
   },
   {
     timestamps: true,

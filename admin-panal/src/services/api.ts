@@ -430,7 +430,6 @@ class ApiService {
     sortBy?: string;
     sortOrder?: string;
     showInHomePage?: boolean;
-    showInNavigation?: boolean;
   }): Promise<{
     success: boolean;
     data: unknown[];
@@ -455,11 +454,6 @@ class ApiService {
     if (params?.sortOrder) queryParams.append("sortOrder", params.sortOrder);
     if (params?.showInHomePage !== undefined)
       queryParams.append("showInHomePage", params.showInHomePage.toString());
-    if (params?.showInNavigation !== undefined)
-      queryParams.append(
-        "showInNavigation",
-        params.showInNavigation.toString()
-      );
 
     const endpoint = `/categories${
       queryParams.toString() ? `?${queryParams.toString()}` : ""
@@ -647,6 +641,233 @@ class ApiService {
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || "فشل في إنشاء الفئة");
+    }
+
+    const result = await response.json();
+    return result.data;
+  }
+
+  // Occasions API
+  async getOccasions(params?: {
+    page?: number;
+    limit?: number;
+    isActive?: boolean;
+    language?: string;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: string;
+    showInHomePage?: boolean;
+  }): Promise<{
+    success: boolean;
+    data: unknown[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+    message: string;
+  }> {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.isActive !== undefined)
+      queryParams.append("isActive", params.isActive.toString());
+    if (params?.language) queryParams.append("language", params.language);
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.sortBy) queryParams.append("sortBy", params.sortBy);
+    if (params?.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+    if (params?.showInHomePage !== undefined)
+      queryParams.append("showInHomePage", params.showInHomePage.toString());
+
+    const endpoint = `/occasions${
+      queryParams.toString() ? `?${queryParams.toString()}` : ""
+    }`;
+    const response = await this.makeRequest<{
+      success: boolean;
+      data: unknown[];
+      pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
+      message: string;
+    }>(endpoint);
+    const responseData = response as unknown as {
+      success: boolean;
+      data: unknown[];
+      pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
+      message: string;
+    };
+    return {
+      success: responseData.success,
+      data: responseData.data || [],
+      pagination: responseData.pagination || {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        itemsPerPage: 50,
+        hasNextPage: false,
+        hasPrevPage: false,
+      },
+      message: responseData.message,
+    };
+  }
+
+  async getOccasionById(
+    id: string,
+    language = "ar"
+  ): Promise<{
+    success: boolean;
+    data: unknown;
+    message: string;
+  }> {
+    const response = await this.makeRequest<{
+      success: boolean;
+      data: unknown;
+      message: string;
+    }>(`/occasions/${id}?language=${language}`);
+    return {
+      success: response.success,
+      data: response.data,
+      message: response.message,
+    };
+  }
+
+  async getActiveOccasions(language = "ar"): Promise<unknown[]> {
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      `/occasions/active?language=${language}`
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async createOccasion(occasionData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      "/occasions",
+      {
+        method: "POST",
+        body: JSON.stringify(occasionData),
+      }
+    );
+    return response.data;
+  }
+
+  async updateOccasion(id: string, occasionData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/occasions/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(occasionData),
+      }
+    );
+    return response.data;
+  }
+
+  async deleteOccasion(id: string): Promise<void> {
+    await this.makeAuthenticatedRequest(`/occasions/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  async toggleOccasionStatus(id: string): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/occasions/${id}/toggle`,
+      {
+        method: "PATCH",
+      }
+    );
+    return response.data;
+  }
+
+  async reorderOccasions(
+    occasionOrders: Array<{ occasionId: string; sortOrder: number }>
+  ): Promise<void> {
+    await this.makeAuthenticatedRequest("/occasions/reorder", {
+      method: "PATCH",
+      body: JSON.stringify({ occasionOrders }),
+    });
+  }
+
+  async searchOccasions(
+    query: string,
+    language = "ar",
+    limit = 10,
+    page = 1
+  ): Promise<unknown[]> {
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      `/occasions/search?q=${encodeURIComponent(
+        query
+      )}&language=${language}&limit=${limit}&page=${page}`
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async uploadOccasionImage(
+    file: File
+  ): Promise<{ imageUrl: string; publicId: string }> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`${API_BASE_URL}/occasions/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "فشل في رفع الصورة");
+    }
+
+    const result = await response.json();
+    return {
+      imageUrl: result.data.imageUrl,
+      publicId: result.data.publicId,
+    };
+  }
+
+  async createOccasionWithImage(
+    occasionData: unknown,
+    file: File
+  ): Promise<unknown> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    // إضافة بيانات المناسبة كـ JSON string
+    Object.entries(occasionData as Record<string, unknown>).forEach(
+      ([key, value]) => {
+        formData.append(key, String(value));
+      }
+    );
+
+    const response = await fetch(
+      `${API_BASE_URL}/occasions/create-with-image`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.getAccessToken()}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "فشل في إنشاء المناسبة");
     }
 
     const result = await response.json();

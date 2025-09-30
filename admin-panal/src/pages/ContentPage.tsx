@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Tabs,
   TabsContent,
@@ -9,77 +8,8 @@ import HeroOccasionsTab from "../components/hero/HeroOccasionsTab";
 import HeroPromotionsTab from "../components/hero/HeroPromotionsTab";
 import CategoriesTab from "../components/categories/CategoriesTab";
 import OccasionsTab from "../components/occasions/OccasionsTab";
-import type { Occasion, OccasionFormData } from "../types/occasions";
 
 export default function ContentPage() {
-  const [occasions, setOccasions] = useState<Occasion[]>([
-    {
-      id: "birthday",
-      nameAr: "عيد ميلاد",
-      nameEn: "Birthday",
-      imageUrl:
-        "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383070/eid-adha_ntz2zh.png",
-      isActive: true,
-      sortOrder: 1,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: "wedding",
-      nameAr: "زفاف",
-      nameEn: "Wedding",
-      imageUrl:
-        "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383081/eid-adha2_dkr1x0.png",
-      isActive: true,
-      sortOrder: 2,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: "graduation",
-      nameAr: "تخرج",
-      nameEn: "Graduation",
-      imageUrl:
-        "https://res.cloudinary.com/djpl34pm6/image/upload/v1756383069/eid-adha3_timrvu.png",
-      isActive: true,
-      sortOrder: 3,
-      createdAt: new Date().toISOString(),
-    },
-  ]);
-
-  const handleAddOccasion = (occasionData: OccasionFormData) => {
-    const occasion: Occasion = {
-      id: new Date().getTime().toString(),
-      ...occasionData,
-      createdAt: new Date().toISOString(),
-    };
-    setOccasions([...occasions, occasion]);
-  };
-
-  const handleUpdateOccasion = (id: string, occasionData: OccasionFormData) => {
-    setOccasions(
-      occasions.map((occ) =>
-        occ.id === id
-          ? { ...occ, ...occasionData, updatedAt: new Date().toISOString() }
-          : occ
-      )
-    );
-  };
-
-  const handleDeleteOccasion = (id: string) => {
-    setOccasions(occasions.filter((occ) => occ.id !== id));
-  };
-
-  const handleToggleOccasionActive = (id: string) => {
-    setOccasions(
-      occasions.map((occ) =>
-        occ.id === id ? { ...occ, isActive: !occ.isActive } : occ
-      )
-    );
-  };
-
-  const handleReorderOccasions = (reorderedOccasions: Occasion[]) => {
-    setOccasions(reorderedOccasions);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -144,14 +74,7 @@ export default function ContentPage() {
 
         {/* Occasions Tab */}
         <TabsContent value="occasions" className="space-y-4">
-          <OccasionsTab
-            occasions={occasions}
-            onAdd={handleAddOccasion}
-            onUpdate={handleUpdateOccasion}
-            onDelete={handleDeleteOccasion}
-            onToggleActive={handleToggleOccasionActive}
-            onReorder={handleReorderOccasions}
-          />
+          <OccasionsTab />
         </TabsContent>
       </Tabs>
     </div>
