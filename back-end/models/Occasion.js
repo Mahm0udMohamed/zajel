@@ -110,6 +110,10 @@ OccasionSchema.index({
 OccasionSchema.index({ isActive: 1, sortOrder: 1 });
 OccasionSchema.index({ createdBy: 1 });
 
+// إضافة فهارس فريدة للأسماء
+OccasionSchema.index({ nameAr: 1 }, { unique: true, sparse: true });
+OccasionSchema.index({ nameEn: 1 }, { unique: true, sparse: true });
+
 // Virtual field للاسم حسب اللغة
 OccasionSchema.virtual("name").get(function () {
   return this.nameAr || this.nameEn;

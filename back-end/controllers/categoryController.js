@@ -360,6 +360,36 @@ export const updateCategory = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
 
+    // التحقق من وجود الفئة
+    const existingCategory = await Category.findById(id);
+    if (!existingCategory) {
+      return res.status(404).json({
+        success: false,
+        message: "الفئة غير موجودة",
+      });
+    }
+
+    // التحقق من عدم وجود فئة أخرى بنفس الاسم (إذا تم تغيير الاسم)
+    if (updateData.nameAr || updateData.nameEn) {
+      const nameAr = updateData.nameAr || existingCategory.nameAr;
+      const nameEn = updateData.nameEn || existingCategory.nameEn;
+
+      const duplicateCategory = await Category.findOne({
+        _id: { $ne: id }, // استبعاد الفئة الحالية
+        $or: [
+          { nameAr: { $regex: new RegExp(`^${nameAr}$`, "i") } },
+          { nameEn: { $regex: new RegExp(`^${nameEn}$`, "i") } },
+        ],
+      });
+
+      if (duplicateCategory) {
+        return res.status(409).json({
+          success: false,
+          message: "يوجد فئة أخرى بنفس الاسم بالفعل",
+        });
+      }
+    }
+
     // إضافة معلومات التحديث
     updateData.updatedBy = req.admin._id;
 
@@ -369,13 +399,6 @@ export const updateCategory = async (req, res) => {
     })
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email");
-
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "الفئة غير موجودة",
-      });
-    }
 
     // مسح الكاش المتعلق بالفئات
     try {

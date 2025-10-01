@@ -110,6 +110,10 @@ CategorySchema.index({
 CategorySchema.index({ isActive: 1, sortOrder: 1 });
 CategorySchema.index({ createdBy: 1 });
 
+// إضافة فهارس فريدة للأسماء
+CategorySchema.index({ nameAr: 1 }, { unique: true, sparse: true });
+CategorySchema.index({ nameEn: 1 }, { unique: true, sparse: true });
+
 // Virtual field للاسم حسب اللغة
 CategorySchema.virtual("name").get(function () {
   return this.nameAr || this.nameEn;

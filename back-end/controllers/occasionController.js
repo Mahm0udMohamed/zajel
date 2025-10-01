@@ -360,6 +360,36 @@ export const updateOccasion = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
 
+    // التحقق من وجود المناسبة
+    const existingOccasion = await Occasion.findById(id);
+    if (!existingOccasion) {
+      return res.status(404).json({
+        success: false,
+        message: "المناسبة غير موجودة",
+      });
+    }
+
+    // التحقق من عدم وجود مناسبة أخرى بنفس الاسم (إذا تم تغيير الاسم)
+    if (updateData.nameAr || updateData.nameEn) {
+      const nameAr = updateData.nameAr || existingOccasion.nameAr;
+      const nameEn = updateData.nameEn || existingOccasion.nameEn;
+
+      const duplicateOccasion = await Occasion.findOne({
+        _id: { $ne: id }, // استبعاد المناسبة الحالية
+        $or: [
+          { nameAr: { $regex: new RegExp(`^${nameAr}$`, "i") } },
+          { nameEn: { $regex: new RegExp(`^${nameEn}$`, "i") } },
+        ],
+      });
+
+      if (duplicateOccasion) {
+        return res.status(409).json({
+          success: false,
+          message: "يوجد مناسبة أخرى بنفس الاسم بالفعل",
+        });
+      }
+    }
+
     // إضافة معلومات التحديث
     updateData.updatedBy = req.admin._id;
 
@@ -369,13 +399,6 @@ export const updateOccasion = async (req, res) => {
     })
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email");
-
-    if (!occasion) {
-      return res.status(404).json({
-        success: false,
-        message: "المناسبة غير موجودة",
-      });
-    }
 
     // مسح الكاش المتعلق بالمناسبات
     try {
