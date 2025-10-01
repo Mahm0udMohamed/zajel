@@ -747,6 +747,21 @@ export const createOccasion = async (req, res) => {
       isActive = true,
     } = req.body;
 
+    // التحقق من عدم وجود مناسبة بنفس الاسم
+    const existingOccasion = await HeroOccasion.findOne({
+      $or: [
+        { nameAr: { $regex: new RegExp(`^${nameAr}$`, "i") } },
+        { nameEn: { $regex: new RegExp(`^${nameEn}$`, "i") } },
+      ],
+    });
+
+    if (existingOccasion) {
+      return res.status(409).json({
+        success: false,
+        message: "يوجد مناسبة بنفس الاسم بالفعل",
+      });
+    }
+
     // التحقق من التواريخ المتداخلة
     const overlappingOccasions = await checkDateOverlap(startDate, endDate);
     if (overlappingOccasions.length > 0) {
@@ -841,16 +856,38 @@ export const updateOccasion = async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body, updatedBy: req.adminId };
 
-    // التحقق من التواريخ المتداخلة إذا تم تحديث التواريخ
-    if (updateData.startDate || updateData.endDate) {
-      const currentOccasion = await HeroOccasion.findById(id);
-      if (!currentOccasion) {
-        return res.status(404).json({
+    // التحقق من وجود المناسبة
+    const currentOccasion = await HeroOccasion.findById(id);
+    if (!currentOccasion) {
+      return res.status(404).json({
+        success: false,
+        message: "المناسبة غير موجودة",
+      });
+    }
+
+    // التحقق من عدم وجود مناسبة أخرى بنفس الاسم (إذا تم تغيير الاسم)
+    if (updateData.nameAr || updateData.nameEn) {
+      const nameAr = updateData.nameAr || currentOccasion.nameAr;
+      const nameEn = updateData.nameEn || currentOccasion.nameEn;
+
+      const duplicateOccasion = await HeroOccasion.findOne({
+        _id: { $ne: id }, // استبعاد المناسبة الحالية
+        $or: [
+          { nameAr: { $regex: new RegExp(`^${nameAr}$`, "i") } },
+          { nameEn: { $regex: new RegExp(`^${nameEn}$`, "i") } },
+        ],
+      });
+
+      if (duplicateOccasion) {
+        return res.status(409).json({
           success: false,
-          message: "المناسبة غير موجودة",
+          message: "يوجد مناسبة أخرى بنفس الاسم بالفعل",
         });
       }
+    }
 
+    // التحقق من التواريخ المتداخلة إذا تم تحديث التواريخ
+    if (updateData.startDate || updateData.endDate) {
       const startDate = updateData.startDate || currentOccasion.startDate;
       const endDate = updateData.endDate || currentOccasion.endDate;
 

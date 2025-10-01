@@ -119,6 +119,10 @@ heroOccasionSchema.index({ isActive: 1, startDate: 1, endDate: 1 });
 heroOccasionSchema.index({ startDate: 1, endDate: 1 });
 heroOccasionSchema.index({ nameAr: "text", nameEn: "text" });
 
+// إضافة فهارس فريدة للأسماء
+heroOccasionSchema.index({ nameAr: 1 }, { unique: true, sparse: true });
+heroOccasionSchema.index({ nameEn: 1 }, { unique: true, sparse: true });
+
 // التحقق من أن كل مناسبة لها على الأقل صورة واحدة
 heroOccasionSchema.pre("save", function (next) {
   if (this.images.length === 0) {

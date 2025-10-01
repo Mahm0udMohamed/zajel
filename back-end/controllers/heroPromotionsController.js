@@ -619,6 +619,30 @@ export const createPromotion = async (req, res) => {
       endDate,
     } = req.body;
 
+    // التحقق من عدم وجود عرض بنفس العنوان أو الأولوية
+    const existingPromotion = await HeroPromotion.findOne({
+      $or: [
+        { titleAr: { $regex: new RegExp(`^${titleAr}$`, "i") } },
+        { titleEn: { $regex: new RegExp(`^${titleEn}$`, "i") } },
+        { priority: parseInt(priority) },
+      ],
+    });
+
+    if (existingPromotion) {
+      let conflictField = "";
+      if (existingPromotion.titleAr === titleAr)
+        conflictField = "العنوان العربي";
+      else if (existingPromotion.titleEn === titleEn)
+        conflictField = "العنوان الإنجليزي";
+      else if (existingPromotion.priority === parseInt(priority))
+        conflictField = "الأولوية";
+
+      return res.status(409).json({
+        success: false,
+        message: `يوجد عرض ترويجي بنفس ${conflictField} بالفعل`,
+      });
+    }
+
     // إنشاء العرض الترويجي الجديد
     const newPromotion = new HeroPromotion({
       titleAr,
@@ -700,6 +724,48 @@ export const updatePromotion = async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body, updatedBy: req.adminId };
 
+    // التحقق من وجود العرض الترويجي
+    const currentPromotion = await HeroPromotion.findById(id);
+    if (!currentPromotion) {
+      return res.status(404).json({
+        success: false,
+        message: "العرض الترويجي غير موجود",
+      });
+    }
+
+    // التحقق من عدم وجود عرض آخر بنفس العنوان أو الأولوية (إذا تم تغييرها)
+    if (updateData.titleAr || updateData.titleEn || updateData.priority) {
+      const titleAr = updateData.titleAr || currentPromotion.titleAr;
+      const titleEn = updateData.titleEn || currentPromotion.titleEn;
+      const priority = updateData.priority
+        ? parseInt(updateData.priority)
+        : currentPromotion.priority;
+
+      const duplicatePromotion = await HeroPromotion.findOne({
+        _id: { $ne: id }, // استبعاد العرض الحالي
+        $or: [
+          { titleAr: { $regex: new RegExp(`^${titleAr}$`, "i") } },
+          { titleEn: { $regex: new RegExp(`^${titleEn}$`, "i") } },
+          { priority: priority },
+        ],
+      });
+
+      if (duplicatePromotion) {
+        let conflictField = "";
+        if (duplicatePromotion.titleAr === titleAr)
+          conflictField = "العنوان العربي";
+        else if (duplicatePromotion.titleEn === titleEn)
+          conflictField = "العنوان الإنجليزي";
+        else if (duplicatePromotion.priority === priority)
+          conflictField = "الأولوية";
+
+        return res.status(409).json({
+          success: false,
+          message: `يوجد عرض ترويجي آخر بنفس ${conflictField} بالفعل`,
+        });
+      }
+    }
+
     if (updateData.startDate) {
       const startDate = new Date(updateData.startDate);
       startDate.setUTCHours(0, 0, 0, 0);
@@ -722,13 +788,6 @@ export const updatePromotion = async (req, res) => {
     })
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email");
-
-    if (!promotion) {
-      return res.status(404).json({
-        success: false,
-        message: "العرض الترويجي غير موجود",
-      });
-    }
 
     // التحقق من انتهاء العرض بعد التحديث
     await checkAndUpdateExpiredPromotions();

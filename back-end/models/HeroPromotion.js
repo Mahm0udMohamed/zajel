@@ -151,6 +151,11 @@ heroPromotionSchema.index({ isActive: 1, startDate: 1, endDate: 1 });
 heroPromotionSchema.index({ priority: 1 });
 heroPromotionSchema.index({ titleAr: "text", titleEn: "text" });
 
+// إضافة فهارس فريدة للعناوين والأولوية
+heroPromotionSchema.index({ titleAr: 1 }, { unique: true, sparse: true });
+heroPromotionSchema.index({ titleEn: 1 }, { unique: true, sparse: true });
+heroPromotionSchema.index({ priority: 1 }, { unique: true, sparse: true });
+
 // التحقق من أن العرض نشط في الفترة الزمنية المحددة
 heroPromotionSchema.virtual("isCurrentlyActive").get(function () {
   const now = new Date();
