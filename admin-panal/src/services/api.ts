@@ -873,6 +873,215 @@ class ApiService {
     const result = await response.json();
     return result.data;
   }
+
+  // Brands API
+  async getBrands(params?: {
+    page?: number;
+    limit?: number;
+    isActive?: boolean;
+    language?: string;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }): Promise<{
+    success: boolean;
+    data: unknown[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+    message: string;
+  }> {
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.isActive !== undefined)
+      queryParams.append("isActive", params.isActive.toString());
+    if (params?.language) queryParams.append("language", params.language);
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.sortBy) queryParams.append("sortBy", params.sortBy);
+    if (params?.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/brands?${queryString}` : "/brands";
+
+    const response = await this.makeRequest<{
+      data: unknown[];
+      pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
+    }>(endpoint);
+
+    return {
+      success: response.success,
+      data: Array.isArray(response.data) ? response.data : [],
+      pagination: response.data?.pagination || {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        itemsPerPage: 50,
+        hasNextPage: false,
+        hasPrevPage: false,
+      },
+      message: response.message,
+    };
+  }
+
+  async getBrandById(
+    id: string,
+    language = "ar"
+  ): Promise<{
+    success: boolean;
+    data: unknown;
+    message: string;
+  }> {
+    const response = await this.makeRequest<{ data: unknown }>(
+      `/brands/${id}?language=${language}`
+    );
+    return {
+      success: response.success,
+      data: response.data,
+      message: response.message,
+    };
+  }
+
+  async getActiveBrands(language = "ar"): Promise<unknown[]> {
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      `/brands/active?language=${language}`
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async createBrand(brandData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      "/brands",
+      {
+        method: "POST",
+        body: JSON.stringify(brandData),
+      }
+    );
+    return response.data;
+  }
+
+  async updateBrand(id: string, brandData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/brands/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(brandData),
+      }
+    );
+    return response.data;
+  }
+
+  async deleteBrand(id: string): Promise<void> {
+    await this.makeAuthenticatedRequest(`/brands/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  async toggleBrandStatus(id: string): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/brands/${id}/toggle`,
+      {
+        method: "PATCH",
+      }
+    );
+    return response.data;
+  }
+
+  async reorderBrands(
+    brandOrders: Array<{ brandId: string; sortOrder: number }>
+  ): Promise<void> {
+    await this.makeAuthenticatedRequest("/brands/reorder", {
+      method: "PATCH",
+      body: JSON.stringify({ brandOrders }),
+    });
+  }
+
+  async searchBrands(
+    query: string,
+    language = "ar",
+    limit = 10,
+    page = 1
+  ): Promise<unknown[]> {
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      `/brands/search?q=${encodeURIComponent(
+        query
+      )}&language=${language}&limit=${limit}&page=${page}`
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async uploadBrandImage(
+    file: File
+  ): Promise<{ imageUrl: string; publicId: string }> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`${API_BASE_URL}/brands/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "فشل في رفع الصورة");
+    }
+
+    const result = await response.json();
+    return {
+      imageUrl: result.data.imageUrl,
+      publicId: result.data.publicId,
+    };
+  }
+
+  async deleteBrandImage(publicId: string): Promise<void> {
+    await this.makeAuthenticatedRequest(`/brands/image/${publicId}`, {
+      method: "DELETE",
+    });
+  }
+
+  async createBrandWithImage(brandData: unknown, file: File): Promise<unknown> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    // إضافة بيانات العلامة التجارية
+    Object.entries(brandData as Record<string, unknown>).forEach(
+      ([key, value]) => {
+        formData.append(key, String(value));
+      }
+    );
+
+    const response = await fetch(`${API_BASE_URL}/brands/create-with-image`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "فشل في إنشاء العلامة التجارية");
+    }
+
+    const result = await response.json();
+    return result.data;
+  }
 }
 
 export const apiService = new ApiService();

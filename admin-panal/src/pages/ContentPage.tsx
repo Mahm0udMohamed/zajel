@@ -8,6 +8,7 @@ import HeroOccasionsTab from "../components/hero/HeroOccasionsTab";
 import HeroPromotionsTab from "../components/hero/HeroPromotionsTab";
 import CategoriesTab from "../components/categories/CategoriesTab";
 import OccasionsTab from "../components/occasions/OccasionsTab";
+import BrandsTab from "../components/brands/BrandsTab";
 
 export default function ContentPage() {
   return (
@@ -19,7 +20,7 @@ export default function ContentPage() {
       </div>
 
       <Tabs defaultValue="hero" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-1 h-auto">
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-4 gap-1 h-auto">
           <TabsTrigger value="hero" className="text-sm sm:text-base py-2 px-3">
             الهيرو
           </TabsTrigger>
@@ -34,6 +35,12 @@ export default function ContentPage() {
             className="text-sm sm:text-base py-2 px-3"
           >
             المناسبات
+          </TabsTrigger>
+          <TabsTrigger
+            value="brands"
+            className="text-sm sm:text-base py-2 px-3"
+          >
+            العلامات التجارية
           </TabsTrigger>
         </TabsList>
 
@@ -75,6 +82,11 @@ export default function ContentPage() {
         {/* Occasions Tab */}
         <TabsContent value="occasions" className="space-y-4">
           <OccasionsTab />
+        </TabsContent>
+
+        {/* Brands Tab */}
+        <TabsContent value="brands" className="space-y-4">
+          <BrandsTab />
         </TabsContent>
       </Tabs>
     </div>

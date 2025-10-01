@@ -19,6 +19,7 @@ import heroOccasionsRoutes from "./routes/heroOccasionsRoutes.js";
 import heroPromotionsRoutes from "./routes/heroPromotionsRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import occasionRoutes from "./routes/occasionRoutes.js";
+import brandRoutes from "./routes/brandRoutes.js";
 import cacheRoutes from "./routes/cacheRoutes.js";
 import passport from "./config/passport.js";
 import { printServiceStatus } from "./utils/serviceChecker.js";
@@ -97,10 +98,12 @@ const clearCacheOnStartup = async () => {
     console.log("🔄 Clearing cache on startup...");
 
     if (cacheLayer.cacheService.isReady()) {
-      // مسح كاش المناسبات والعروض الترويجية والفئات
+      // مسح كاش المناسبات والعروض الترويجية والفئات والعلامات التجارية
       await cacheLayer.clear("hero-occasions", "*");
       await cacheLayer.clear("hero-promotions", "*");
       await cacheLayer.clear("categories", "*");
+      await cacheLayer.clear("brands", "*");
+      await cacheLayer.clear("brands", "*");
       console.log("✅ Cache cleared on startup");
     }
   } catch (error) {
@@ -168,6 +171,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use(express.json({ limit: "50mb" }));
+
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(express.static("public"));
 
@@ -200,6 +204,7 @@ app.use("/api/hero-occasions", heroOccasionsRoutes);
 app.use("/api/hero-promotions", heroPromotionsRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/occasions", occasionRoutes);
+app.use("/api/brands", brandRoutes);
 app.use("/api/cache", cacheRoutes);
 
 // ✅ إنشاء السيرفر باستخدام HTTPS للتطوير المحلي
@@ -228,6 +233,7 @@ process.on("SIGINT", async () => {
       await cacheLayer.clear("hero-occasions", "*");
       await cacheLayer.clear("hero-promotions", "*");
       await cacheLayer.clear("categories", "*");
+      await cacheLayer.clear("brands", "*");
       console.log("✅ Cache cleared on restart");
     }
   } catch (error) {
@@ -243,6 +249,7 @@ process.on("SIGTERM", async () => {
       await cacheLayer.clear("hero-occasions", "*");
       await cacheLayer.clear("hero-promotions", "*");
       await cacheLayer.clear("categories", "*");
+      await cacheLayer.clear("brands", "*");
       console.log("✅ Cache cleared on stop");
     }
   } catch (error) {
