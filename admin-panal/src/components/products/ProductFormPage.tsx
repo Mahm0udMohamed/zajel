@@ -27,6 +27,8 @@ import {
   Trash2,
   Loader2,
   ArrowRight,
+  FileText,
+  Eye,
 } from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
 import { apiService } from "../../services/api";
@@ -359,465 +361,532 @@ export default function ProductFormPage({
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* الأسماء */}
-            <div className="grid gap-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="nameAr" className="text-white font-medium">
-                    الاسم بالعربية *
-                  </Label>
-                  <Input
-                    id="nameAr"
-                    value={formData.nameAr}
-                    onChange={(e) =>
-                      setFormData({ ...formData, nameAr: e.target.value })
-                    }
-                    placeholder="أدخل اسم المنتج بالعربية"
-                    className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="nameEn" className="text-white font-medium">
-                    الاسم بالإنجليزية *
-                  </Label>
-                  <Input
-                    id="nameEn"
-                    value={formData.nameEn}
-                    onChange={(e) =>
-                      setFormData({ ...formData, nameEn: e.target.value })
-                    }
-                    placeholder="Enter product name in English"
-                    className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 placeholder-ltr"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
-                <Label className="flex items-center gap-2 text-white font-medium">
-                  <Image className="w-4 h-4 text-blue-400" />
-                  صور المنتج
-                </Label>
-
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm text-gray-400">
-                      الصورة الأساسية *
-                    </Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={formData.mainImage}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            mainImage: e.target.value,
-                          })
-                        }
-                        placeholder="رابط الصورة الأساسية أو ارفع صورة"
-                        className="flex-1 bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
-                        required
-                      />
-                      <div className="relative group">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleImageUpload(e, -1, true)}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                          id="main-image-upload"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="flex items-center gap-2 bg-purple-500/10 border-purple-500/30 text-purple-400 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 group-hover:text-purple-300 group-hover:shadow-purple-500/40 transition-all duration-200 shadow-purple-500/20"
-                        >
-                          <Upload className="w-4 h-4" />
-                          رفع
-                        </Button>
-                      </div>
+        <CardContent className="p-4 md:p-6">
+          <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+            {/* تخطيط متجاوب للشاشات المختلفة */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 xl:gap-8">
+              {/* العمود الأيسر - إدارة الصور وإعدادات العرض */}
+              <div className="xl:col-span-1 space-y-4 md:space-y-6 order-2 xl:order-2">
+                {/* إدارة الصور */}
+                <div className="space-y-4 p-4 md:p-6 bg-black/20 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                      <Image className="w-4 h-4 text-purple-400" />
                     </div>
-                    {uploadingImages.has(-1) ? (
-                      <div className="mt-2 flex items-center justify-center w-20 h-20 bg-gray-800 rounded border">
-                        <div className="flex flex-col items-center gap-2">
-                          <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
-                          <span className="text-xs text-gray-400">
-                            جاري الرفع...
-                          </span>
-                        </div>
-                      </div>
-                    ) : formData.mainImage ? (
-                      <div className="mt-2">
-                        <ImageWithError
-                          src={formData.mainImage}
-                          alt="معاينة الصورة الأساسية"
-                          className="w-20 h-20 object-cover rounded border"
-                        />
-                      </div>
-                    ) : null}
+                    <div>
+                      <h3 className="text-white font-semibold">إدارة الصور</h3>
+                      <p className="text-sm text-gray-400">
+                        ارفع وأدر صور المنتج
+                      </p>
+                    </div>
                   </div>
 
-                  {formData.additionalImages.map((image, index) => (
-                    <div
-                      key={`additional-image-${index}-${image}`}
-                      className="space-y-2"
-                    >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        الصورة الأساسية *
+                      </Label>
                       <div className="flex gap-2">
                         <Input
-                          value={image}
+                          value={formData.mainImage}
                           onChange={(e) =>
-                            updateImageField(index, e.target.value)
+                            setFormData({
+                              ...formData,
+                              mainImage: e.target.value,
+                            })
                           }
-                          placeholder="رابط الصورة أو ارفع صورة"
+                          placeholder="رابط الصورة الأساسية"
                           className="flex-1 bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                          required
                         />
                         <div className="relative group">
                           <input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => handleImageUpload(e, index)}
+                            onChange={(e) => handleImageUpload(e, -1, true)}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                            id={`additional-image-upload-${index}`}
+                            id="main-image-upload"
                           />
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            className="flex items-center gap-2 bg-purple-500/10 border-purple-500/30 text-purple-400 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 group-hover:text-purple-300 group-hover:shadow-purple-500/40 transition-all duration-200 shadow-purple-500/20"
+                            className="bg-purple-500/10 border-purple-500/30 text-purple-400 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 shadow-purple-500/20"
                           >
                             <Upload className="w-4 h-4" />
-                            رفع
                           </Button>
                         </div>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeImageField(index)}
-                          className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
                       </div>
-                      {uploadingImages.has(index) ? (
-                        <div className="mt-2 flex items-center justify-center w-20 h-20 bg-gray-800 rounded border">
+                      {uploadingImages.has(-1) ? (
+                        <div className="flex items-center justify-center w-full h-24 md:h-32 bg-gray-800 rounded border">
                           <div className="flex flex-col items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                            <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
                             <span className="text-xs text-gray-400">
                               جاري الرفع...
                             </span>
                           </div>
                         </div>
-                      ) : image ? (
-                        <div className="mt-2">
-                          {failedImages.has(index) ? (
-                            <div className="w-20 h-20 bg-gray-800 rounded border flex items-center justify-center">
-                              <div className="text-center px-1">
-                                <Image className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mx-auto mb-1" />
-                                <span className="text-[10px] xs:text-xs text-gray-500 leading-tight">
+                      ) : formData.mainImage ? (
+                        <ImageWithError
+                          src={formData.mainImage}
+                          alt="معاينة الصورة الأساسية"
+                          className="w-full h-24 md:h-32 object-cover rounded border"
+                        />
+                      ) : null}
+                    </div>
+
+                    {formData.additionalImages.map((image, index) => (
+                      <div
+                        key={`additional-image-${index}-${image}`}
+                        className="space-y-2"
+                      >
+                        <div className="flex gap-2">
+                          <Input
+                            value={image}
+                            onChange={(e) =>
+                              updateImageField(index, e.target.value)
+                            }
+                            placeholder="رابط الصورة"
+                            className="flex-1 bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                          />
+                          <div className="relative group">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, index)}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="bg-purple-500/10 border-purple-500/30 text-purple-400 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 shadow-purple-500/20"
+                            >
+                              <Upload className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeImageField(index)}
+                            className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 shadow-red-500/20"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        {uploadingImages.has(index) ? (
+                          <div className="flex items-center justify-center w-full h-16 md:h-20 bg-gray-800 rounded border">
+                            <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
+                          </div>
+                        ) : image ? (
+                          <div>
+                            {failedImages.has(index) ? (
+                              <div className="w-full h-16 md:h-20 bg-gray-800 rounded border flex items-center justify-center">
+                                <span className="text-xs text-gray-500">
                                   صورة غير صحيحة
                                 </span>
                               </div>
-                            </div>
-                          ) : (
-                            <ImageWithError
-                              src={image}
-                              alt={`معاينة الصورة الإضافية ${index + 1}`}
-                              className="w-20 h-20 object-cover rounded border"
-                              onError={() => handleImageError(index)}
-                              onLoad={() => handleImageLoad(index)}
-                            />
-                          )}
-                        </div>
-                      ) : null}
+                            ) : (
+                              <ImageWithError
+                                src={image}
+                                alt={`معاينة الصورة ${index + 1}`}
+                                className="w-full h-16 md:h-20 object-cover rounded border"
+                                onError={() => handleImageError(index)}
+                                onLoad={() => handleImageLoad(index)}
+                              />
+                            )}
+                          </div>
+                        ) : null}
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addImageField}
+                      className="w-full bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20 hover:border-purple-500/50 shadow-purple-500/20"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      إضافة صورة
+                    </Button>
+                  </div>
+                </div>
+
+                {/* إعدادات العرض */}
+                <div className="space-y-4 p-4 md:p-6 bg-black/20 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                      <Eye className="w-4 h-4 text-orange-400" />
                     </div>
-                  ))}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addImageField}
-                    className="w-full bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20 hover:border-purple-500/50 shadow-purple-500/20"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    إضافة صورة أخرى
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-white font-medium">السعر *</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.price}
-                    onChange={(e) =>
-                      setFormData({ ...formData, price: e.target.value })
-                    }
-                    placeholder="0.00"
-                    className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-white font-medium">الفئة *</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, category: value })
-                    }
-                  >
-                    <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
-                      <SelectValue placeholder="اختر الفئة" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category._id} value={category._id}>
-                          {category.nameAr}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-white font-medium">المناسبة *</Label>
-                  <Select
-                    value={formData.occasion}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, occasion: value })
-                    }
-                  >
-                    <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
-                      <SelectValue placeholder="اختر المناسبة" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {occasions.map((occasion) => (
-                        <SelectItem key={occasion._id} value={occasion._id}>
-                          {occasion.nameAr}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-white font-medium">
-                    العلامة التجارية *
-                  </Label>
-                  <Select
-                    value={formData.brand}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, brand: value })
-                    }
-                  >
-                    <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
-                      <SelectValue placeholder="اختر العلامة التجارية" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {brands.map((brand) => (
-                        <SelectItem key={brand._id} value={brand._id}>
-                          {brand.nameAr}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
-                <Label className="text-white font-medium">
-                  حالة المنتج والجمهور
-                </Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm text-gray-400">
-                      حالة المنتج *
-                    </Label>
-                    <Select
-                      value={formData.productStatus}
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, productStatus: value })
-                      }
-                    >
-                      <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
-                        <SelectValue placeholder="اختر حالة المنتج" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="الأكثر مبيعًا">
-                          الأكثر مبيعًا
-                        </SelectItem>
-                        <SelectItem value="المجموعات المميزة">
-                          المجموعات المميزة
-                        </SelectItem>
-                        <SelectItem value="هدايا فاخرة">هدايا فاخرة</SelectItem>
-                        <SelectItem value="مناسبة خاصة">مناسبة خاصة</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div>
+                      <h3 className="text-white font-semibold">
+                        إعدادات العرض
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        تحكم في كيفية عرض المنتج للعملاء
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-sm text-gray-400">
-                      الجمهور المستهدف *
-                    </Label>
-                    <Select
-                      value={formData.targetAudience}
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, targetAudience: value })
-                      }
-                    >
-                      <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
-                        <SelectValue placeholder="اختر الجمهور المستهدف" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="له">له</SelectItem>
-                        <SelectItem value="لها">لها</SelectItem>
-                        <SelectItem value="لكابلز">لكابلز</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
+                      <Switch
+                        id="isActive"
+                        checked={formData.isActive}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, isActive: checked })
+                        }
+                        className="data-[state=checked]:bg-green-600 shadow-green-500/20"
+                      />
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="isActive"
+                          className="text-sm font-medium text-white cursor-pointer"
+                        >
+                          نشط
+                        </Label>
+                        <p className="text-xs text-gray-400">
+                          عرض المنتج للعملاء
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
+                      <Switch
+                        id="isFeatured"
+                        checked={formData.isFeatured}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, isFeatured: checked })
+                        }
+                        className="data-[state=checked]:bg-purple-600 shadow-purple-500/20"
+                      />
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="isFeatured"
+                          className="text-sm font-medium text-white cursor-pointer"
+                        >
+                          منتج مميز
+                        </Label>
+                        <p className="text-xs text-gray-400">
+                          عرض في المنتجات المميزة
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
+                      <Switch
+                        id="showInHomePage"
+                        checked={formData.showInHomePage}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, showInHomePage: checked })
+                        }
+                        className="data-[state=checked]:bg-blue-600 shadow-blue-500/20"
+                      />
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="showInHomePage"
+                          className="text-sm font-medium text-white cursor-pointer"
+                        >
+                          الصفحة الرئيسية
+                        </Label>
+                        <p className="text-xs text-gray-400">
+                          عرض في الصفحة الرئيسية
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
-                <Label className="text-white font-medium">أوصاف المنتج</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm text-gray-400">
-                      الوصف بالعربية
-                    </Label>
-                    <Textarea
-                      value={formData.descriptionAr}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          descriptionAr: e.target.value,
-                        })
-                      }
-                      className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
-                      rows={4}
-                      placeholder="أدخل وصف المنتج بالعربية"
-                    />
+              {/* العمود الأيمن - المعلومات الأساسية والمحتوى */}
+              <div className="xl:col-span-2 space-y-4 md:space-y-6 order-1 xl:order-1">
+                {/* المعلومات الأساسية */}
+                <div className="space-y-4 p-4 md:p-6 bg-black/20 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                      <Package className="w-4 h-4 text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-semibold">
+                        المعلومات الأساسية
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        أدخل اسم المنتج والسعر والتصنيفات
+                      </p>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm text-gray-400">
-                      الوصف بالإنجليزية
-                    </Label>
-                    <Textarea
-                      value={formData.descriptionEn}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          descriptionEn: e.target.value,
-                        })
-                      }
-                      className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 placeholder-ltr"
-                      rows={4}
-                      placeholder="Enter product description in English"
-                    />
-                  </div>
-                </div>
-              </div>
 
-              <div className="space-y-3 p-4 bg-black/20 rounded-lg border border-gray-800/50">
-                <Label className="text-white font-medium">معلومات إضافية</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm text-gray-400">
-                      نصائح العناية
-                    </Label>
-                    <Textarea
-                      value={formData.careInstructions}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          careInstructions: e.target.value,
-                        })
-                      }
-                      className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
-                      rows={3}
-                      placeholder="أدخل نصائح العناية بالمنتج"
-                    />
+                  {/* الأسماء */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="nameAr" className="text-sm text-gray-400">
+                        الاسم بالعربية *
+                      </Label>
+                      <Input
+                        id="nameAr"
+                        value={formData.nameAr}
+                        onChange={(e) =>
+                          setFormData({ ...formData, nameAr: e.target.value })
+                        }
+                        placeholder="أدخل اسم المنتج بالعربية"
+                        className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="nameEn" className="text-sm text-gray-400">
+                        الاسم بالإنجليزية *
+                      </Label>
+                      <Input
+                        id="nameEn"
+                        value={formData.nameEn}
+                        onChange={(e) =>
+                          setFormData({ ...formData, nameEn: e.target.value })
+                        }
+                        placeholder="Enter product name in English"
+                        className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 placeholder-ltr"
+                        required
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm text-gray-400">
-                      محتويات التنسيق
-                    </Label>
-                    <Textarea
-                      value={formData.arrangementContents}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          arrangementContents: e.target.value,
-                        })
-                      }
-                      className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
-                      rows={3}
-                      placeholder="أدخل محتويات التنسيق"
-                    />
-                  </div>
-                </div>
-              </div>
 
-              <div className="flex items-center justify-end gap-6">
-                <div className="flex items-center gap-2">
-                  <Label
-                    htmlFor="isActive"
-                    className="order-2 text-white font-medium"
-                  >
-                    نشط
-                  </Label>
-                  <Switch
-                    id="isActive"
-                    checked={formData.isActive}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, isActive: checked })
-                    }
-                    className="order-1 data-[state=checked]:bg-purple-600 shadow-purple-500/20"
-                  />
+                  {/* السعر والتصنيفات */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">السعر *</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={formData.price}
+                        onChange={(e) =>
+                          setFormData({ ...formData, price: e.target.value })
+                        }
+                        placeholder="0.00"
+                        className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">الفئة *</Label>
+                      <Select
+                        value={formData.category}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, category: value })
+                        }
+                      >
+                        <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
+                          <SelectValue placeholder="اختر الفئة" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category._id} value={category._id}>
+                              {category.nameAr}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        المناسبة *
+                      </Label>
+                      <Select
+                        value={formData.occasion}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, occasion: value })
+                        }
+                      >
+                        <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
+                          <SelectValue placeholder="اختر المناسبة" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {occasions.map((occasion) => (
+                            <SelectItem key={occasion._id} value={occasion._id}>
+                              {occasion.nameAr}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        العلامة التجارية *
+                      </Label>
+                      <Select
+                        value={formData.brand}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, brand: value })
+                        }
+                      >
+                        <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
+                          <SelectValue placeholder="اختر العلامة التجارية" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {brands.map((brand) => (
+                            <SelectItem key={brand._id} value={brand._id}>
+                              {brand.nameAr}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* حالة المنتج والجمهور المستهدف */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        حالة المنتج *
+                      </Label>
+                      <Select
+                        value={formData.productStatus}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, productStatus: value })
+                        }
+                      >
+                        <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
+                          <SelectValue placeholder="اختر حالة المنتج" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="الأكثر مبيعًا">
+                            الأكثر مبيعًا
+                          </SelectItem>
+                          <SelectItem value="المجموعات المميزة">
+                            المجموعات المميزة
+                          </SelectItem>
+                          <SelectItem value="هدايا فاخرة">
+                            هدايا فاخرة
+                          </SelectItem>
+                          <SelectItem value="مناسبة خاصة">
+                            مناسبة خاصة
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        الجمهور المستهدف *
+                      </Label>
+                      <Select
+                        value={formData.targetAudience}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, targetAudience: value })
+                        }
+                      >
+                        <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
+                          <SelectValue placeholder="اختر الجمهور المستهدف" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="له">له</SelectItem>
+                          <SelectItem value="لها">لها</SelectItem>
+                          <SelectItem value="لكابلز">لكابلز</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Label
-                    htmlFor="isFeatured"
-                    className="order-2 text-white font-medium"
-                  >
-                    منتج مميز
-                  </Label>
-                  <Switch
-                    id="isFeatured"
-                    checked={formData.isFeatured}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, isFeatured: checked })
-                    }
-                    className="order-1 data-[state=checked]:bg-purple-600 shadow-purple-500/20"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Label
-                    htmlFor="showInHomePage"
-                    className="order-2 text-white font-medium"
-                  >
-                    عرض في الصفحة الرئيسية
-                  </Label>
-                  <Switch
-                    id="showInHomePage"
-                    checked={formData.showInHomePage}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, showInHomePage: checked })
-                    }
-                    className="order-1 data-[state=checked]:bg-purple-600 shadow-purple-500/20"
-                  />
+
+                {/* الأوصاف والمحتوى */}
+                <div className="space-y-4 p-4 md:p-6 bg-black/20 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                      <FileText className="w-4 h-4 text-green-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-semibold">
+                        المحتوى والأوصاف
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        أضف أوصاف المنتج والمعلومات التفصيلية
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        الوصف بالعربية
+                      </Label>
+                      <Textarea
+                        value={formData.descriptionAr}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            descriptionAr: e.target.value,
+                          })
+                        }
+                        className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                        rows={4}
+                        placeholder="أدخل وصف المنتج بالعربية"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        الوصف بالإنجليزية
+                      </Label>
+                      <Textarea
+                        value={formData.descriptionEn}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            descriptionEn: e.target.value,
+                          })
+                        }
+                        className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 placeholder-ltr"
+                        rows={4}
+                        placeholder="Enter product description in English"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        نصائح العناية
+                      </Label>
+                      <Textarea
+                        value={formData.careInstructions}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            careInstructions: e.target.value,
+                          })
+                        }
+                        className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                        rows={3}
+                        placeholder="أدخل نصائح العناية بالمنتج"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        محتويات التنسيق
+                      </Label>
+                      <Textarea
+                        value={formData.arrangementContents}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            arrangementContents: e.target.value,
+                          })
+                        }
+                        className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                        rows={3}
+                        placeholder="أدخل محتويات التنسيق"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* أزرار الإجراءات */}
-            <div className="flex items-center justify-end gap-3 pt-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 md:pt-6 border-t border-gray-800/50">
               <Button type="button" variant="outline" onClick={onCancel}>
                 إلغاء
               </Button>
