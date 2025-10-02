@@ -58,7 +58,7 @@ const sizeClasses = {
   lg: "max-w-lg",
   xl: "max-w-xl",
   "2xl": "max-w-2xl",
-  full: "max-w-full",
+  full: "max-w-full w-full h-full max-h-full",
 };
 
 export function ReusableModal({
@@ -112,7 +112,9 @@ export function ReusableModal({
   const modalContent = (
     <DialogContent
       className={cn(
-        "max-h-[85vh] flex flex-col",
+        size === "full"
+          ? "max-h-[100vh] flex flex-col"
+          : "max-h-[85vh] flex flex-col",
         sizeClasses[size],
         contentClassName
       )}

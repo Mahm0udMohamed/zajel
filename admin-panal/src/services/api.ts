@@ -1082,6 +1082,286 @@ class ApiService {
     const result = await response.json();
     return result.data;
   }
+
+  // Products API
+  async getProducts(params?: {
+    page?: number;
+    limit?: number;
+    isActive?: boolean;
+    language?: string;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: string;
+    category?: string;
+    occasion?: string;
+    brand?: string;
+    productStatus?: string;
+    targetAudience?: string;
+    showInHomePage?: boolean;
+    isFeatured?: boolean;
+    minPrice?: number;
+    maxPrice?: number;
+  }): Promise<{
+    success: boolean;
+    data: unknown[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+    message: string;
+  }> {
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.isActive !== undefined)
+      queryParams.append("isActive", params.isActive.toString());
+    if (params?.language) queryParams.append("language", params.language);
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.sortBy) queryParams.append("sortBy", params.sortBy);
+    if (params?.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+    if (params?.category) queryParams.append("category", params.category);
+    if (params?.occasion) queryParams.append("occasion", params.occasion);
+    if (params?.brand) queryParams.append("brand", params.brand);
+    if (params?.productStatus)
+      queryParams.append("productStatus", params.productStatus);
+    if (params?.targetAudience)
+      queryParams.append("targetAudience", params.targetAudience);
+    if (params?.showInHomePage !== undefined)
+      queryParams.append("showInHomePage", params.showInHomePage.toString());
+    if (params?.isFeatured !== undefined)
+      queryParams.append("isFeatured", params.isFeatured.toString());
+    if (params?.minPrice)
+      queryParams.append("minPrice", params.minPrice.toString());
+    if (params?.maxPrice)
+      queryParams.append("maxPrice", params.maxPrice.toString());
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/products?${queryString}` : "/products";
+
+    const response = await this.makeRequest<{
+      data: unknown[];
+      pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
+    }>(endpoint);
+
+    return {
+      success: response.success,
+      data: Array.isArray(response.data) ? response.data : [],
+      pagination: response.data?.pagination || {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        itemsPerPage: 50,
+        hasNextPage: false,
+        hasPrevPage: false,
+      },
+      message: response.message,
+    };
+  }
+
+  async getProductById(
+    id: string,
+    language = "ar"
+  ): Promise<{
+    success: boolean;
+    data: unknown;
+    message: string;
+  }> {
+    const response = await this.makeRequest<{ data: unknown }>(
+      `/products/${id}?language=${language}`
+    );
+    return {
+      success: response.success,
+      data: response.data,
+      message: response.message,
+    };
+  }
+
+  async getActiveProducts(language = "ar", filters = {}): Promise<unknown[]> {
+    const queryParams = new URLSearchParams();
+    queryParams.append("language", language);
+
+    // إضافة الفلاتر
+    Object.entries(filters as Record<string, string>).forEach(
+      ([key, value]) => {
+        if (value) queryParams.append(key, value);
+      }
+    );
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString
+      ? `/products/active?${queryString}`
+      : "/products/active";
+
+    const response = await this.makeRequest<{ data: unknown[] }>(endpoint);
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async createProduct(productData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      "/products",
+      {
+        method: "POST",
+        body: JSON.stringify(productData),
+      }
+    );
+    return response.data;
+  }
+
+  async updateProduct(id: string, productData: unknown): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/products/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(productData),
+      }
+    );
+    return response.data;
+  }
+
+  async deleteProduct(id: string): Promise<void> {
+    await this.makeAuthenticatedRequest(`/products/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  async toggleProductStatus(id: string): Promise<unknown> {
+    const response = await this.makeAuthenticatedRequest<{ data: unknown }>(
+      `/products/${id}/toggle`,
+      {
+        method: "PATCH",
+      }
+    );
+    return response.data;
+  }
+
+  async reorderProducts(
+    productOrders: Array<{ productId: string; sortOrder: number }>
+  ): Promise<void> {
+    await this.makeAuthenticatedRequest("/products/reorder", {
+      method: "PATCH",
+      body: JSON.stringify({ productOrders }),
+    });
+  }
+
+  async searchProducts(
+    query: string,
+    language = "ar",
+    limit = 10,
+    page = 1,
+    filters = {}
+  ): Promise<unknown[]> {
+    const queryParams = new URLSearchParams();
+    queryParams.append("q", query);
+    queryParams.append("language", language);
+    queryParams.append("limit", limit.toString());
+    queryParams.append("page", page.toString());
+
+    // إضافة الفلاتر
+    Object.entries(filters as Record<string, string>).forEach(
+      ([key, value]) => {
+        if (value) queryParams.append(key, value);
+      }
+    );
+
+    const response = await this.makeRequest<{ data: unknown[] }>(
+      `/products/search?${queryParams.toString()}`
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
+  async uploadProductImage(
+    file: File
+  ): Promise<{ imageUrl: string; publicId: string }> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`${API_BASE_URL}/products/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "فشل في رفع الصورة");
+    }
+
+    const result = await response.json();
+    return {
+      imageUrl: result.data.imageUrl,
+      publicId: result.data.publicId,
+    };
+  }
+
+  async deleteProductImage(publicId: string): Promise<void> {
+    await this.makeAuthenticatedRequest(`/products/image/${publicId}`, {
+      method: "DELETE",
+    });
+  }
+
+  async createProductWithImage(
+    productData: unknown,
+    file: File
+  ): Promise<unknown> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    // إضافة بيانات المنتج
+    Object.entries(productData as Record<string, unknown>).forEach(
+      ([key, value]) => {
+        if (Array.isArray(value)) {
+          // للصور الإضافية
+          value.forEach((item, index) => {
+            formData.append(`${key}[${index}]`, String(item));
+          });
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    );
+
+    const response = await fetch(`${API_BASE_URL}/products/create-with-image`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "فشل في إنشاء المنتج");
+    }
+
+    const result = await response.json();
+    return result.data;
+  }
+
+  async incrementProductViews(id: string): Promise<void> {
+    await this.makeRequest(`/products/${id}/views`, {
+      method: "PATCH",
+    });
+  }
+
+  async incrementProductPurchases(id: string): Promise<void> {
+    await this.makeRequest(`/products/${id}/purchases`, {
+      method: "PATCH",
+    });
+  }
 }
 
 export const apiService = new ApiService();

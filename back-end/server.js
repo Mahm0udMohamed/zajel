@@ -20,6 +20,7 @@ import heroPromotionsRoutes from "./routes/heroPromotionsRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import occasionRoutes from "./routes/occasionRoutes.js";
 import brandRoutes from "./routes/brandRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 import cacheRoutes from "./routes/cacheRoutes.js";
 import passport from "./config/passport.js";
 import { printServiceStatus } from "./utils/serviceChecker.js";
@@ -98,12 +99,13 @@ const clearCacheOnStartup = async () => {
     console.log("🔄 Clearing cache on startup...");
 
     if (cacheLayer.cacheService.isReady()) {
-      // مسح كاش المناسبات والعروض الترويجية والفئات والعلامات التجارية
+      // مسح كاش المناسبات والعروض الترويجية والفئات والعلامات التجارية والمنتجات
       await cacheLayer.clear("hero-occasions", "*");
       await cacheLayer.clear("hero-promotions", "*");
       await cacheLayer.clear("categories", "*");
+      await cacheLayer.clear("occasions", "*");
       await cacheLayer.clear("brands", "*");
-      await cacheLayer.clear("brands", "*");
+      await cacheLayer.clear("products", "*");
       console.log("✅ Cache cleared on startup");
     }
   } catch (error) {
@@ -205,6 +207,7 @@ app.use("/api/hero-promotions", heroPromotionsRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/occasions", occasionRoutes);
 app.use("/api/brands", brandRoutes);
+app.use("/api/products", productRoutes);
 app.use("/api/cache", cacheRoutes);
 
 // ✅ إنشاء السيرفر باستخدام HTTPS للتطوير المحلي
@@ -233,7 +236,9 @@ process.on("SIGINT", async () => {
       await cacheLayer.clear("hero-occasions", "*");
       await cacheLayer.clear("hero-promotions", "*");
       await cacheLayer.clear("categories", "*");
+      await cacheLayer.clear("occasions", "*");
       await cacheLayer.clear("brands", "*");
+      await cacheLayer.clear("products", "*");
       console.log("✅ Cache cleared on restart");
     }
   } catch (error) {
@@ -249,7 +254,9 @@ process.on("SIGTERM", async () => {
       await cacheLayer.clear("hero-occasions", "*");
       await cacheLayer.clear("hero-promotions", "*");
       await cacheLayer.clear("categories", "*");
+      await cacheLayer.clear("occasions", "*");
       await cacheLayer.clear("brands", "*");
+      await cacheLayer.clear("products", "*");
       console.log("✅ Cache cleared on stop");
     }
   } catch (error) {
