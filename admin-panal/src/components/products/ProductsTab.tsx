@@ -221,7 +221,12 @@ export default function ProductsTab() {
   const getProductStatusIcons = (statuses: string[]) => {
     const statusConfig: Record<
       string,
-      { icon: React.ComponentType<any>; color: string }
+      {
+        icon: React.ComponentType<
+          React.SVGProps<SVGSVGElement> & { title?: string }
+        >;
+        color: string;
+      }
     > = {
       "الأكثر مبيعًا": {
         icon: BarChart3,
@@ -272,7 +277,12 @@ export default function ProductsTab() {
   const getTargetAudienceIcon = (audience: string) => {
     const audienceConfig: Record<
       string,
-      { icon: React.ComponentType<any>; color: string }
+      {
+        icon: React.ComponentType<
+          React.SVGProps<SVGSVGElement> & { title?: string }
+        >;
+        color: string;
+      }
     > = {
       له: {
         icon: User,

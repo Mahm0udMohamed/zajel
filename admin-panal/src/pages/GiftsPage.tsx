@@ -56,7 +56,6 @@ interface GiftPackage {
     | "thank_you";
   items: string[];
   isActive: boolean;
-  isFeatured: boolean;
   isPopular: boolean;
   availableQuantity: number;
 }
@@ -80,7 +79,6 @@ export default function GiftsPage() {
         "ورق تغليف أنيق",
       ],
       isActive: true,
-      isFeatured: true,
       isPopular: true,
       availableQuantity: 25,
     },
@@ -95,7 +93,6 @@ export default function GiftsPage() {
       category: "birthday",
       items: ["كعكة عيد ميلاد", "بالونات ملونة", "شموع", "بطاقة تهنئة"],
       isActive: true,
-      isFeatured: false,
       isPopular: true,
       availableQuantity: 15,
     },
@@ -118,7 +115,6 @@ export default function GiftsPage() {
     category: "romantic",
     items: [],
     isActive: true,
-    isFeatured: false,
     isPopular: false,
     availableQuantity: 0,
   });
@@ -156,7 +152,6 @@ export default function GiftsPage() {
       category: newGift.category as GiftPackage["category"],
       items: newGift.items || [],
       isActive: newGift.isActive !== false,
-      isFeatured: newGift.isFeatured || false,
       isPopular: newGift.isPopular || false,
       availableQuantity: newGift.availableQuantity || 0,
     };
@@ -173,7 +168,6 @@ export default function GiftsPage() {
       category: "romantic",
       items: [],
       isActive: true,
-      isFeatured: false,
       isPopular: false,
       availableQuantity: 0,
     });
@@ -365,16 +359,6 @@ export default function GiftsPage() {
               <div className="flex items-center space-x-4 space-x-reverse">
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <Switch
-                    id="gift-isFeatured"
-                    checked={newGift.isFeatured}
-                    onCheckedChange={(checked) =>
-                      setNewGift({ ...newGift, isFeatured: checked })
-                    }
-                  />
-                  <Label htmlFor="gift-isFeatured">مميزة</Label>
-                </div>
-                <div className="flex items-center space-x-2 space-x-reverse">
-                  <Switch
                     id="gift-isPopular"
                     checked={newGift.isPopular}
                     onCheckedChange={(checked) =>
@@ -420,20 +404,6 @@ export default function GiftsPage() {
           <CardContent>
             <div className="text-2xl font-bold">{gifts.length}</div>
             <p className="text-xs text-muted-foreground">هدية متاحة</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              الهدايا المميزة
-            </CardTitle>
-            <Star className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {gifts.filter((g) => g.isFeatured).length}
-            </div>
-            <p className="text-xs text-muted-foreground">هدية مميزة</p>
           </CardContent>
         </Card>
         <Card>
@@ -564,11 +534,6 @@ export default function GiftsPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        {gift.isFeatured && (
-                          <Badge variant="outline" className="text-xs">
-                            مميزة
-                          </Badge>
-                        )}
                         {gift.isPopular && (
                           <Badge variant="outline" className="text-xs">
                             شائعة
@@ -667,16 +632,6 @@ export default function GiftsPage() {
                 </div>
               </div>
               <div className="flex items-center space-x-4 space-x-reverse">
-                <div className="flex items-center space-x-2 space-x-reverse">
-                  <Switch
-                    id="edit-gift-isFeatured"
-                    checked={editingGift.isFeatured}
-                    onCheckedChange={(checked) =>
-                      setEditingGift({ ...editingGift, isFeatured: checked })
-                    }
-                  />
-                  <Label htmlFor="edit-gift-isFeatured">مميزة</Label>
-                </div>
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <Switch
                     id="edit-gift-isPopular"

@@ -14,6 +14,7 @@ import {
   createProductWithImage,
   incrementProductViews,
   incrementProductPurchases,
+  incrementPurchasesForOrder,
 } from "../controllers/productController.js";
 import { authenticateAdmin } from "../middlewares/adminAuthMiddleware.js";
 import { body, param, query } from "express-validator";
@@ -119,34 +120,50 @@ const createProductValidation = [
     .withMessage("الجمهور المستهدف مطلوب")
     .isIn(["له", "لها", "لكابلز"])
     .withMessage("الجمهور المستهدف يجب أن يكون: له، لها، لكابلز"),
-  body("careInstructions")
+  body("careInstructionsAr")
     .optional()
     .isLength({ max: 1000 })
-    .withMessage("نصائح العناية يجب أن تكون أقل من 1000 حرف"),
+    .withMessage("نصائح العناية بالعربية يجب أن تكون أقل من 1000 حرف"),
+  body("careInstructionsEn")
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage("نصائح العناية بالإنجليزية يجب أن تكون أقل من 1000 حرف"),
   body("dimensions")
     .optional()
     .isObject()
     .withMessage("الأبعاد يجب أن تكون كائن"),
-  body("dimensions.length")
-    .optional()
-    .isFloat({ min: 0 })
-    .withMessage("الطول يجب أن يكون رقم أكبر من أو يساوي 0"),
-  body("dimensions.width")
-    .optional()
-    .isFloat({ min: 0 })
-    .withMessage("العرض يجب أن يكون رقم أكبر من أو يساوي 0"),
   body("dimensions.height")
     .optional()
     .isFloat({ min: 0 })
     .withMessage("الارتفاع يجب أن يكون رقم أكبر من أو يساوي 0"),
+  body("dimensions.width")
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage("العرض يجب أن يكون رقم أكبر من أو يساوي 0"),
   body("dimensions.unit")
     .optional()
-    .isIn(["سم", "م", "بوصة", "قدم"])
-    .withMessage("وحدة القياس يجب أن تكون: سم، م، بوصة، قدم"),
-  body("arrangementContents")
+    .isIn(["سم", "م"])
+    .withMessage("وحدة القياس يجب أن تكون: سم، م"),
+
+  // التحقق من الوزن
+  body("weight.value")
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage("الوزن يجب أن يكون رقم أكبر من أو يساوي 0"),
+
+  body("weight.unit")
+    .optional()
+    .isIn(["جرام", "كيلوجرام"])
+    .withMessage("وحدة الوزن يجب أن تكون: جرام، كيلوجرام"),
+
+  body("arrangementContentsAr")
     .optional()
     .isLength({ max: 1000 })
-    .withMessage("محتويات التنسيق يجب أن تكون أقل من 1000 حرف"),
+    .withMessage("محتويات التنسيق بالعربية يجب أن تكون أقل من 1000 حرف"),
+  body("arrangementContentsEn")
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage("محتويات التنسيق بالإنجليزية يجب أن تكون أقل من 1000 حرف"),
   body("isActive")
     .optional()
     .isBoolean()
@@ -159,10 +176,6 @@ const createProductValidation = [
     .optional()
     .isBoolean()
     .withMessage("عرض في الصفحة الرئيسية يجب أن يكون true أو false"),
-  body("isFeatured")
-    .optional()
-    .isBoolean()
-    .withMessage("المنتج المميز يجب أن يكون true أو false"),
   body("metaTitleAr")
     .optional()
     .isLength({ max: 60 })
@@ -248,34 +261,50 @@ const updateProductValidation = [
     .optional()
     .isIn(["له", "لها", "لكابلز"])
     .withMessage("الجمهور المستهدف يجب أن يكون: له، لها، لكابلز"),
-  body("careInstructions")
+  body("careInstructionsAr")
     .optional()
     .isLength({ max: 1000 })
-    .withMessage("نصائح العناية يجب أن تكون أقل من 1000 حرف"),
+    .withMessage("نصائح العناية بالعربية يجب أن تكون أقل من 1000 حرف"),
+  body("careInstructionsEn")
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage("نصائح العناية بالإنجليزية يجب أن تكون أقل من 1000 حرف"),
   body("dimensions")
     .optional()
     .isObject()
     .withMessage("الأبعاد يجب أن تكون كائن"),
-  body("dimensions.length")
-    .optional()
-    .isFloat({ min: 0 })
-    .withMessage("الطول يجب أن يكون رقم أكبر من أو يساوي 0"),
-  body("dimensions.width")
-    .optional()
-    .isFloat({ min: 0 })
-    .withMessage("العرض يجب أن يكون رقم أكبر من أو يساوي 0"),
   body("dimensions.height")
     .optional()
     .isFloat({ min: 0 })
     .withMessage("الارتفاع يجب أن يكون رقم أكبر من أو يساوي 0"),
+  body("dimensions.width")
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage("العرض يجب أن يكون رقم أكبر من أو يساوي 0"),
   body("dimensions.unit")
     .optional()
-    .isIn(["سم", "م", "بوصة", "قدم"])
-    .withMessage("وحدة القياس يجب أن تكون: سم، م، بوصة، قدم"),
-  body("arrangementContents")
+    .isIn(["سم", "م"])
+    .withMessage("وحدة القياس يجب أن تكون: سم، م"),
+
+  // التحقق من الوزن
+  body("weight.value")
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage("الوزن يجب أن يكون رقم أكبر من أو يساوي 0"),
+
+  body("weight.unit")
+    .optional()
+    .isIn(["جرام", "كيلوجرام"])
+    .withMessage("وحدة الوزن يجب أن تكون: جرام، كيلوجرام"),
+
+  body("arrangementContentsAr")
     .optional()
     .isLength({ max: 1000 })
-    .withMessage("محتويات التنسيق يجب أن تكون أقل من 1000 حرف"),
+    .withMessage("محتويات التنسيق بالعربية يجب أن تكون أقل من 1000 حرف"),
+  body("arrangementContentsEn")
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage("محتويات التنسيق بالإنجليزية يجب أن تكون أقل من 1000 حرف"),
   body("isActive")
     .optional()
     .isBoolean()
@@ -288,10 +317,6 @@ const updateProductValidation = [
     .optional()
     .isBoolean()
     .withMessage("عرض في الصفحة الرئيسية يجب أن يكون true أو false"),
-  body("isFeatured")
-    .optional()
-    .isBoolean()
-    .withMessage("المنتج المميز يجب أن يكون true أو false"),
   body("metaTitleAr")
     .optional()
     .isLength({ max: 60 })
@@ -398,6 +423,9 @@ router.get("/:id", productIdValidation, getProductById);
 // Public routes للمشاهدات والمشتريات
 router.patch("/:id/views", productIdValidation, incrementProductViews);
 router.patch("/:id/purchases", productIdValidation, incrementProductPurchases);
+
+// Route لزيادة المشتريات تلقائياً لعدة منتجات (عند إتمام طلب)
+router.patch("/increment-purchases", incrementPurchasesForOrder);
 
 // Admin routes (تحتاج مصادقة المدير)
 router.post("/", authenticateAdmin, createProductValidation, createProduct);

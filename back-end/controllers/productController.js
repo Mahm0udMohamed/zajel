@@ -6,6 +6,27 @@ import { validationResult } from "express-validator";
 import { cacheLayer } from "../services/cache/index.js";
 import cloudinary from "../utils/cloudinary.js";
 
+/**
+ * ========================================
+ * تحديث تلقائي للإحصائيات
+ * ========================================
+ *
+ * تم إضافة التحديث التلقائي للإحصائيات:
+ *
+ * 1. المشاهدات (viewCount):
+ *    - تزيد تلقائياً عند جلب منتج محدد (getProductById)
+ *    - تستخدم Product.incrementViewsOnGet() للكفاءة
+ *
+ * 2. المشتريات (purchaseCount):
+ *    - تزيد تلقائياً عند إتمام طلب (incrementPurchasesForOrder)
+ *    - تستخدم Product.incrementPurchasesOnOrder() لعدة منتجات
+ *
+ * 3. API Endpoints الجديدة:
+ *    - PATCH /products/increment-purchases (لزيادة المشتريات لعدة منتجات)
+ *
+ * ========================================
+ */
+
 // دالة مساعدة لمسح جميع كاشات المنتجات (Best Practice)
 const clearAllProductsCache = async () => {
   try {
@@ -43,7 +64,6 @@ export const getAllProducts = async (req, res) => {
       productStatus,
       targetAudience,
       showInHomePage,
-      isFeatured,
       minPrice,
       maxPrice,
     } = req.query;
@@ -83,10 +103,6 @@ export const getAllProducts = async (req, res) => {
       query.showInHomePage = showInHomePage === "true";
     }
 
-    if (isFeatured !== undefined) {
-      query.isFeatured = isFeatured === "true";
-    }
-
     // فلترة السعر
     if (minPrice || maxPrice) {
       query.price = {};
@@ -105,14 +121,14 @@ export const getAllProducts = async (req, res) => {
         query.$or = [
           { nameAr: searchRegex },
           { descriptionAr: searchRegex },
-          { careInstructions: searchRegex },
+          { careInstructionsAr: searchRegex },
           { arrangementContents: searchRegex },
         ];
       } else {
         query.$or = [
           { nameEn: searchRegex },
           { descriptionEn: searchRegex },
-          { careInstructions: searchRegex },
+          { careInstructionsEn: searchRegex },
           { arrangementContents: searchRegex },
         ];
       }
@@ -142,7 +158,6 @@ export const getAllProducts = async (req, res) => {
       productStatus,
       targetAudience,
       showInHomePage,
-      isFeatured,
       minPrice,
       maxPrice,
     };
@@ -198,14 +213,19 @@ export const getAllProducts = async (req, res) => {
       brand: product.brand,
       productStatus: product.productStatus,
       targetAudience: product.targetAudience,
-      careInstructions: product.careInstructions,
+      careInstructionsAr: product.careInstructionsAr,
+      careInstructionsEn: product.careInstructionsEn,
       dimensions: product.dimensions,
-      arrangementContents: product.arrangementContents,
+      fullDimensions: product.fullDimensions,
+      fullDimensionsEn: product.fullDimensionsEn,
+      fullWeight: product.fullWeight,
+      fullWeightEn: product.fullWeightEn,
+      arrangementContentsAr: product.arrangementContentsAr,
+      arrangementContentsEn: product.arrangementContentsEn,
       isActive: product.isActive,
       sortOrder: product.sortOrder,
       viewCount: product.viewCount,
       purchaseCount: product.purchaseCount,
-      isFeatured: product.isFeatured,
       showInHomePage: product.showInHomePage,
       metaTitle: language === "ar" ? product.metaTitleAr : product.metaTitleEn,
       metaDescription:
@@ -271,6 +291,9 @@ export const getProductById = async (req, res) => {
     try {
       const cachedProduct = await cacheLayer.get(cacheKey);
       if (cachedProduct) {
+        // زيادة المشاهدات تلقائياً حتى لو كان من الكاش
+        Product.incrementViewsOnGet(id);
+
         return res.status(200).json({
           success: true,
           data: cachedProduct,
@@ -288,6 +311,9 @@ export const getProductById = async (req, res) => {
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
       .lean();
+
+    // زيادة المشاهدات تلقائياً عند جلب المنتج
+    Product.incrementViewsOnGet(id);
 
     if (!product) {
       return res.status(404).json({
@@ -314,14 +340,19 @@ export const getProductById = async (req, res) => {
       brand: product.brand,
       productStatus: product.productStatus,
       targetAudience: product.targetAudience,
-      careInstructions: product.careInstructions,
+      careInstructionsAr: product.careInstructionsAr,
+      careInstructionsEn: product.careInstructionsEn,
       dimensions: product.dimensions,
-      arrangementContents: product.arrangementContents,
+      fullDimensions: product.fullDimensions,
+      fullDimensionsEn: product.fullDimensionsEn,
+      fullWeight: product.fullWeight,
+      fullWeightEn: product.fullWeightEn,
+      arrangementContentsAr: product.arrangementContentsAr,
+      arrangementContentsEn: product.arrangementContentsEn,
       isActive: product.isActive,
       sortOrder: product.sortOrder,
       viewCount: product.viewCount,
       purchaseCount: product.purchaseCount,
-      isFeatured: product.isFeatured,
       showInHomePage: product.showInHomePage,
       metaTitle: language === "ar" ? product.metaTitleAr : product.metaTitleEn,
       metaDescription:
@@ -384,13 +415,14 @@ export const createProduct = async (req, res) => {
       descriptionEn = "",
       productStatus = [],
       targetAudience,
-      careInstructions = "",
+      careInstructionsAr = "",
+      careInstructionsEn = "",
       dimensions = {},
-      arrangementContents = "",
+      arrangementContentsAr = "",
+      arrangementContentsEn = "",
       isActive = true,
       sortOrder = 0,
       showInHomePage = true,
-      isFeatured = false,
       metaTitleAr = "",
       metaTitleEn = "",
       metaDescriptionAr = "",
@@ -454,13 +486,14 @@ export const createProduct = async (req, res) => {
       descriptionEn,
       productStatus,
       targetAudience,
-      careInstructions,
+      careInstructionsAr,
+      careInstructionsEn,
       dimensions,
-      arrangementContents,
+      arrangementContentsAr,
+      arrangementContentsEn,
       isActive,
       sortOrder,
       showInHomePage,
-      isFeatured,
       metaTitleAr,
       metaTitleEn,
       metaDescriptionAr,
@@ -795,6 +828,11 @@ export const getActiveProducts = async (req, res) => {
     try {
       const cachedProducts = await cacheLayer.get(cacheKey);
       if (cachedProducts) {
+        // زيادة المشاهدات تلقائياً للمنتجات المعروضة (اختياري)
+        // يمكن إزالة هذا السطر إذا كنت لا تريد زيادة المشاهدات عند عرض قائمة المنتجات
+        // const productIds = cachedProducts.map(p => p._id);
+        // Product.incrementViewsOnGet(productIds);
+
         return res.status(200).json({
           success: true,
           data: cachedProducts,
@@ -971,13 +1009,14 @@ export const createProductWithImage = async (req, res) => {
       descriptionEn = "",
       productStatus = [],
       targetAudience,
-      careInstructions = "",
+      careInstructionsAr = "",
+      careInstructionsEn = "",
       dimensions = {},
-      arrangementContents = "",
+      arrangementContentsAr = "",
+      arrangementContentsEn = "",
       isActive = true,
       sortOrder = 0,
       showInHomePage = true,
-      isFeatured = false,
       metaTitleAr = "",
       metaTitleEn = "",
       metaDescriptionAr = "",
@@ -1085,13 +1124,14 @@ export const createProductWithImage = async (req, res) => {
       descriptionEn,
       productStatus,
       targetAudience,
-      careInstructions,
+      careInstructionsAr,
+      careInstructionsEn,
       dimensions,
-      arrangementContents,
+      arrangementContentsAr,
+      arrangementContentsEn,
       isActive,
       sortOrder,
       showInHomePage,
-      isFeatured,
       metaTitleAr,
       metaTitleEn,
       metaDescriptionAr,
@@ -1178,6 +1218,37 @@ export const incrementProductPurchases = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "حدث خطأ في تحديث عدد المشتريات",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * زيادة المشتريات تلقائياً لعدة منتجات (عند إتمام طلب)
+ */
+export const incrementPurchasesForOrder = async (req, res) => {
+  try {
+    const { productIds } = req.body;
+
+    if (!Array.isArray(productIds) || productIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "معرفات المنتجات مطلوبة",
+      });
+    }
+
+    // زيادة المشتريات تلقائياً لجميع المنتجات
+    await Product.incrementPurchasesOnOrder(productIds);
+
+    res.status(200).json({
+      success: true,
+      message: "تم تحديث إحصائيات المشتريات بنجاح",
+    });
+  } catch (error) {
+    console.error("خطأ في تحديث إحصائيات المشتريات:", error);
+    res.status(500).json({
+      success: false,
+      message: "حدث خطأ في تحديث إحصائيات المشتريات",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }

@@ -47,12 +47,30 @@ export function ProductModal({
     brand: product?.brand?._id || "",
     descriptionAr: product?.descriptionAr || "",
     descriptionEn: product?.descriptionEn || "",
-    careInstructions: product?.careInstructions || "",
-    arrangementContents: product?.arrangementContents || "",
-    productStatus: product?.productStatus || "",
+    careInstructionsAr: product?.careInstructionsAr || "",
+    careInstructionsEn: product?.careInstructionsEn || "",
+    arrangementContentsAr: product?.arrangementContentsAr || "",
+    arrangementContentsEn: product?.arrangementContentsEn || "",
+    productStatus: Array.isArray(product?.productStatus)
+      ? product?.productStatus || []
+      : product?.productStatus
+      ? [product.productStatus]
+      : [],
+    dimensions: {
+      height: product?.dimensions?.height?.toString() || "",
+      width: product?.dimensions?.width?.toString() || "",
+      unit: product?.dimensions?.unit || "سم",
+    },
+    weight: {
+      value: product?.weight?.value?.toString() || "",
+      unit: product?.weight?.unit || "جرام",
+    },
+    metaTitleAr: product?.metaTitleAr || "",
+    metaTitleEn: product?.metaTitleEn || "",
+    metaDescriptionAr: product?.metaDescriptionAr || "",
+    metaDescriptionEn: product?.metaDescriptionEn || "",
     targetAudience: product?.targetAudience || "",
     isActive: product?.isActive ?? true,
-    isFeatured: product?.isFeatured ?? false,
     showInHomePage: product?.showInHomePage ?? false,
   });
 
@@ -112,12 +130,30 @@ export function ProductModal({
         brand: product.brand?._id || "",
         descriptionAr: product.descriptionAr || "",
         descriptionEn: product.descriptionEn || "",
-        careInstructions: product.careInstructions || "",
-        arrangementContents: product.arrangementContents || "",
-        productStatus: product.productStatus || "",
+        careInstructionsAr: product.careInstructionsAr || "",
+        careInstructionsEn: product.careInstructionsEn || "",
+        arrangementContentsAr: product.arrangementContentsAr || "",
+        arrangementContentsEn: product.arrangementContentsEn || "",
+        productStatus: Array.isArray(product.productStatus)
+          ? product.productStatus || []
+          : product.productStatus
+          ? [product.productStatus]
+          : [],
+        dimensions: {
+          height: product.dimensions?.height?.toString() || "",
+          width: product.dimensions?.width?.toString() || "",
+          unit: product.dimensions?.unit || "سم",
+        },
+        weight: {
+          value: product.weight?.value?.toString() || "",
+          unit: product.weight?.unit || "جرام",
+        },
+        metaTitleAr: product.metaTitleAr || "",
+        metaTitleEn: product.metaTitleEn || "",
+        metaDescriptionAr: product.metaDescriptionAr || "",
+        metaDescriptionEn: product.metaDescriptionEn || "",
         targetAudience: product.targetAudience || "",
         isActive: product.isActive ?? true,
-        isFeatured: product.isFeatured ?? false,
         showInHomePage: product.showInHomePage ?? false,
       };
       setFormData(updatedFormData);
@@ -135,12 +171,26 @@ export function ProductModal({
         brand: "",
         descriptionAr: "",
         descriptionEn: "",
-        careInstructions: "",
-        arrangementContents: "",
-        productStatus: "",
+        careInstructionsAr: "",
+        careInstructionsEn: "",
+        arrangementContentsAr: "",
+        arrangementContentsEn: "",
+        productStatus: [],
+        dimensions: {
+          height: "",
+          width: "",
+          unit: "سم",
+        },
+        weight: {
+          value: "",
+          unit: "جرام",
+        },
+        metaTitleAr: "",
+        metaTitleEn: "",
+        metaDescriptionAr: "",
+        metaDescriptionEn: "",
         targetAudience: "",
         isActive: true,
-        isFeatured: false,
         showInHomePage: false,
       };
       setFormData(resetFormData);
@@ -163,12 +213,26 @@ export function ProductModal({
           brand: "",
           descriptionAr: "",
           descriptionEn: "",
-          careInstructions: "",
-          arrangementContents: "",
-          productStatus: "",
+          careInstructionsAr: "",
+          careInstructionsEn: "",
+          arrangementContentsAr: "",
+          arrangementContentsEn: "",
+          dimensions: {
+            height: "",
+            width: "",
+            unit: "سم",
+          },
+          weight: {
+            value: "",
+            unit: "جرام",
+          },
+          metaTitleAr: "",
+          metaTitleEn: "",
+          metaDescriptionAr: "",
+          metaDescriptionEn: "",
+          productStatus: [],
           targetAudience: "",
           isActive: true,
-          isFeatured: false,
           showInHomePage: false,
         };
         setFormData(resetFormData);
@@ -186,12 +250,30 @@ export function ProductModal({
           brand: product.brand?._id || "",
           descriptionAr: product.descriptionAr || "",
           descriptionEn: product.descriptionEn || "",
-          careInstructions: product.careInstructions || "",
-          arrangementContents: product.arrangementContents || "",
-          productStatus: product.productStatus || "",
+          careInstructionsAr: product.careInstructionsAr || "",
+          careInstructionsEn: product.careInstructionsEn || "",
+          arrangementContentsAr: product.arrangementContentsAr || "",
+          arrangementContentsEn: product.arrangementContentsEn || "",
+          productStatus: Array.isArray(product.productStatus)
+            ? product.productStatus || []
+            : product.productStatus
+            ? [product.productStatus]
+            : [],
+          dimensions: {
+            height: product.dimensions?.height?.toString() || "",
+            width: product.dimensions?.width?.toString() || "",
+            unit: product.dimensions?.unit || "سم",
+          },
+          weight: {
+            value: product.weight?.value?.toString() || "",
+            unit: product.weight?.unit || "جرام",
+          },
+          metaTitleAr: product.metaTitleAr || "",
+          metaTitleEn: product.metaTitleEn || "",
+          metaDescriptionAr: product.metaDescriptionAr || "",
+          metaDescriptionEn: product.metaDescriptionEn || "",
           targetAudience: product.targetAudience || "",
           isActive: product.isActive ?? true,
-          isFeatured: product.isFeatured ?? false,
           showInHomePage: product.showInHomePage ?? false,
         };
         setFormData(resetFormData);
@@ -214,12 +296,14 @@ export function ProductModal({
       formData.brand !== originalData.brand ||
       formData.descriptionAr !== originalData.descriptionAr ||
       formData.descriptionEn !== originalData.descriptionEn ||
-      formData.careInstructions !== originalData.careInstructions ||
-      formData.arrangementContents !== originalData.arrangementContents ||
-      formData.productStatus !== originalData.productStatus ||
+      formData.careInstructionsAr !== originalData.careInstructionsAr ||
+      formData.careInstructionsEn !== originalData.careInstructionsEn ||
+      formData.arrangementContentsAr !== originalData.arrangementContentsAr ||
+      formData.arrangementContentsEn !== originalData.arrangementContentsEn ||
+      JSON.stringify(formData.productStatus) !==
+        JSON.stringify(originalData.productStatus) ||
       formData.targetAudience !== originalData.targetAudience ||
       formData.isActive !== originalData.isActive ||
-      formData.isFeatured !== originalData.isFeatured ||
       formData.showInHomePage !== originalData.showInHomePage ||
       JSON.stringify(formData.additionalImages) !==
         JSON.stringify(originalData.additionalImages)
@@ -237,9 +321,11 @@ export function ProductModal({
       formData.brand !== "" ||
       formData.descriptionAr.trim() !== "" ||
       formData.descriptionEn.trim() !== "" ||
-      formData.careInstructions.trim() !== "" ||
-      formData.arrangementContents.trim() !== "" ||
-      formData.productStatus !== "" ||
+      formData.careInstructionsAr.trim() !== "" ||
+      formData.careInstructionsEn.trim() !== "" ||
+      formData.arrangementContentsAr.trim() !== "" ||
+      formData.arrangementContentsEn.trim() !== "" ||
+      formData.productStatus.length > 0 ||
       formData.targetAudience !== "" ||
       formData.additionalImages.some((img) => img.trim() !== "")
     );
@@ -256,7 +342,7 @@ export function ProductModal({
     const hasCategory = formData.category !== "";
     const hasOccasion = formData.occasion !== "";
     const hasBrand = formData.brand !== "";
-    const hasProductStatus = formData.productStatus !== "";
+    const hasProductStatus = formData.productStatus.length > 0;
     const hasTargetAudience = formData.targetAudience !== "";
 
     return (
@@ -405,12 +491,32 @@ export function ProductModal({
         brand: formData.brand,
         descriptionAr: formData.descriptionAr.trim(),
         descriptionEn: formData.descriptionEn.trim(),
-        careInstructions: formData.careInstructions.trim(),
-        arrangementContents: formData.arrangementContents.trim(),
+        careInstructionsAr: formData.careInstructionsAr.trim(),
+        careInstructionsEn: formData.careInstructionsEn.trim(),
+        arrangementContentsAr: formData.arrangementContentsAr.trim(),
+        arrangementContentsEn: formData.arrangementContentsEn.trim(),
+        dimensions: {
+          height: formData.dimensions.height
+            ? parseFloat(formData.dimensions.height)
+            : undefined,
+          width: formData.dimensions.width
+            ? parseFloat(formData.dimensions.width)
+            : undefined,
+          unit: formData.dimensions.unit,
+        },
+        weight: {
+          value: formData.weight.value
+            ? parseFloat(formData.weight.value)
+            : undefined,
+          unit: formData.weight.unit,
+        },
+        metaTitleAr: formData.metaTitleAr.trim(),
+        metaTitleEn: formData.metaTitleEn.trim(),
+        metaDescriptionAr: formData.metaDescriptionAr.trim(),
+        metaDescriptionEn: formData.metaDescriptionEn.trim(),
         productStatus: formData.productStatus,
         targetAudience: formData.targetAudience,
         isActive: Boolean(formData.isActive),
-        isFeatured: Boolean(formData.isFeatured),
         showInHomePage: Boolean(formData.showInHomePage),
       };
 
@@ -746,9 +852,9 @@ export function ProductModal({
               حالة المنتج *
             </Label>
             <Select
-              value={formData.productStatus}
+              value={formData.productStatus[0] || ""}
               onValueChange={(value) =>
-                setFormData({ ...formData, productStatus: value })
+                setFormData({ ...formData, productStatus: [value] })
               }
             >
               <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20 text-white">
@@ -837,9 +943,12 @@ export function ProductModal({
               </Label>
               <textarea
                 id="careInstructions"
-                value={formData.careInstructions}
+                value={formData.careInstructionsAr}
                 onChange={(e) =>
-                  setFormData({ ...formData, careInstructions: e.target.value })
+                  setFormData({
+                    ...formData,
+                    careInstructionsAr: e.target.value,
+                  })
                 }
                 className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 resize-none"
                 rows={3}
@@ -855,11 +964,11 @@ export function ProductModal({
               </Label>
               <textarea
                 id="arrangementContents"
-                value={formData.arrangementContents}
+                value={formData.arrangementContentsAr}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    arrangementContents: e.target.value,
+                    arrangementContentsAr: e.target.value,
                   })
                 }
                 className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 resize-none"
@@ -884,22 +993,6 @@ export function ProductModal({
               checked={formData.isActive}
               onCheckedChange={(checked) =>
                 setFormData({ ...formData, isActive: checked })
-              }
-              className="order-1 data-[state=checked]:bg-purple-600 shadow-purple-500/20"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Label
-              htmlFor="isFeatured"
-              className="order-2 text-white font-medium"
-            >
-              منتج مميز
-            </Label>
-            <Switch
-              id="isFeatured"
-              checked={formData.isFeatured}
-              onCheckedChange={(checked) =>
-                setFormData({ ...formData, isFeatured: checked })
               }
               className="order-1 data-[state=checked]:bg-purple-600 shadow-purple-500/20"
             />

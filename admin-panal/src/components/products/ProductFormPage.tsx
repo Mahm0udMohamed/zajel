@@ -112,8 +112,23 @@ export default function ProductFormPage({
     brand: product?.brand?._id || "",
     descriptionAr: product?.descriptionAr || "",
     descriptionEn: product?.descriptionEn || "",
-    careInstructions: product?.careInstructions || "",
-    arrangementContents: product?.arrangementContents || "",
+    careInstructionsAr: product?.careInstructionsAr || "",
+    careInstructionsEn: product?.careInstructionsEn || "",
+    arrangementContentsAr: product?.arrangementContentsAr || "",
+    arrangementContentsEn: product?.arrangementContentsEn || "",
+    dimensions: {
+      height: product?.dimensions?.height?.toString() || "",
+      width: product?.dimensions?.width?.toString() || "",
+      unit: product?.dimensions?.unit || "سم",
+    },
+    weight: {
+      value: product?.weight?.value?.toString() || "",
+      unit: product?.weight?.unit || "جرام",
+    },
+    metaTitleAr: product?.metaTitleAr || "",
+    metaTitleEn: product?.metaTitleEn || "",
+    metaDescriptionAr: product?.metaDescriptionAr || "",
+    metaDescriptionEn: product?.metaDescriptionEn || "",
     productStatus: Array.isArray(product?.productStatus)
       ? product?.productStatus || []
       : product?.productStatus
@@ -121,7 +136,6 @@ export default function ProductFormPage({
       : [],
     targetAudience: product?.targetAudience || "",
     isActive: product?.isActive ?? true,
-    isFeatured: product?.isFeatured ?? false,
     showInHomePage: product?.showInHomePage ?? false,
   });
 
@@ -296,14 +310,32 @@ export default function ProductFormPage({
         brand: formData.brand,
         descriptionAr: formData.descriptionAr.trim(),
         descriptionEn: formData.descriptionEn.trim(),
-        careInstructions: formData.careInstructions.trim(),
-        arrangementContents: formData.arrangementContents.trim(),
+        careInstructionsAr: formData.careInstructionsAr.trim(),
+        careInstructionsEn: formData.careInstructionsEn.trim(),
+        arrangementContentsAr: formData.arrangementContentsAr.trim(),
+        arrangementContentsEn: formData.arrangementContentsEn.trim(),
+        dimensions: {
+          height: formData.dimensions.height
+            ? parseFloat(formData.dimensions.height)
+            : undefined,
+          width: formData.dimensions.width
+            ? parseFloat(formData.dimensions.width)
+            : undefined,
+          unit: formData.dimensions.unit,
+        },
+        weight: {
+          value: formData.weight.value
+            ? parseFloat(formData.weight.value)
+            : undefined,
+          unit: formData.weight.unit,
+        },
+        metaTitleAr: formData.metaTitleAr.trim(),
+        metaTitleEn: formData.metaTitleEn.trim(),
+        metaDescriptionAr: formData.metaDescriptionAr.trim(),
+        metaDescriptionEn: formData.metaDescriptionEn.trim(),
         productStatus: formData.productStatus,
         targetAudience: formData.targetAudience,
         isActive: Boolean(formData.isActive),
-        isFeatured:
-          Array.isArray(formData.productStatus) &&
-          formData.productStatus.includes("المجموعات المميزة"),
         showInHomePage: Boolean(formData.showInHomePage),
       };
 
@@ -981,37 +1013,428 @@ export default function ProductFormPage({
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="text-sm text-gray-400">
-                        نصائح العناية
+                        نصائح العناية بالعربية
                       </Label>
                       <Textarea
-                        value={formData.careInstructions}
+                        value={formData.careInstructionsAr}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            careInstructions: e.target.value,
+                            careInstructionsAr: e.target.value,
                           })
                         }
                         className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
                         rows={3}
-                        placeholder="أدخل نصائح العناية بالمنتج"
+                        placeholder="أدخل نصائح العناية بالمنتج بالعربية"
                       />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm text-gray-400">
-                        محتويات التنسيق
+                        نصائح العناية بالإنجليزية
                       </Label>
                       <Textarea
-                        value={formData.arrangementContents}
+                        value={formData.careInstructionsEn}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            arrangementContents: e.target.value,
+                            careInstructionsEn: e.target.value,
+                          })
+                        }
+                        className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 placeholder-ltr"
+                        rows={3}
+                        placeholder="Enter product care instructions in English"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        محتويات التنسيق بالعربية
+                      </Label>
+                      <Textarea
+                        value={formData.arrangementContentsAr}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            arrangementContentsAr: e.target.value,
                           })
                         }
                         className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
                         rows={3}
-                        placeholder="أدخل محتويات التنسيق"
+                        placeholder="أدخل محتويات التنسيق بالعربية"
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm text-gray-400">
+                        محتويات التنسيق بالإنجليزية
+                      </Label>
+                      <Textarea
+                        value={formData.arrangementContentsEn}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            arrangementContentsEn: e.target.value,
+                          })
+                        }
+                        className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 placeholder-ltr"
+                        rows={3}
+                        placeholder="Enter arrangement contents in English"
+                      />
+                    </div>
+                  </div>
+
+                  {/* الأبعاد */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+                        <svg
+                          className="w-4 h-4 text-indigo-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold">
+                          أبعاد المنتج
+                        </h3>
+                        <p className="text-sm text-gray-400">
+                          أدخل أبعاد المنتج (اختياري)
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-400">
+                          الارتفاع
+                        </Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          value={formData.dimensions.height}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              dimensions: {
+                                ...formData.dimensions,
+                                height: e.target.value,
+                              },
+                            })
+                          }
+                          className="bg-gray-900/50 border-gray-700 focus:border-indigo-500 focus:ring-indigo-500/20"
+                          placeholder="0.0"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-400">العرض</Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          value={formData.dimensions.width}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              dimensions: {
+                                ...formData.dimensions,
+                                width: e.target.value,
+                              },
+                            })
+                          }
+                          className="bg-gray-900/50 border-gray-700 focus:border-indigo-500 focus:ring-indigo-500/20"
+                          placeholder="0.0"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-400">
+                          وحدة القياس
+                        </Label>
+                        <Select
+                          value={formData.dimensions.unit}
+                          onValueChange={(value) =>
+                            setFormData({
+                              ...formData,
+                              dimensions: {
+                                ...formData.dimensions,
+                                unit: value,
+                              },
+                            })
+                          }
+                        >
+                          <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-indigo-500 focus:ring-indigo-500/20">
+                            <SelectValue placeholder="اختر الوحدة" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="سم">سم (سنتيمتر)</SelectItem>
+                            <SelectItem value="م">م (متر)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    {/* عرض الأبعاد كاملة */}
+                    {(formData.dimensions.height ||
+                      formData.dimensions.width) && (
+                      <div className="mt-4 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <svg
+                            className="w-4 h-4 text-indigo-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span className="text-sm text-indigo-300 font-medium">
+                            الأبعاد:
+                          </span>
+                        </div>
+                        <div className="mt-1 text-sm text-indigo-200">
+                          الارتفاع: {formData.dimensions.height || 0} × العرض:{" "}
+                          {formData.dimensions.width || 0}{" "}
+                          {formData.dimensions.unit}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* حقل الوزن */}
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          الوزن
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">
+                              القيمة
+                            </label>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={formData.weight.value}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  weight: {
+                                    ...formData.weight,
+                                    value: e.target.value,
+                                  },
+                                })
+                              }
+                              placeholder="أدخل الوزن"
+                              className="bg-gray-900/50 border-gray-700 focus:border-indigo-500 focus:ring-indigo-500/20"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">
+                              الوحدة
+                            </label>
+                            <Select
+                              value={formData.weight.unit}
+                              onValueChange={(value) =>
+                                setFormData({
+                                  ...formData,
+                                  weight: {
+                                    ...formData.weight,
+                                    unit: value,
+                                  },
+                                })
+                              }
+                            >
+                              <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-indigo-500 focus:ring-indigo-500/20">
+                                <SelectValue placeholder="اختر الوحدة" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="جرام">جرام (g)</SelectItem>
+                                <SelectItem value="كيلوجرام">
+                                  كيلوجرام (kg)
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* عرض الوزن كامل */}
+                      {formData.weight.value && (
+                        <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <svg
+                              className="w-4 h-4 text-green-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
+                              />
+                            </svg>
+                            <span className="text-sm font-medium text-green-300">
+                              الوزن:
+                            </span>
+                          </div>
+                          <div className="mt-1 text-sm text-green-200">
+                            {formData.weight.value} {formData.weight.unit}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* حقول SEO */}
+                    <div className="space-y-6">
+                      <div className="border-t border-gray-800/50 pt-6">
+                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                          <svg
+                            className="w-5 h-5 text-purple-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          إعدادات SEO
+                        </h3>
+
+                        {/* عناوين SEO */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* عنوان SEO بالعربية */}
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="metaTitleAr"
+                              className="text-sm text-gray-400"
+                            >
+                              عنوان SEO بالعربية
+                            </Label>
+                            <Input
+                              id="metaTitleAr"
+                              value={formData.metaTitleAr}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  metaTitleAr: e.target.value,
+                                })
+                              }
+                              placeholder="أدخل عنوان SEO بالعربية"
+                              className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                              maxLength={60}
+                            />
+                            <div className="text-xs text-gray-500">
+                              {(formData.metaTitleAr || "").length}/60 حرف
+                            </div>
+                          </div>
+
+                          {/* عنوان SEO بالإنجليزية */}
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="metaTitleEn"
+                              className="text-sm text-gray-400"
+                            >
+                              عنوان SEO بالإنجليزية
+                            </Label>
+                            <Input
+                              id="metaTitleEn"
+                              value={formData.metaTitleEn}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  metaTitleEn: e.target.value,
+                                })
+                              }
+                              placeholder="Enter SEO title in English"
+                              className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20 placeholder-ltr"
+                              maxLength={60}
+                            />
+                            <div className="text-xs text-gray-500">
+                              {(formData.metaTitleEn || "").length}/60 حرف
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* أوصاف SEO */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* وصف SEO بالعربية */}
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="metaDescriptionAr"
+                              className="text-sm text-gray-400"
+                            >
+                              وصف SEO بالعربية
+                            </Label>
+                            <Textarea
+                              id="metaDescriptionAr"
+                              value={formData.metaDescriptionAr}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  metaDescriptionAr: e.target.value,
+                                })
+                              }
+                              placeholder="أدخل وصف SEO بالعربية"
+                              className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                              rows={3}
+                              maxLength={160}
+                            />
+                            <div className="text-xs text-gray-500">
+                              {(formData.metaDescriptionAr || "").length}/160
+                              حرف
+                            </div>
+                          </div>
+
+                          {/* وصف SEO بالإنجليزية */}
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="metaDescriptionEn"
+                              className="text-sm text-gray-400"
+                            >
+                              وصف SEO بالإنجليزية
+                            </Label>
+                            <Textarea
+                              id="metaDescriptionEn"
+                              value={formData.metaDescriptionEn}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  metaDescriptionEn: e.target.value,
+                                })
+                              }
+                              placeholder="Enter SEO description in English"
+                              className="bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20 placeholder-ltr"
+                              rows={3}
+                              maxLength={160}
+                            />
+                            <div className="text-xs text-gray-500">
+                              {(formData.metaDescriptionEn || "").length}/160
+                              حرف
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

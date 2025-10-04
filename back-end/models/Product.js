@@ -113,39 +113,66 @@ const ProductSchema = new mongoose.Schema(
     },
 
     // نصائح العناية
-    careInstructions: {
+    careInstructionsAr: {
       type: String,
       trim: true,
-      maxlength: [1000, "نصائح العناية يجب أن تكون أقل من 1000 حرف"],
+      maxlength: [1000, "نصائح العناية بالعربية يجب أن تكون أقل من 1000 حرف"],
+      default: "",
+    },
+    careInstructionsEn: {
+      type: String,
+      trim: true,
+      maxlength: [
+        1000,
+        "نصائح العناية بالإنجليزية يجب أن تكون أقل من 1000 حرف",
+      ],
       default: "",
     },
 
     // الأبعاد
     dimensions: {
-      length: {
+      height: {
         type: Number,
-        min: [0, "الطول يجب أن يكون أكبر من أو يساوي 0"],
+        min: [0, "الارتفاع يجب أن يكون أكبر من أو يساوي 0"],
       },
       width: {
         type: Number,
         min: [0, "العرض يجب أن يكون أكبر من أو يساوي 0"],
       },
-      height: {
-        type: Number,
-        min: [0, "الارتفاع يجب أن يكون أكبر من أو يساوي 0"],
-      },
       unit: {
         type: String,
-        enum: ["سم", "م", "بوصة", "قدم"],
+        enum: ["سم", "م"],
         default: "سم",
       },
     },
 
+    // الوزن
+    weight: {
+      value: {
+        type: Number,
+        min: [0, "الوزن يجب أن يكون أكبر من أو يساوي 0"],
+      },
+      unit: {
+        type: String,
+        enum: ["جرام", "كيلوجرام"],
+        default: "جرام",
+      },
+    },
+
     // محتويات التنسيق
-    arrangementContents: {
+    arrangementContentsAr: {
       type: String,
       trim: true,
-      maxlength: [1000, "محتويات التنسيق يجب أن تكون أقل من 1000 حرف"],
+      maxlength: [1000, "محتويات التنسيق بالعربية يجب أن تكون أقل من 1000 حرف"],
+      default: "",
+    },
+    arrangementContentsEn: {
+      type: String,
+      trim: true,
+      maxlength: [
+        1000,
+        "محتويات التنسيق بالإنجليزية يجب أن تكون أقل من 1000 حرف",
+      ],
       default: "",
     },
 
@@ -212,10 +239,6 @@ const ProductSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    isFeatured: {
-      type: Boolean,
-      default: false,
-    },
   },
   {
     timestamps: true,
@@ -230,8 +253,10 @@ ProductSchema.index({
   nameEn: "text",
   descriptionAr: "text",
   descriptionEn: "text",
-  careInstructions: "text",
-  arrangementContents: "text",
+  careInstructionsAr: "text",
+  careInstructionsEn: "text",
+  arrangementContentsAr: "text",
+  arrangementContentsEn: "text",
 });
 
 // فهارس للعلاقات
@@ -270,15 +295,54 @@ ProductSchema.virtual("metaDescription").get(function () {
 
 // Virtual field للأبعاد كاملة
 ProductSchema.virtual("fullDimensions").get(function () {
-  if (
-    !this.dimensions.length &&
-    !this.dimensions.width &&
-    !this.dimensions.height
-  ) {
+  if (!this.dimensions.height && !this.dimensions.width) {
     return null;
   }
-  const { length, width, height, unit } = this.dimensions;
-  return `${length || 0} × ${width || 0} × ${height || 0} ${unit}`;
+  const { height, width, unit } = this.dimensions;
+  return `الارتفاع: ${height || 0} × العرض: ${width || 0} ${unit}`;
+});
+
+// Virtual field للأبعاد بالإنجليزية
+ProductSchema.virtual("fullDimensionsEn").get(function () {
+  if (!this.dimensions.height && !this.dimensions.width) {
+    return null;
+  }
+  const { height, width, unit } = this.dimensions;
+
+  // تحويل الوحدة للإنجليزية
+  const unitMap = {
+    سم: "cm",
+    م: "m",
+  };
+
+  const unitEn = unitMap[unit] || unit;
+  return `Height: ${height || 0} × Width: ${width || 0} ${unitEn}`;
+});
+
+// Virtual field للوزن بالعربية
+ProductSchema.virtual("fullWeight").get(function () {
+  if (!this.weight.value) {
+    return null;
+  }
+  const { value, unit } = this.weight;
+  return `الوزن: ${value} ${unit}`;
+});
+
+// Virtual field للوزن بالإنجليزية
+ProductSchema.virtual("fullWeightEn").get(function () {
+  if (!this.weight.value) {
+    return null;
+  }
+  const { value, unit } = this.weight;
+
+  // تحويل وحدة الوزن للإنجليزية
+  const weightUnitMap = {
+    جرام: "g",
+    كيلوجرام: "kg",
+  };
+
+  const unitEn = weightUnitMap[unit] || unit;
+  return `Weight: ${value} ${unitEn}`;
 });
 
 // Middleware قبل الحفظ - تحديث ترتيب المنتجات
@@ -384,7 +448,7 @@ ProductSchema.statics.getActiveProducts = function (
     .select(
       `name${language === "ar" ? "Ar" : "En"} description${
         language === "ar" ? "Ar" : "En"
-      } mainImage additionalImages price productStatus targetAudience sortOrder isFeatured`
+      } mainImage additionalImages price productStatus targetAudience sortOrder`
     );
 };
 
@@ -401,14 +465,14 @@ ProductSchema.statics.searchProducts = function (
       ? {
           nameAr: { $regex: query, $options: "i" },
           descriptionAr: { $regex: query, $options: "i" },
-          careInstructions: { $regex: query, $options: "i" },
-          arrangementContents: { $regex: query, $options: "i" },
+          careInstructionsAr: { $regex: query, $options: "i" },
+          arrangementContentsAr: { $regex: query, $options: "i" },
         }
       : {
           nameEn: { $regex: query, $options: "i" },
           descriptionEn: { $regex: query, $options: "i" },
-          careInstructions: { $regex: query, $options: "i" },
-          arrangementContents: { $regex: query, $options: "i" },
+          careInstructionsEn: { $regex: query, $options: "i" },
+          arrangementContentsEn: { $regex: query, $options: "i" },
         };
 
   return this.find({ ...searchFields, isActive, ...filters })
@@ -421,7 +485,7 @@ ProductSchema.statics.searchProducts = function (
     .select(
       `name${language === "ar" ? "Ar" : "En"} description${
         language === "ar" ? "Ar" : "En"
-      } mainImage additionalImages price productStatus targetAudience sortOrder isFeatured`
+      } mainImage additionalImages price productStatus targetAudience sortOrder`
     );
 };
 
@@ -446,6 +510,33 @@ ProductSchema.methods.incrementViewCount = function () {
 ProductSchema.methods.incrementPurchaseCount = function () {
   this.purchaseCount += 1;
   return this.save();
+};
+
+// Static method لزيادة المشاهدات تلقائياً عند جلب المنتج
+ProductSchema.statics.incrementViewsOnGet = async function (productId) {
+  try {
+    await this.findByIdAndUpdate(
+      productId,
+      { $inc: { viewCount: 1 } },
+      { new: false } // لا نعيد المنتج المحدث لتوفير الأداء
+    );
+  } catch (error) {
+    console.error("Error incrementing view count:", error);
+  }
+};
+
+// Static method لزيادة المشتريات تلقائياً عند إنشاء طلب
+ProductSchema.statics.incrementPurchasesOnOrder = async function (productIds) {
+  try {
+    if (!Array.isArray(productIds) || productIds.length === 0) return;
+
+    await this.updateMany(
+      { _id: { $in: productIds } },
+      { $inc: { purchaseCount: 1 } }
+    );
+  } catch (error) {
+    console.error("Error incrementing purchase count:", error);
+  }
 };
 
 // Method لتفعيل/إلغاء تفعيل المنتج

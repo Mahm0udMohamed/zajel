@@ -22,12 +22,32 @@ export interface Product {
   };
   descriptionAr?: string;
   descriptionEn?: string;
-  careInstructions?: string;
-  arrangementContents?: string;
+  careInstructionsAr?: string;
+  careInstructionsEn?: string;
+  arrangementContentsAr?: string;
+  arrangementContentsEn?: string;
+  dimensions?: {
+    height?: number;
+    width?: number;
+    unit?: string;
+  };
+  weight?: {
+    value?: number;
+    unit?: string;
+  };
+  fullDimensions?: string;
+  fullDimensionsEn?: string;
+  fullWeight?: string;
+  fullWeightEn?: string;
+  metaTitle?: string; // عنوان SEO حسب اللغة
+  metaTitleAr?: string; // عنوان SEO بالعربية
+  metaTitleEn?: string; // عنوان SEO بالإنجليزية
+  metaDescription?: string; // وصف SEO حسب اللغة
+  metaDescriptionAr?: string; // وصف SEO بالعربية
+  metaDescriptionEn?: string; // وصف SEO بالإنجليزية
   productStatus: string[];
   targetAudience: string;
   isActive: boolean;
-  isFeatured: boolean;
   showInHomePage: boolean;
   viewCount?: number;
   purchaseCount?: number;
@@ -46,11 +66,25 @@ export interface ProductFormData {
   brand: string;
   descriptionAr: string;
   descriptionEn: string;
-  careInstructions: string;
-  arrangementContents: string;
+  careInstructionsAr: string;
+  careInstructionsEn: string;
+  arrangementContentsAr: string;
+  arrangementContentsEn: string;
+  dimensions: {
+    height: string;
+    width: string;
+    unit: string;
+  };
+  weight: {
+    value: string;
+    unit: string;
+  };
+  metaTitleAr: string;
+  metaTitleEn: string;
+  metaDescriptionAr: string;
+  metaDescriptionEn: string;
   productStatus: string[];
   targetAudience: string;
   isActive: boolean;
-  isFeatured: boolean;
   showInHomePage: boolean;
 }

@@ -1098,7 +1098,6 @@ class ApiService {
     productStatus?: string;
     targetAudience?: string;
     showInHomePage?: boolean;
-    isFeatured?: boolean;
     minPrice?: number;
     maxPrice?: number;
   }): Promise<{
@@ -1133,8 +1132,6 @@ class ApiService {
       queryParams.append("targetAudience", params.targetAudience);
     if (params?.showInHomePage !== undefined)
       queryParams.append("showInHomePage", params.showInHomePage.toString());
-    if (params?.isFeatured !== undefined)
-      queryParams.append("isFeatured", params.isFeatured.toString());
     if (params?.minPrice)
       queryParams.append("minPrice", params.minPrice.toString());
     if (params?.maxPrice)
