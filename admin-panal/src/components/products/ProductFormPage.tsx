@@ -131,6 +131,9 @@ export default function ProductFormPage({
     new Set()
   );
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+  const [activeTab, setActiveTab] = useState<
+    "basic" | "images" | "content" | "settings"
+  >("basic");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -342,7 +345,7 @@ export default function ProductFormPage({
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="space-y-0 pb-2">
+        <CardHeader className="space-y-0 pb-0">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex-1">
               <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-semibold">
@@ -361,14 +364,72 @@ export default function ProductFormPage({
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="p-4 md:p-6">
-          <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
-            {/* تخطيط متجاوب للشاشات المختلفة */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 xl:gap-8">
+        <CardContent className="p-2">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* أزرار التبديل للشاشات المتوسطة والصغيرة */}
+            <div className="xl:hidden">
+              <div className="flex gap-0.5 p-1 bg-gray-900/50 rounded-lg overflow-x-auto max-w-full w-fit mx-auto">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("basic")}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 flex items-center gap-1 whitespace-nowrap ${
+                    activeTab === "basic"
+                      ? "text-white"
+                      : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                  }`}
+                >
+                  <Package className="w-3 h-3" />
+                  <span>المعلومات</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("images")}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 flex items-center gap-1 whitespace-nowrap ${
+                    activeTab === "images"
+                      ? "text-white"
+                      : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                  }`}
+                >
+                  <Image className="w-3 h-3" />
+                  <span>الصور</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("content")}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 flex items-center gap-1 whitespace-nowrap ${
+                    activeTab === "content"
+                      ? "text-white"
+                      : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                  }`}
+                >
+                  <FileText className="w-3 h-3" />
+                  <span>المحتوى</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("settings")}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 flex items-center gap-1 whitespace-nowrap ${
+                    activeTab === "settings"
+                      ? "text-white"
+                      : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                  }`}
+                >
+                  <Eye className="w-3 h-3" />
+                  <span>الإعدادات</span>
+                </button>
+              </div>
+            </div>
+
+            {/* تخطيط احترافي للشاشات الكبيرة */}
+            <div className="flex flex-col xl:flex-row gap-8">
               {/* العمود الأيسر - إدارة الصور وإعدادات العرض */}
-              <div className="xl:col-span-1 space-y-4 md:space-y-6 order-2 xl:order-2">
+              <div className="xl:w-[288px] xl:flex-shrink-0 xl:order-2 space-y-6">
                 {/* إدارة الصور */}
-                <div className="space-y-4 p-4 md:p-6 bg-black/20 rounded-lg border border-gray-800/50">
+                <div
+                  className={`space-y-4 p-6 bg-black/20 rounded-lg border border-gray-800/50 ${
+                    activeTab !== "images" ? "xl:block hidden" : "block"
+                  }`}
+                >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
                       <Image className="w-4 h-4 text-purple-400" />
@@ -396,7 +457,7 @@ export default function ProductFormPage({
                             })
                           }
                           placeholder="رابط الصورة الأساسية"
-                          className="flex-1 bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                          className="flex-1 bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20 placeholder-ltr"
                           required
                         />
                         <div className="relative group">
@@ -417,22 +478,6 @@ export default function ProductFormPage({
                           </Button>
                         </div>
                       </div>
-                      {uploadingImages.has(-1) ? (
-                        <div className="flex items-center justify-center w-full h-24 md:h-32 bg-gray-800 rounded border">
-                          <div className="flex flex-col items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
-                            <span className="text-xs text-gray-400">
-                              جاري الرفع...
-                            </span>
-                          </div>
-                        </div>
-                      ) : formData.mainImage ? (
-                        <ImageWithError
-                          src={formData.mainImage}
-                          alt="معاينة الصورة الأساسية"
-                          className="w-full h-24 md:h-32 object-cover rounded border"
-                        />
-                      ) : null}
                     </div>
 
                     {formData.additionalImages.map((image, index) => (
@@ -447,7 +492,7 @@ export default function ProductFormPage({
                               updateImageField(index, e.target.value)
                             }
                             placeholder="رابط الصورة"
-                            className="flex-1 bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                            className="flex-1 bg-gray-900/50 border-gray-700 focus:border-purple-500 focus:ring-purple-500/20 placeholder-ltr"
                           />
                           <div className="relative group">
                             <input
@@ -475,29 +520,6 @@ export default function ProductFormPage({
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
-                        {uploadingImages.has(index) ? (
-                          <div className="flex items-center justify-center w-full h-16 md:h-20 bg-gray-800 rounded border">
-                            <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
-                          </div>
-                        ) : image ? (
-                          <div>
-                            {failedImages.has(index) ? (
-                              <div className="w-full h-16 md:h-20 bg-gray-800 rounded border flex items-center justify-center">
-                                <span className="text-xs text-gray-500">
-                                  صورة غير صحيحة
-                                </span>
-                              </div>
-                            ) : (
-                              <ImageWithError
-                                src={image}
-                                alt={`معاينة الصورة ${index + 1}`}
-                                className="w-full h-16 md:h-20 object-cover rounded border"
-                                onError={() => handleImageError(index)}
-                                onLoad={() => handleImageLoad(index)}
-                              />
-                            )}
-                          </div>
-                        ) : null}
                       </div>
                     ))}
                     <Button
@@ -510,11 +532,88 @@ export default function ProductFormPage({
                       <Plus className="w-4 h-4 mr-2" />
                       إضافة صورة
                     </Button>
+
+                    {/* صندوق عرض الصور */}
+                    <div className="mt-6 p-4 bg-gray-900/30 rounded-lg border border-gray-700/50">
+                      <h4 className="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
+                        <Image className="w-4 h-4" />
+                        الصور
+                      </h4>
+                      <div className="flex flex-wrap gap-1">
+                        {/* الصورة الأساسية */}
+                        {uploadingImages.has(-1) ? (
+                          <div className="flex items-center justify-center w-12 h-12 bg-gray-800 rounded border">
+                            <div className="flex flex-col items-center gap-1">
+                              <Loader2 className="w-3 h-3 animate-spin text-purple-400" />
+                              <span className="text-xs text-gray-400">
+                                رفع...
+                              </span>
+                            </div>
+                          </div>
+                        ) : formData.mainImage ? (
+                          <div className="relative group">
+                            <ImageWithError
+                              src={formData.mainImage}
+                              alt="الصورة الأساسية"
+                              className="w-12 h-12 object-cover rounded border"
+                            />
+                            <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs px-1 py-0.5 rounded-full">
+                              أساسية
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-800/50 rounded border border-dashed border-gray-600 flex items-center justify-center">
+                            <span className="text-xs text-gray-500">
+                              لا توجد
+                            </span>
+                          </div>
+                        )}
+
+                        {/* الصور الإضافية */}
+                        {formData.additionalImages.map((image, index) => (
+                          <div key={`preview-${index}`}>
+                            {uploadingImages.has(index) ? (
+                              <div className="flex items-center justify-center w-12 h-12 bg-gray-800 rounded border">
+                                <Loader2 className="w-3 h-3 animate-spin text-purple-400" />
+                              </div>
+                            ) : image ? (
+                              <div>
+                                {failedImages.has(index) ? (
+                                  <div className="w-12 h-12 bg-gray-800 rounded border flex items-center justify-center">
+                                    <span className="text-xs text-red-400">
+                                      خطأ
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <ImageWithError
+                                    src={image}
+                                    alt={`صورة ${index + 1}`}
+                                    className="w-12 h-12 object-cover rounded border"
+                                    onError={() => handleImageError(index)}
+                                    onLoad={() => handleImageLoad(index)}
+                                  />
+                                )}
+                              </div>
+                            ) : (
+                              <div className="w-12 h-12 bg-gray-800/50 rounded border border-dashed border-gray-600 flex items-center justify-center">
+                                <span className="text-xs text-gray-500">
+                                  فارغ
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* إعدادات العرض */}
-                <div className="space-y-4 p-4 md:p-6 bg-black/20 rounded-lg border border-gray-800/50">
+                <div
+                  className={`space-y-4 p-6 bg-black/20 rounded-lg border border-gray-800/50 ${
+                    activeTab !== "settings" ? "xl:block hidden" : "block"
+                  }`}
+                >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
                       <Eye className="w-4 h-4 text-orange-400" />
@@ -600,9 +699,13 @@ export default function ProductFormPage({
               </div>
 
               {/* العمود الأيمن - المعلومات الأساسية والمحتوى */}
-              <div className="xl:col-span-2 space-y-4 md:space-y-6 order-1 xl:order-1">
+              <div className="xl:flex-1 xl:order-1 space-y-6 xl:min-w-0">
                 {/* المعلومات الأساسية */}
-                <div className="space-y-4 p-4 md:p-6 bg-black/20 rounded-lg border border-gray-800/50">
+                <div
+                  className={`space-y-4 p-6 bg-black/20 rounded-lg border border-gray-800/50 ${
+                    activeTab !== "basic" ? "xl:block hidden" : "block"
+                  }`}
+                >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
                       <Package className="w-4 h-4 text-blue-400" />
@@ -652,7 +755,7 @@ export default function ProductFormPage({
                   </div>
 
                   {/* السعر والتصنيفات */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="space-y-2">
                       <Label className="text-sm text-gray-400">السعر *</Label>
                       <Input
@@ -738,7 +841,7 @@ export default function ProductFormPage({
                   </div>
 
                   {/* حالة المنتج والجمهور المستهدف */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="text-sm text-gray-400">
                         حالة المنتج *
@@ -793,7 +896,11 @@ export default function ProductFormPage({
                 </div>
 
                 {/* الأوصاف والمحتوى */}
-                <div className="space-y-4 p-4 md:p-6 bg-black/20 rounded-lg border border-gray-800/50">
+                <div
+                  className={`space-y-4 p-6 bg-black/20 rounded-lg border border-gray-800/50 ${
+                    activeTab !== "content" ? "xl:block hidden" : "block"
+                  }`}
+                >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
                       <FileText className="w-4 h-4 text-green-400" />
@@ -808,7 +915,7 @@ export default function ProductFormPage({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="text-sm text-gray-400">
                         الوصف بالعربية
@@ -845,7 +952,7 @@ export default function ProductFormPage({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="text-sm text-gray-400">
                         نصائح العناية
@@ -886,7 +993,7 @@ export default function ProductFormPage({
             </div>
 
             {/* أزرار الإجراءات */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 md:pt-6 border-t border-gray-800/50">
+            <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-800/50">
               <Button type="button" variant="outline" onClick={onCancel}>
                 إلغاء
               </Button>
