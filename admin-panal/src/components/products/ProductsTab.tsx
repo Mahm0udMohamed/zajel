@@ -145,8 +145,41 @@ export default function ProductsTab() {
   };
 
   const handleToggleActive = async (id: string) => {
+    if (!id) {
+      toast({
+        title: "خطأ",
+        description: "معرف المنتج غير صحيح",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // حفظ الحالة الأصلية للتراجع في حالة الخطأ
+    const originalProducts = [...products];
+    const productIndex = products.findIndex((product) => product._id === id);
+
+    if (productIndex === -1) {
+      toast({
+        title: "خطأ",
+        description: "المنتج غير موجود",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const originalStatus = products[productIndex].isActive;
+    const newStatus = !originalStatus;
+
+    // تحديث الحالة محلياً فوراً لتحسين تجربة المستخدم
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product._id === id ? { ...product, isActive: newStatus } : product
+      )
+    );
+
     try {
       const updatedProduct = await apiService.toggleProductStatus(id);
+      // تحديث البيانات الكاملة من الخادم
       setProducts((prevProducts) =>
         prevProducts.map((product) =>
           product._id === id ? (updatedProduct as Product) : product
@@ -154,10 +187,14 @@ export default function ProductsTab() {
       );
       toast({
         title: "تم بنجاح",
-        description: "تم تحديث حالة المنتج بنجاح",
+        description: `تم ${newStatus ? "تفعيل" : "إلغاء تفعيل"} المنتج بنجاح`,
       });
     } catch (error) {
       console.error("Error toggling product status:", error);
+
+      // إعادة الحالة الأصلية في حالة الخطأ
+      setProducts(originalProducts);
+
       toast({
         title: "خطأ",
         description: "فشل في تحديث حالة المنتج",
@@ -266,13 +303,15 @@ export default function ProductsTab() {
                   <TableHead className="w-20 min-w-[80px]">الصورة</TableHead>
                   <TableHead className="w-40 min-w-[160px]">المنتج</TableHead>
                   <TableHead className="w-32 min-w-[128px]">السعر</TableHead>
+                  <TableHead className="w-32 min-w-[128px]">الفئة</TableHead>
+                  <TableHead className="w-32 min-w-[128px]">
+                    العلامة التجارية
+                  </TableHead>
+                  <TableHead className="w-32 min-w-[128px]">المناسبة</TableHead>
                   <TableHead className="w-40 min-w-[160px]">التصنيف</TableHead>
                   <TableHead className="w-32 min-w-[128px]">الحالة</TableHead>
                   <TableHead className="w-24 min-w-[96px]">
                     الإحصائيات
-                  </TableHead>
-                  <TableHead className="w-32 min-w-[128px]">
-                    تاريخ الإنشاء
                   </TableHead>
                   <TableHead className="w-32 min-w-[128px]">
                     الإجراءات
@@ -282,7 +321,7 @@ export default function ProductsTab() {
               <TableBody>
                 {products.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8">
+                    <TableCell colSpan={10} className="text-center py-8">
                       <div className="flex flex-col items-center gap-2">
                         <Package className="w-8 h-8 text-muted-foreground" />
                         <span className="text-muted-foreground">
@@ -330,10 +369,28 @@ export default function ProductsTab() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <div className="text-sm font-medium text-center">
+                            <div className="flex justify-center">
+                              <div className="text-sm text-center">
                                 {product.category?.nameAr}
                               </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex justify-center">
+                              <div className="text-sm text-center">
+                                {product.brand?.nameAr}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex justify-center">
+                              <div className="text-sm text-center">
+                                {product.occasion?.nameAr}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center gap-1">
                               <div className="flex flex-wrap justify-center gap-1">
                                 {getProductStatusBadge(product.productStatus)}
                                 {getTargetAudienceBadge(product.targetAudience)}
@@ -379,15 +436,6 @@ export default function ProductsTab() {
                               <div className="flex items-center gap-1">
                                 <ShoppingCart className="w-3 h-3" />
                                 <span>{product.purchaseCount || 0}</span>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex justify-center">
-                              <div className="text-sm text-center">
-                                {new Date(product.createdAt).toLocaleDateString(
-                                  "ar-SA"
-                                )}
                               </div>
                             </div>
                           </TableCell>

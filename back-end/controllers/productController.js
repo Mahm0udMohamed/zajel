@@ -662,6 +662,15 @@ export const toggleProductStatus = async (req, res) => {
     product.updatedBy = req.admin._id;
     await product.save();
 
+    // جلب المنتج المحدث مع العلاقات
+    const updatedProduct = await Product.findById(id)
+      .populate("category", "nameAr nameEn imageUrl")
+      .populate("occasion", "nameAr nameEn imageUrl")
+      .populate("brand", "nameAr nameEn imageUrl")
+      .populate("createdBy", "name email")
+      .populate("updatedBy", "name email")
+      .lean();
+
     // مسح الكاش المتعلق بالمنتجات
     try {
       await cacheLayer.clear("products", "*");
@@ -672,7 +681,7 @@ export const toggleProductStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: product,
+      data: updatedProduct,
       message: `تم ${product.isActive ? "تفعيل" : "إلغاء تفعيل"} المنتج بنجاح`,
     });
   } catch (error) {
