@@ -68,7 +68,11 @@ export const getAllProducts = async (req, res) => {
     }
 
     if (productStatus) {
-      query.productStatus = productStatus;
+      if (Array.isArray(productStatus)) {
+        query.productStatus = { $in: productStatus };
+      } else {
+        query.productStatus = productStatus;
+      }
     }
 
     if (targetAudience) {
@@ -378,7 +382,7 @@ export const createProduct = async (req, res) => {
       brand,
       descriptionAr = "",
       descriptionEn = "",
-      productStatus,
+      productStatus = [],
       targetAudience,
       careInstructions = "",
       dimensions = {},
@@ -965,7 +969,7 @@ export const createProductWithImage = async (req, res) => {
       brand,
       descriptionAr = "",
       descriptionEn = "",
-      productStatus,
+      productStatus = [],
       targetAudience,
       careInstructions = "",
       dimensions = {},

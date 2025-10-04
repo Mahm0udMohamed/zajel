@@ -24,7 +24,7 @@ export interface Product {
   descriptionEn?: string;
   careInstructions?: string;
   arrangementContents?: string;
-  productStatus: string;
+  productStatus: string[];
   targetAudience: string;
   isActive: boolean;
   isFeatured: boolean;
@@ -48,7 +48,7 @@ export interface ProductFormData {
   descriptionEn: string;
   careInstructions: string;
   arrangementContents: string;
-  productStatus: string;
+  productStatus: string[];
   targetAudience: string;
   isActive: boolean;
   isFeatured: boolean;

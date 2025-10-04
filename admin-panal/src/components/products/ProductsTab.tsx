@@ -27,6 +27,13 @@ import {
   Loader2,
   Eye,
   ShoppingCart,
+  BarChart3,
+  Star,
+  Gem,
+  Clock,
+  User,
+  UserCheck,
+  Users,
 } from "lucide-react";
 import { useToast } from "../../hooks/use-toast";
 import { apiService } from "../../services/api";
@@ -211,45 +218,85 @@ export default function ProductsTab() {
     }).format(price);
   };
 
-  const getProductStatusBadge = (status: string) => {
-    const statusColors: Record<string, string> = {
-      "الأكثر مبيعًا": "bg-green-500/20 border-green-500/50 text-green-300",
-      "المجموعات المميزة":
-        "bg-purple-500/20 border-purple-500/50 text-purple-300",
-      "هدايا فاخرة": "bg-yellow-500/20 border-yellow-500/50 text-yellow-300",
-      "مناسبة خاصة": "bg-pink-500/20 border-pink-500/50 text-pink-300",
+  const getProductStatusIcons = (statuses: string[]) => {
+    const statusConfig: Record<
+      string,
+      { icon: React.ComponentType<any>; color: string }
+    > = {
+      "الأكثر مبيعًا": {
+        icon: BarChart3,
+        color: "text-blue-600",
+      },
+      "المجموعات المميزة": {
+        icon: Star,
+        color: "text-amber-500",
+      },
+      "هدايا فاخرة": {
+        icon: Gem,
+        color: "text-purple-600",
+      },
+      "مناسبة خاصة": {
+        icon: Clock,
+        color: "text-green-600",
+      },
     };
 
+    if (!Array.isArray(statuses) || statuses.length === 0) {
+      return (
+        <div className="flex items-center gap-1">
+          <span className="text-xs text-gray-400">-</span>
+        </div>
+      );
+    }
+
     return (
-      <Badge
-        variant="outline"
-        className={`text-xs ${
-          statusColors[status] ||
-          "bg-gray-500/20 border-gray-500/50 text-gray-300"
-        }`}
-      >
-        {status}
-      </Badge>
+      <div className="flex items-center gap-2">
+        {statuses.map((status, index) => {
+          const config = statusConfig[status];
+          if (!config) return null;
+
+          const IconComponent = config.icon;
+
+          return (
+            <IconComponent
+              key={`${status}-${index}`}
+              className={`w-4 h-4 ${config.color}`}
+              title={status}
+            />
+          );
+        })}
+      </div>
     );
   };
 
-  const getTargetAudienceBadge = (audience: string) => {
-    const audienceColors: Record<string, string> = {
-      له: "bg-blue-500/20 border-blue-500/50 text-blue-300",
-      لها: "bg-pink-500/20 border-pink-500/50 text-pink-300",
-      لكابلز: "bg-purple-500/20 border-purple-500/50 text-purple-300",
+  const getTargetAudienceIcon = (audience: string) => {
+    const audienceConfig: Record<
+      string,
+      { icon: React.ComponentType<any>; color: string }
+    > = {
+      له: {
+        icon: User,
+        color: "text-blue-500",
+      },
+      لها: {
+        icon: UserCheck,
+        color: "text-pink-500",
+      },
+      لكابلز: {
+        icon: Users,
+        color: "text-indigo-500",
+      },
     };
 
+    const config = audienceConfig[audience];
+    if (!config) {
+      return <span className="text-xs text-gray-400">-</span>;
+    }
+
+    const IconComponent = config.icon;
+
     return (
-      <Badge
-        variant="outline"
-        className={`text-xs ${
-          audienceColors[audience] ||
-          "bg-gray-500/20 border-gray-500/50 text-gray-300"
-        }`}
-      >
-        {audience}
-      </Badge>
+      <IconComponent className={`w-4 h-4 ${config.color}`} title={audience} />
     );
   };
 
@@ -308,7 +355,7 @@ export default function ProductsTab() {
                     العلامة التجارية
                   </TableHead>
                   <TableHead className="w-32 min-w-[128px]">المناسبة</TableHead>
-                  <TableHead className="w-40 min-w-[160px]">التصنيف</TableHead>
+                  <TableHead className="w-32 min-w-[128px]">التصنيف</TableHead>
                   <TableHead className="w-32 min-w-[128px]">الحالة</TableHead>
                   <TableHead className="w-24 min-w-[96px]">
                     الإحصائيات
@@ -390,11 +437,9 @@ export default function ProductsTab() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <div className="flex flex-wrap justify-center gap-1">
-                                {getProductStatusBadge(product.productStatus)}
-                                {getTargetAudienceBadge(product.targetAudience)}
-                              </div>
+                            <div className="flex items-center justify-center gap-2">
+                              {getProductStatusIcons(product.productStatus)}
+                              {getTargetAudienceIcon(product.targetAudience)}
                             </div>
                           </TableCell>
                           <TableCell>

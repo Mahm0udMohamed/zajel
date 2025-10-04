@@ -87,9 +87,7 @@ const validateProductData = (data: ProductFormData) => {
   if (!data.brand) {
     errors.push("العلامة التجارية مطلوبة");
   }
-  if (!data.productStatus) {
-    errors.push("حالة المنتج مطلوبة");
-  }
+  // productStatus is now optional (can be empty array)
   if (!data.targetAudience) {
     errors.push("الجمهور المستهدف مطلوب");
   }
@@ -116,7 +114,11 @@ export default function ProductFormPage({
     descriptionEn: product?.descriptionEn || "",
     careInstructions: product?.careInstructions || "",
     arrangementContents: product?.arrangementContents || "",
-    productStatus: product?.productStatus || "",
+    productStatus: Array.isArray(product?.productStatus)
+      ? product?.productStatus || []
+      : product?.productStatus
+      ? [product.productStatus]
+      : [],
     targetAudience: product?.targetAudience || "",
     isActive: product?.isActive ?? true,
     isFeatured: product?.isFeatured ?? false,
@@ -299,7 +301,9 @@ export default function ProductFormPage({
         productStatus: formData.productStatus,
         targetAudience: formData.targetAudience,
         isActive: Boolean(formData.isActive),
-        isFeatured: Boolean(formData.isFeatured),
+        isFeatured:
+          Array.isArray(formData.productStatus) &&
+          formData.productStatus.includes("المجموعات المميزة"),
         showInHomePage: Boolean(formData.showInHomePage),
       };
 
@@ -653,28 +657,6 @@ export default function ProductFormPage({
 
                     <div className="flex items-center gap-3 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
                       <Switch
-                        id="isFeatured"
-                        checked={formData.isFeatured}
-                        onCheckedChange={(checked) =>
-                          setFormData({ ...formData, isFeatured: checked })
-                        }
-                        className="data-[state=checked]:bg-purple-600 shadow-purple-500/20"
-                      />
-                      <div className="flex-1">
-                        <Label
-                          htmlFor="isFeatured"
-                          className="text-sm font-medium text-white cursor-pointer"
-                        >
-                          منتج مميز
-                        </Label>
-                        <p className="text-xs text-gray-400">
-                          عرض في المنتجات المميزة
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
-                      <Switch
                         id="showInHomePage"
                         checked={formData.showInHomePage}
                         onCheckedChange={(checked) =>
@@ -842,34 +824,78 @@ export default function ProductFormPage({
 
                   {/* حالة المنتج والجمهور المستهدف */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <Label className="text-sm text-gray-400">
-                        حالة المنتج *
+                        حالة المنتج
                       </Label>
-                      <Select
-                        value={formData.productStatus}
-                        onValueChange={(value) =>
-                          setFormData({ ...formData, productStatus: value })
-                        }
-                      >
-                        <SelectTrigger className="bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20">
-                          <SelectValue placeholder="اختر حالة المنتج" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="الأكثر مبيعًا">
-                            الأكثر مبيعًا
-                          </SelectItem>
-                          <SelectItem value="المجموعات المميزة">
-                            المجموعات المميزة
-                          </SelectItem>
-                          <SelectItem value="هدايا فاخرة">
-                            هدايا فاخرة
-                          </SelectItem>
-                          <SelectItem value="مناسبة خاصة">
-                            مناسبة خاصة
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {[
+                          "الأكثر مبيعًا",
+                          "المجموعات المميزة",
+                          "هدايا فاخرة",
+                          "مناسبة خاصة",
+                        ].map((status) => (
+                          <div
+                            key={status}
+                            className={`flex items-center p-2 rounded-md border transition-all duration-200 cursor-pointer ${
+                              Array.isArray(formData.productStatus) &&
+                              formData.productStatus.includes(status)
+                                ? "bg-blue-500/20 border-blue-500/50 text-blue-300"
+                                : "bg-gray-900/30 border-gray-700/50 text-gray-300 hover:bg-gray-800/50 hover:border-gray-600/50"
+                            }`}
+                            onClick={() => {
+                              const currentStatus = Array.isArray(
+                                formData.productStatus
+                              )
+                                ? formData.productStatus
+                                : [];
+
+                              if (currentStatus.includes(status)) {
+                                setFormData({
+                                  ...formData,
+                                  productStatus: currentStatus.filter(
+                                    (s) => s !== status
+                                  ),
+                                });
+                              } else {
+                                setFormData({
+                                  ...formData,
+                                  productStatus: [...currentStatus, status],
+                                });
+                              }
+                            }}
+                          >
+                            <div className="flex items-center justify-center w-4 h-4 mr-2">
+                              <div
+                                className={`w-3 h-3 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+                                  Array.isArray(formData.productStatus) &&
+                                  formData.productStatus.includes(status)
+                                    ? "bg-blue-500 border-blue-500"
+                                    : "border-gray-500"
+                                }`}
+                              >
+                                {Array.isArray(formData.productStatus) &&
+                                  formData.productStatus.includes(status) && (
+                                    <svg
+                                      className="w-2 h-2 text-white"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  )}
+                              </div>
+                            </div>
+                            <span className="text-xs font-medium truncate">
+                              {status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
                     <div className="space-y-2">

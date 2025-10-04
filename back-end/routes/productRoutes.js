@@ -92,12 +92,28 @@ const createProductValidation = [
     .isLength({ max: 2000 })
     .withMessage("وصف المنتج بالإنجليزية يجب أن يكون أقل من 2000 حرف"),
   body("productStatus")
-    .notEmpty()
-    .withMessage("حالة المنتج مطلوبة")
-    .isIn(["الأكثر مبيعًا", "المجموعات المميزة", "هدايا فاخرة", "مناسبة خاصة"])
-    .withMessage(
-      "حالة المنتج يجب أن تكون واحدة من: الأكثر مبيعًا، المجموعات المميزة، هدايا فاخرة، مناسبة خاصة"
-    ),
+    .optional()
+    .isArray()
+    .withMessage("حالة المنتج يجب أن تكون مصفوفة")
+    .custom((value) => {
+      if (value && value.length > 0) {
+        const validStatuses = [
+          "الأكثر مبيعًا",
+          "المجموعات المميزة",
+          "هدايا فاخرة",
+          "مناسبة خاصة",
+        ];
+        const invalidStatuses = value.filter(
+          (status) => !validStatuses.includes(status)
+        );
+        if (invalidStatuses.length > 0) {
+          throw new Error(
+            `حالة المنتج غير صحيحة: ${invalidStatuses.join(", ")}`
+          );
+        }
+      }
+      return true;
+    }),
   body("targetAudience")
     .notEmpty()
     .withMessage("الجمهور المستهدف مطلوب")
@@ -207,10 +223,27 @@ const updateProductValidation = [
     .withMessage("وصف المنتج بالإنجليزية يجب أن يكون أقل من 2000 حرف"),
   body("productStatus")
     .optional()
-    .isIn(["الأكثر مبيعًا", "المجموعات المميزة", "هدايا فاخرة", "مناسبة خاصة"])
-    .withMessage(
-      "حالة المنتج يجب أن تكون واحدة من: الأكثر مبيعًا، المجموعات المميزة، هدايا فاخرة، مناسبة خاصة"
-    ),
+    .isArray()
+    .withMessage("حالة المنتج يجب أن تكون مصفوفة")
+    .custom((value) => {
+      if (value && value.length > 0) {
+        const validStatuses = [
+          "الأكثر مبيعًا",
+          "المجموعات المميزة",
+          "هدايا فاخرة",
+          "مناسبة خاصة",
+        ];
+        const invalidStatuses = value.filter(
+          (status) => !validStatuses.includes(status)
+        );
+        if (invalidStatuses.length > 0) {
+          throw new Error(
+            `حالة المنتج غير صحيحة: ${invalidStatuses.join(", ")}`
+          );
+        }
+      }
+      return true;
+    }),
   body("targetAudience")
     .optional()
     .isIn(["له", "لها", "لكابلز"])
@@ -310,8 +343,26 @@ const searchValidation = [
     .withMessage("معرف العلامة التجارية غير صحيح"),
   query("productStatus")
     .optional()
-    .isIn(["الأكثر مبيعًا", "المجموعات المميزة", "هدايا فاخرة", "مناسبة خاصة"])
-    .withMessage("حالة المنتج غير صحيحة"),
+    .custom((value) => {
+      if (value) {
+        const validStatuses = [
+          "الأكثر مبيعًا",
+          "المجموعات المميزة",
+          "هدايا فاخرة",
+          "مناسبة خاصة",
+        ];
+        const statuses = Array.isArray(value) ? value : [value];
+        const invalidStatuses = statuses.filter(
+          (status) => !validStatuses.includes(status)
+        );
+        if (invalidStatuses.length > 0) {
+          throw new Error(
+            `حالة المنتج غير صحيحة: ${invalidStatuses.join(", ")}`
+          );
+        }
+      }
+      return true;
+    }),
   query("targetAudience")
     .optional()
     .isIn(["له", "لها", "لكابلز"])

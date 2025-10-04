@@ -88,7 +88,7 @@ const ProductSchema = new mongoose.Schema(
 
     // حالة المنتج
     productStatus: {
-      type: String,
+      type: [String],
       enum: {
         values: [
           "الأكثر مبيعًا",
@@ -99,7 +99,7 @@ const ProductSchema = new mongoose.Schema(
         message:
           "حالة المنتج يجب أن تكون واحدة من: الأكثر مبيعًا، المجموعات المميزة، هدايا فاخرة، مناسبة خاصة",
       },
-      required: [true, "حالة المنتج مطلوبة"],
+      default: [],
     },
 
     // الجمهور المستهدف
